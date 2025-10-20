@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ task.title }}</h2>
+<p>{{ task.description }}</p>
+<p>Status: {{ task.status }} | Priority: {{ task.priority }} | Due: {{ task.due_date }}</p>
+<p>Assignees: {% for u in task.assignees %}{{ u.username }} {% endfor %}</p>
+
+<h5>Dependencies</h5>
+<ul>
+{% for p in task.predecessors %}
+	<li>{{ p.title }} ({{ p.status }})</li>
+{% else %}
+	<li>None</li>
+{% endfor %}
+</ul>
+
+<form method="post">
+	{{ form.hidden_tag() }}
+	<div class="mb-3">{{ form.status.label }}{{ form.status(class="form-select") }}</div>
+	{{ form.submit(class="btn btn-primary") }}
+</form>
+
+<h5 class="mt-4">Comments</h5>
+<ul>
+{% for c in task.comments %}
+	<li><strong>{{ c.author.username if c.author }}</strong>: {{ c.body }} <small class="text-muted">{{ c.created_at }}</small></li>
+{% else %}
+	<li>No comments</li>
+{% endfor %}
+</ul>
+
+<h6>Add a comment</h6>
+<form method="post">
+	{{ comment_form.hidden_tag() }}
+	<div class="mb-3">{{ comment_form.body(class="form-control", rows=3) }}</div>
+	{{ comment_form.submit(class="btn btn-secondary") }}
+</form>
+{% endblock %}

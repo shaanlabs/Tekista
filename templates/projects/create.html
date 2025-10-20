@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Create Project</h2>
+<form method="post">
+	{{ form.hidden_tag() }}
+	<div class="mb-3">{{ form.title.label }}{{ form.title(class="form-control") }}</div>
+	<div class="mb-3">{{ form.description.label }}{{ form.description(class="form-control", rows=4) }}</div>
+	<div class="mb-3">{{ form.deadline.label }}{{ form.deadline(class="form-control") }}</div>
+	<div class="mb-3">{{ form.users.label }}{{ form.users(class="form-select", multiple=True) }}</div>
+	{{ form.submit(class="btn btn-primary") }}
+</form>
+{% endblock %}
