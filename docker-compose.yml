@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - ./:/app:cached
+    environment:
+      - FLASK_ENV=development
+    command: flask run --host=0.0.0.0 --port=5000
+    # For production: remove the volume, set FLASK_ENV=production, and run via gunicorn if desired.

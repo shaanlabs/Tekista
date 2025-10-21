@@ -1,0 +1,107 @@
+{
+  "mcpServers": {
+    "taskmanager": {
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "env": {
+        "FLASK_ENV": "production",
+        "DATABASE_URL": "sqlite:///app.db"
+      }
+    }
+  },
+  "resources": [
+    {
+      "name": "projects",
+      "description": "Get all projects or projects for a specific user",
+      "method": "get_projects",
+      "params": {
+        "user_id": "optional integer"
+      }
+    },
+    {
+      "name": "project_details",
+      "description": "Get detailed information about a specific project",
+      "method": "get_project_details",
+      "params": {
+        "project_id": "required integer"
+      }
+    },
+    {
+      "name": "tasks",
+      "description": "Get tasks with optional filtering by project, status, or user",
+      "method": "get_tasks",
+      "params": {
+        "project_id": "optional integer",
+        "status": "optional string (To Do, In Progress, Done)",
+        "user_id": "optional integer"
+      }
+    },
+    {
+      "name": "task_details",
+      "description": "Get detailed information about a specific task",
+      "method": "get_task_details",
+      "params": {
+        "task_id": "required integer"
+      }
+    },
+    {
+      "name": "user_tasks",
+      "description": "Get all tasks assigned to a specific user",
+      "method": "get_user_tasks",
+      "params": {
+        "user_id": "required integer",
+        "status": "optional string"
+      }
+    },
+    {
+      "name": "overdue_tasks",
+      "description": "Get all overdue tasks",
+      "method": "get_overdue_tasks",
+      "params": {
+        "project_id": "optional integer"
+      }
+    },
+    {
+      "name": "upcoming_tasks",
+      "description": "Get tasks due in the next N days",
+      "method": "get_upcoming_tasks",
+      "params": {
+        "days": "optional integer (default: 7)",
+        "project_id": "optional integer"
+      }
+    },
+    {
+      "name": "project_statistics",
+      "description": "Get statistics for a project",
+      "method": "get_project_statistics",
+      "params": {
+        "project_id": "required integer"
+      }
+    },
+    {
+      "name": "team_workload",
+      "description": "Get workload distribution across team members",
+      "method": "get_team_workload",
+      "params": {
+        "project_id": "optional integer"
+      }
+    },
+    {
+      "name": "search_tasks",
+      "description": "Search tasks by title or description",
+      "method": "search_tasks",
+      "params": {
+        "query": "required string",
+        "project_id": "optional integer"
+      }
+    },
+    {
+      "name": "dashboard_summary",
+      "description": "Get a comprehensive dashboard summary for a user",
+      "method": "get_dashboard_summary",
+      "params": {
+        "user_id": "required integer"
+      }
+    }
+  ]
+}

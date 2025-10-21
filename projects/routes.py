@@ -175,6 +175,31 @@ def project_detail(project_id):
     return render_template('projects/detail.html', project=project, tasks=tasks)
 
 
+# Kanban Board View
+@projects_bp.route('/<int:project_id>/kanban')
+@login_required
+def project_kanban(project_id):
+    project = Project.query.get_or_404(project_id)
+    # Group tasks by status
+    columns = {
+        'To Do': [],
+        'In Progress': [],
+        'Done': []
+    }
+    for t in project.tasks:
+        columns.setdefault(t.status, []).append(t)
+    return render_template('projects/kanban.html', project=project, columns=columns)
+
+
+# Gantt Chart View (basic scaffold - client renders timeline)
+@projects_bp.route('/<int:project_id>/gantt')
+@login_required
+def project_gantt(project_id):
+    project = Project.query.get_or_404(project_id)
+    tasks = Task.query.filter_by(project_id=project_id).all()
+    return render_template('projects/gantt.html', project=project, tasks=tasks)
+
+
 @projects_bp.route('/<int:project_id>/export')
 @login_required
 def export_project_csv(project_id):

@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}TaskManager - Project & Task Management{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Welcome to TEKISTA</h1>
+        <p class="dashboard-subtitle">A powerful project and task management system</p>
+        {% if not current_user.is_authenticated %}
+        <a class="btn btn-light btn-lg mt-3" href="{{ url_for('auth.register') }}" role="button">
+            <i class="fas fa-rocket me-2"></i>Get Started
+        </a>
+        {% endif %}
+    </div>
+
+{% if current_user.is_authenticated %}
+<!-- Quick Actions -->
+<div class="quick-actions">
+    <h3 class="quick-actions-title">Quick Actions</h3>
+    <div class="quick-actions-grid">
+        <a href="{{ url_for('projects.create_project') }}" class="quick-action-btn" data-action="create-project">
+            <div class="quick-action-icon">
+                <i class="fas fa-plus"></i>
+            </div>
+            <div>
+                <strong>Create Project</strong>
+                <small>Start a new project</small>
+            </div>
+        </a>
+        <a href="{{ url_for('projects.list_projects') }}" class="quick-action-btn" data-action="view-projects">
+            <div class="quick-action-icon">
+                <i class="fas fa-folder"></i>
+            </div>
+            <div>
+                <strong>View Projects</strong>
+                <small>Manage your projects</small>
+            </div>
+        </a>
+        <a href="#" class="quick-action-btn" data-action="create-task">
+            <div class="quick-action-icon">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <div>
+                <strong>Add Task</strong>
+                <small>Create a new task</small>
+            </div>
+        </a>
+        <a href="#" class="quick-action-btn" data-action="view-tasks">
+            <div class="quick-action-icon">
+                <i class="fas fa-list"></i>
+            </div>
+            <div>
+                <strong>View Tasks</strong>
+                <small>See all tasks</small>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card projects">
+        <div class="stat-number" data-stat="projects">0</div>
+        <div class="stat-label">Active Projects</div>
+        <div class="stat-change positive">+2 this week</div>
+    </div>
+    <div class="stat-card tasks">
+        <div class="stat-number" data-stat="tasks">0</div>
+        <div class="stat-label">Total Tasks</div>
+        <div class="stat-change positive">+5 today</div>
+    </div>
+    <div class="stat-card completed">
+        <div class="stat-number" data-stat="completed">0</div>
+        <div class="stat-label">Completed</div>
+        <div class="stat-change positive">+3 this week</div>
+    </div>
+    <div class="stat-card overdue">
+        <div class="stat-number" data-stat="overdue">0</div>
+        <div class="stat-label">Overdue</div>
+        <div class="stat-change negative">-1 today</div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="activity-feed">
+    <div class="activity-header">
+        <h3 class="activity-title">Recent Activity</h3>
+    </div>
+    <div class="activity-list">
+        <div class="activity-item">
+            <div class="activity-icon created">
+                <i class="fas fa-plus"></i>
+            </div>
+            <div class="activity-content">
+                <div class="activity-text">New project "Website Redesign" created</div>
+                <div class="activity-time">2 hours ago</div>
+            </div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-icon updated">
+                <i class="fas fa-edit"></i>
+            </div>
+            <div class="activity-content">
+                <div class="activity-text">Task "Design Mockups" updated</div>
+                <div class="activity-time">4 hours ago</div>
+            </div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-icon completed">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="activity-content">
+                <div class="activity-text">Task "Research Phase" completed</div>
+                <div class="activity-time">1 day ago</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Project Management</h5>
+                <p class="card-text">Create and manage projects with deadlines and team assignments.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Task Tracking</h5>
+                <p class="card-text">Track tasks with priorities, dependencies, and status updates.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Team Collaboration</h5>
+                <p class="card-text">Assign tasks to team members and collaborate effectively.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

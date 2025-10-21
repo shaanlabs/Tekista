@@ -1,27 +1,48 @@
-# Use Python 3.12 (stable and compatible)
 FROM python:3.12-slim
 
-# Set the working directory inside the container
+# Minimal environment hardening and ensure /app is on PYTHONPATH
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app
+
 WORKDIR /app
 
-# Copy requirements first (for faster rebuilds)
+# Copy requirements and install; install build tools only temporarily
 COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc \
+    && pip install --no-cache-dir -r requirements.txt \
+    && apt-get purge -y --auto-remove build-essential gcc \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy all your app files into the container
+# Copy application code
 COPY . .
 
-# Make sure app.db can be written
-RUN chmod -R a+w /app
+# Create a non-root user and give ownership of /app
+RUN useradd --create-home appuser \
+    && chown -R appuser:appuser /app \
+    && chmod -R go-rwx /app \
+    && find /app -type d -exec chmod 750 {} + \
+    && find /app -type f -exec chmod 640 {} +
 
-# Expose port 5000
+USER appuser
+
 EXPOSE 5000
 
-# Tell Flask to run in development mode (optional but helpful)
+# Default Flask settings (can be overridden via docker-compose or docker run -e)
 ENV FLASK_APP=app.py
-ENV FLASK_ENV=development
+ENV FLASK_ENV=production
 
-# Run the app
+# Add Ollama (local model runner) configuration.
+# If you run ollama on your host, use host.docker.internal:11434 (Windows/Docker Desktop).
+# On Linux you can run the container with --network=host and leave OLLAMA_HOST=http://127.0.0.1:11434.
+ENV OLLAMA_HOST=http://host.docker.internal:11434
+ENV OLLAMA_MODEL=your-model-name
+ENV OLLAMA_USE_GPU=true
+
+# Add a simple HTTP healthcheck implemented with Python (no curl required)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD ["python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:5000/health')"]
+
+# Default command (keeps compatibility with existing project)
 CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]

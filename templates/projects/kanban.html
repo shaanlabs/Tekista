@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Kanban - {{ project.title }}{% endblock %}
+{% block content %}
+<div class="enterprise-card">
+	<div class="card-header-enterprise">
+		<h3 class="card-title-enterprise">Kanban Board</h3>
+		<div class="card-actions">
+			<a href="{{ url_for('projects.project_detail', project_id=project.id) }}" class="btn-enterprise btn-enterprise-secondary">
+				<i class="fas fa-arrow-left"></i> Back
+			</a>
+		</div>
+	</div>
+	<div class="card-body">
+		<div class="row">
+			{% for status, tasks in columns.items() %}
+			<div class="col-md-4">
+				<div class="enterprise-card">
+					<div class="card-header-enterprise">
+						<h5 class="mb-0">{{ status }}</h5>
+					</div>
+					<div class="card-body task-container" data-status="{{ status }}">
+						{% for t in tasks %}
+						<div class="card task-item mb-2" data-task-id="{{ t.id }}" draggable="true">
+							<div class="card-body">
+								<div class="d-flex justify-content-between align-items-center">
+									<strong>{{ t.title }}</strong>
+									<span class="badge {% if t.priority=='High' %}badge-priority-high{% elif t.priority=='Low' %}badge-priority-low{% else %}badge-priority-normal{% endif %}">{{ t.priority }}</span>
+								</div>
+								<div class="text-muted small mt-1">Due: {{ t.due_date or '—' }}</div>
+							</div>
+						</div>
+						{% else %}
+						<div class="text-muted">No tasks</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+

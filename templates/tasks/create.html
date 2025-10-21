@@ -1,15 +1,23 @@
-
 {% extends 'base.html' %}
+{% block title %}Add Task - {{ project.title }}{% endblock %}
 {% block content %}
-<h2>Add Task to {{ project.title }}</h2>
-<form method="post">
-	{{ form.hidden_tag() }}
-	<div class="mb-3">{{ form.title.label }}{{ form.title(class="form-control") }}</div>
-	<div class="mb-3">{{ form.description.label }}{{ form.description(class="form-control", rows=3) }}</div>
-	<div class="mb-3">{{ form.due_date.label }}{{ form.due_date(class="form-control") }}</div>
-	<div class="mb-3">{{ form.priority.label }}{{ form.priority(class="form-select") }}</div>
-	<div class="mb-3">{{ form.assignees.label }}{{ form.assignees(class="form-select", multiple=True) }}</div>
-	<div class="mb-3">{{ form.dependencies.label }}{{ form.dependencies(class="form-select", multiple=True) }}</div>
-	{{ form.submit(class="btn btn-primary") }}
-</form>
+<div class="enterprise-card">
+	<div class="card-header-enterprise">
+		<h3 class="card-title-enterprise">Add Task to {{ project.title }}</h3>
+	</div>
+	<div class="card-body">
+		<form method="post" novalidate>
+			{{ form.hidden_tag() }}
+			<div class="mb-3">{{ form.title.label(class="form-label") }}{{ form.title(class="form-control", placeholder="Task title") }}</div>
+			<div class="mb-3">{{ form.description.label(class="form-label") }}{{ form.description(class="form-control", rows=3, placeholder="Describe the task") }}</div>
+			<div class="mb-3">{{ form.due_date.label(class="form-label") }}{{ form.due_date(class="form-control") }}</div>
+			<div class="mb-3">{{ form.priority.label(class="form-label") }}{{ form.priority(class="form-select") }}</div>
+			<div class="mb-3">{{ form.assignees.label(class="form-label") }}{{ form.assignees(class="form-select", multiple=True) }}</div>
+			<div class="mb-3">{{ form.dependencies.label(class="form-label") }}{{ form.dependencies(class="form-select", multiple=True) }}</div>
+			<div class="d-grid">
+				{{ form.submit(class="btn btn-primary btn-lg") }}
+			</div>
+		</form>
+	</div>
+</div>
 {% endblock %}
