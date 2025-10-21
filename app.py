@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_login import LoginManager, login_required, current_user
 from flask_mail import Mail
 import os
@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from models import db, User
 from config import Config
+from socket_events import init_socketio
 
 # Initialize extensions (using the SAME db from models.py)
 login_manager = LoginManager()
@@ -45,6 +46,10 @@ def create_app():
     app.register_blueprint(api_bp, url_prefix="/api")
     app.register_blueprint(ai_bp, url_prefix="/ai")
 
+    # Initialize Socket.IO and attach to app extensions for global access
+    socketio = init_socketio(app)
+    app.extensions['socketio'] = socketio
+
     # Error handler for AI features
     @app.errorhandler(500)
     def handle_server_error(e):
@@ -76,4 +81,8 @@ def create_app():
 # Optional: for direct run (but usually use `flask run`)
 if __name__ == "__main__":
     app = create_app()
-    app.run(debug=True)
+    socketio = app.extensions.get('socketio')
+    if socketio:
+        socketio.run(app, debug=True)
+    else:
+        app.run(debug=True)

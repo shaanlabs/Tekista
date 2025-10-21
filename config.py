@@ -21,8 +21,12 @@ class Config:
 	# AI Configuration
 	OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 	ENABLE_AI_FEATURES = os.environ.get('ENABLE_AI_FEATURES', 'false').lower() in ['true', 'on', '1']
+	AI_PROVIDER = os.environ.get('AI_PROVIDER', 'ollama')  # 'ollama' or 'openai'
+	# Ollama settings
+	OLLAMA_HOST = os.environ.get('OLLAMA_HOST', 'http://localhost:11434')
+	OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'llama3')
 	
-	# AI Model Settings
+	# AI Model Settings (used for OpenAI fallback or general tuning)
 	AI_MODEL = os.environ.get('AI_MODEL', 'gpt-3.5-turbo')
 	AI_TEMPERATURE = float(os.environ.get('AI_TEMPERATURE', '0.7'))
 	AI_MAX_TOKENS = int(os.environ.get('AI_MAX_TOKENS', '500'))

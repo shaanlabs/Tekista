@@ -10,6 +10,7 @@ WORKDIR /app
 # Copy requirements and install; install build tools only temporarily
 COPY requirements.txt .
 
+# install build deps temporarily, install requirements, then cleanup
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc \
     && pip install --no-cache-dir -r requirements.txt \
     && apt-get purge -y --auto-remove build-essential gcc \
@@ -18,8 +19,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 # Copy application code
 COPY . .
 
-# Create a non-root user and give ownership of /app
+# Create a non-root user, prepare instance/ and tighten permissions
 RUN useradd --create-home appuser \
+    && mkdir -p /app/instance \
     && chown -R appuser:appuser /app \
     && chmod -R go-rwx /app \
     && find /app -type d -exec chmod 750 {} + \
@@ -33,11 +35,10 @@ EXPOSE 5000
 ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
 
-# Add Ollama (local model runner) configuration.
-# If you run ollama on your host, use host.docker.internal:11434 (Windows/Docker Desktop).
-# On Linux you can run the container with --network=host and leave OLLAMA_HOST=http://127.0.0.1:11434.
+# Add Ollama defaults (adjust OLLAMA_MODEL to the exact name you have pulled)
 ENV OLLAMA_HOST=http://host.docker.internal:11434
-ENV OLLAMA_MODEL=your-model-name
+# Use requested llama3.2 3B model
+ENV OLLAMA_MODEL=llama3.2:3b
 ENV OLLAMA_USE_GPU=true
 
 # Add a simple HTTP healthcheck implemented with Python (no curl required)

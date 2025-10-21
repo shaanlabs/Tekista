@@ -169,7 +169,8 @@ def project_detail(project_id):
     if status:
         task_query = task_query.filter(Task.status == status)
     if assignee:
-        task_query = task_query.join(Task.assignees).filter(Task.assignees.c.user_id == assignee)
+        # Join the User relationship and filter by User.id
+        task_query = task_query.join(Task.assignees).join(User).filter(User.id == assignee)
 
     tasks = task_query.all()
     return render_template('projects/detail.html', project=project, tasks=tasks)

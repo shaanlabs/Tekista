@@ -5,6 +5,7 @@ Handles real-time notification delivery via WebSockets
 
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_login import current_user
+from flask import request
 from models import db, User
 from notifications_service import NotificationService, NotificationEvents
 import logging

@@ -4,9 +4,13 @@ from . import ai_assistant
 from models import db, Task, Project, User, task_assignees
 from datetime import datetime
 try:
-    import openai
+	import ollama
 except ImportError:
-    openai = None
+	ollama = None
+try:
+	import openai
+except ImportError:
+	openai = None
 
 aibp = Blueprint('ai', __name__)
 
@@ -94,57 +98,73 @@ def get_suggestions():
 @aibp.route('/api/ai/chat', methods=['POST'])
 @login_required
 def chat():
-    """Chat with the AI assistant"""
-    if not openai:
-        return jsonify({"error": "OpenAI library not installed"}), 500
-    
-    if not current_app.config.get('OPENAI_API_KEY'):
-        return jsonify({"error": "OpenAI API key not configured"}), 500
-    
-    data = request.get_json()
-    message = data.get('message')
-    
-    if not message:
-        return jsonify({"error": "Message is required"}), 400
-    
-    try:
-        # Get user context
-        user = User.query.get(current_user.id)
-        if not user:
-            return jsonify({"error": "User not found"}), 404
-        
-        # Get recent tasks and projects for context
-        tasks = Task.query.join(
-            task_assignees, Task.id == task_assignees.c.task_id
-        ).filter(
-            task_assignees.c.user_id == user.id,
-            Task.status != 'Done'
-        ).order_by(Task.due_date.asc()).limit(5).all()
-        
-        # Prepare context
-        context = f"Current user: {user.username}\n"
-        context += f"Current time: {datetime.utcnow().strftime('%Y-%m-%d %H:%M')} UTC\n\n"
-        
-        if tasks:
-            context += "=== Your Upcoming Tasks ===\n"
-            for task in tasks:
-                context += f"- {task.title} (Due: {task.due_date}, Priority: {task.priority})\n"
-        
-        # Call OpenAI API
-        openai.api_key = current_app.config.get('OPENAI_API_KEY')
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful task management assistant. Use the following context to provide relevant responses. Be concise and helpful.\n\n" + context},
-                {"role": "user", "content": message}
-            ],
-            max_tokens=500
-        )
-        
-        return jsonify({
-            "response": response.choices[0].message['content'].strip()
-        })
-        
-    except Exception as e:
-        current_app.logger.error(f"Chat error: {str(e)}")
-        return jsonify({"error": "Failed to process your request"}), 500
+	"""Chat with the AI assistant (Ollama by default, OpenAI as fallback if configured)"""
+	data = request.get_json()
+	message = data.get('message')
+	if not message:
+		return jsonify({"error": "Message is required"}), 400
+
+	try:
+		# Get user context
+		user = User.query.get(current_user.id)
+		if not user:
+			return jsonify({"error": "User not found"}), 404
+		# Get recent tasks for context
+		tasks = Task.query.join(
+			task_assignees, Task.id == task_assignees.c.task_id
+		).filter(
+			task_assignees.c.user_id == user.id,
+			Task.status != 'Done'
+		).order_by(Task.due_date.asc()).limit(5).all()
+		# Prepare context
+		context = f"Current user: {user.username}\n"
+		context += f"Current time: {datetime.utcnow().strftime('%Y-%m-%d %H:%M')} UTC\n\n"
+		if tasks:
+			context += "=== Your Upcoming Tasks ===\n"
+			for task in tasks:
+				context += f"- {task.title} (Due: {task.due_date}, Priority: {task.priority})\n"
+
+		provider = current_app.config.get('AI_PROVIDER', 'ollama').lower()
+		temperature = float(current_app.config.get('AI_TEMPERATURE', 0.7))
+		max_tokens = int(current_app.config.get('AI_MAX_TOKENS', 500))
+
+		if provider == 'ollama':
+			if not ollama:
+				return jsonify({"error": "Ollama library not installed"}), 500
+			host = current_app.config.get('OLLAMA_HOST', 'http://localhost:11434')
+			model = current_app.config.get('OLLAMA_MODEL', 'llama3')
+			client = ollama.Client(host=host)
+			result = client.chat(
+				model=model,
+				messages=[
+					{"role": "system", "content": "You are a helpful task management assistant. Use the provided context. Be concise and helpful.\n\n" + context},
+					{"role": "user", "content": message},
+				],
+				options={
+					"temperature": temperature,
+					"num_predict": max_tokens,
+				},
+			)
+			return jsonify({"response": result["message"]["content"].strip()})
+
+		# Fallback to OpenAI if configured
+		if not openai:
+			return jsonify({"error": "OpenAI library not installed and Ollama not selected"}), 500
+		api_key = current_app.config.get('OPENAI_API_KEY')
+		if not api_key:
+			return jsonify({"error": "OpenAI API key not configured and Ollama not selected"}), 500
+		openai.api_key = api_key
+		model = current_app.config.get('AI_MODEL', 'gpt-3.5-turbo')
+		response = openai.ChatCompletion.create(
+			model=model,
+			messages=[
+				{"role": "system", "content": "You are a helpful task management assistant. Use the following context to provide relevant responses. Be concise and helpful.\n\n" + context},
+				{"role": "user", "content": message}
+			],
+			max_tokens=max_tokens
+		)
+		return jsonify({"response": response.choices[0].message['content'].strip()})
+
+	except Exception as e:
+		current_app.logger.error(f"Chat error: {str(e)}")
+		return jsonify({"error": "Failed to process your request"}), 500
