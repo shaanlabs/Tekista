@@ -1,4 +1,4 @@
-from flask import current_app
+from flask import current_app, has_app_context
 try:
     import openai
 except ImportError:
@@ -17,9 +17,8 @@ import json
 
 class AIAssistant:
     def __init__(self, openai_api_key=None):
-        self.openai_api_key = openai_api_key or current_app.config.get('OPENAI_API_KEY')
-        if self.openai_api_key:
-            openai.api_key = self.openai_api_key
+        # Do not touch current_app here; may be constructed outside app context
+        self.openai_api_key = openai_api_key
 
     def estimate_task_duration(self, task_title, task_description, project_id=None):
         """
@@ -89,8 +88,16 @@ class AIAssistant:
         """
         Generate a natural language summary of project status
         """
-        if not self.openai_api_key:
+        # Resolve API key at call time to avoid app context issues
+        api_key = self.openai_api_key
+        if not api_key and has_app_context():
+            api_key = current_app.config.get('OPENAI_API_KEY')
+        if not api_key:
             return "AI features require an OpenAI API key to be configured."
+        try:
+            openai.api_key = api_key
+        except Exception:
+            pass
             
         query = Project.query
         if project_id:
@@ -136,8 +143,15 @@ class AIAssistant:
         Parse natural language input to create a task
         Example: "Remind me to finalize UI by Friday"
         """
-        if not self.openai_api_key:
+        api_key = self.openai_api_key
+        if not api_key and has_app_context():
+            api_key = current_app.config.get('OPENAI_API_KEY')
+        if not api_key:
             return {"error": "AI features require an OpenAI API key to be configured."}
+        try:
+            openai.api_key = api_key
+        except Exception:
+            pass
             
         try:
             response = openai.ChatCompletion.create(
@@ -226,8 +240,15 @@ class AIAssistant:
         """
         Get personalized AI suggestions for a user
         """
-        if not self.openai_api_key:
+        api_key = self.openai_api_key
+        if not api_key and has_app_context():
+            api_key = current_app.config.get('OPENAI_API_KEY')
+        if not api_key:
             return []
+        try:
+            openai.api_key = api_key
+        except Exception:
+            pass
             
         user = User.query.get(user_id) if user_id else None
         if not user:

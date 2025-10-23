@@ -1,21 +1,44 @@
-{% extends 'base.html' %}
+{% extends 'layouts/app.html' %}
+
+{% block title %}Projects - Tekista{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-	<h2>Projects</h2>
-	<a class="btn btn-success" href="{{ url_for('projects.create_project') }}">New Project</a>
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-xl font-semibold text-white">Projects</h1>
+  <a href="{{ url_for('projects.create_project') }}"
+     class="inline-flex items-center px-4 py-2 rounded border border-white/10 bg-accent/20 text-sm text-white hover:bg-accent/30">
+    New Project
+  </a>
+  </div>
+
+<div class="space-y-3">
+  {% for p in projects %}
+  <a href="{{ url_for('projects.project_detail', project_id=p.id) }}" class="block">
+    <div class="rounded border border-white/10 bg-white/5 hover:bg-white/10 transition-colors">
+      <div class="p-4">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 class="text-base font-medium text-white">{{ p.title }}</h2>
+            {% if p.description %}
+              <p class="mt-1 text-sm text-gray-400 line-clamp-2">{{ p.description }}</p>
+            {% endif %}
+          </div>
+          <div class="text-right shrink-0">
+            <div class="text-xs text-gray-400">Deadline</div>
+            <div class="text-sm text-gray-300">{{ p.deadline or '—' }}</div>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="h-2 w-full rounded bg-white/10 overflow-hidden">
+            <div class="h-2 bg-accent" style="width: {{ p.progress() }}%"></div>
+          </div>
+          <div class="mt-1 text-xs text-gray-400">{{ p.progress() }}% complete</div>
+        </div>
+      </div>
+    </div>
+  </a>
+  {% else %}
+    <div class="rounded border border-white/10 bg-white/5 p-6 text-sm text-gray-400">No projects yet.</div>
+  {% endfor %}
 </div>
-{% for p in projects %}
-<div class="card mb-2">
-	<div class="card-body">
-		<h5 class="card-title"><a href="{{ url_for('projects.project_detail', project_id=p.id) }}">{{ p.title }}</a></h5>
-		<p class="card-text">{{ p.description }}</p>
-		<div class="d-flex justify-content-between">
-			<div>Deadline: {{ p.deadline }}</div>
-			<div>Progress: <div class="progress" style="width:150px; display:inline-block;"><div class="progress-bar" role="progressbar" style="width: {{ p.progress() }}%;">{{ p.progress() }}%</div></div></div>
-		</div>
-	</div>
-</div>
-{% else %}
-<p>No projects yet.</p>
-{% endfor %}
 {% endblock %}

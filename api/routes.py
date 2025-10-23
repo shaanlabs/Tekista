@@ -29,17 +29,48 @@ def project_to_dict(p):
 		'tasks': [task_to_dict(t) for t in p.tasks]
 	}
 
-@api_bp.route('/projects', methods=['GET'])
+@api_bp.route('/projects', methods=['GET', 'POST'])
 @api_auth_required
 def api_projects():
-	projects = Project.query.all()
-	return jsonify([project_to_dict(p) for p in projects])
+    if request.method == 'GET':
+        projects = Project.query.all()
+        return jsonify([project_to_dict(p) for p in projects])
+    data = request.get_json() or {}
+    title = data.get('title')
+    if not title:
+        return jsonify({'error': 'title is required'}), 400
+    p = Project(title=title, description=data.get('description'))
+    deadline = data.get('deadline')
+    if deadline:
+        try:
+            p.deadline = datetime.fromisoformat(deadline).date()
+        except Exception:
+            pass
+    db.session.add(p)
+    db.session.commit()
+    return jsonify(project_to_dict(p)), 201, {'Location': url_for('api.api_project_detail', project_id=p.id)}
 
-@api_bp.route('/projects/<int:project_id>', methods=['GET'])
+@api_bp.route('/projects/<int:project_id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @api_auth_required
 def api_project_detail(project_id):
-	p = Project.query.get_or_404(project_id)
-	return jsonify(project_to_dict(p))
+    p = Project.query.get_or_404(project_id)
+    if request.method == 'GET':
+        return jsonify(project_to_dict(p))
+    if request.method in ('PUT','PATCH'):
+        data = request.get_json() or {}
+        if 'title' in data: p.title = data['title']
+        if 'description' in data: p.description = data['description']
+        if 'deadline' in data:
+            try:
+                p.deadline = datetime.fromisoformat(data['deadline']).date() if data['deadline'] else None
+            except Exception:
+                pass
+        db.session.commit()
+        return jsonify(project_to_dict(p))
+    # DELETE
+    db.session.delete(p)
+    db.session.commit()
+    return '', 204
 
 @api_bp.route('/tasks', methods=['GET', 'POST'])
 @api_auth_required
@@ -63,11 +94,31 @@ def api_tasks():
 	db.session.add(t); db.session.commit()
 	return jsonify(task_to_dict(t)), 201, {'Location': url_for('api.api_tasks')}
 
-@api_bp.route('/tasks/<int:task_id>', methods=['GET'])
+@api_bp.route('/tasks/<int:task_id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @api_auth_required
 def api_task_detail(task_id):
-	t = Task.query.get_or_404(task_id)
-	return jsonify(task_to_dict(t))
+    t = Task.query.get_or_404(task_id)
+    if request.method == 'GET':
+        return jsonify(task_to_dict(t))
+    if request.method in ('PUT','PATCH'):
+        data = request.get_json() or {}
+        if 'title' in data: t.title = data['title']
+        if 'description' in data: t.description = data['description']
+        if 'status' in data: t.status = data['status']
+        if 'priority' in data: t.priority = data['priority']
+        if 'project_id' in data: t.project_id = data['project_id']
+        if 'assignees' in data:
+            t.assignees.clear()
+            for uid in data.get('assignees', []):
+                u = User.query.get(uid)
+                if u:
+                    t.assignees.append(u)
+        db.session.commit()
+        return jsonify(task_to_dict(t))
+    # DELETE
+    db.session.delete(t)
+    db.session.commit()
+    return '', 204
 
 # New token endpoints
 @api_bp.route('/token', methods=['POST'])

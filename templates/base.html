@@ -11,23 +11,19 @@
 	<link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/components.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
-	<link href="{{ url_for('static', filename='css/enterprise.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/notifications.css') }}" rel="stylesheet">
 	{% if config.ENABLE_AI_FEATURES %}
 	<link href="{{ url_for('static', filename='css/ai-features.css') }}" rel="stylesheet">
 	{% endif %}
-	<title>{% block title %}TaskManager{% endblock %}</title>
+	<title>{% block title %}Tekista{% endblock %}</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
 	<div class="container">
-		<a class="navbar-brand" href="{{ url_for('projects.list_projects') }}">TaskManager</a>
+		<a class="navbar-brand" href="{{ url_for('projects.list_projects') }}">Tekista</a>
 		<div class="collapse navbar-collapse">
 			<ul class="navbar-nav ms-auto">
 				{% if current_user.is_authenticated %}
-				<li class="nav-item"><a class="nav-link" href="{{ url_for('enterprise_dashboard') }}">
-					<i class="fas fa-chart-line me-1"></i>Enterprise Dashboard
-				</a></li>
 				<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>
 				{% else %}
 				<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
@@ -94,9 +90,7 @@
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endif %}
 
-{% if request.endpoint and 'enterprise' in request.endpoint %}
-<script src="{{ url_for('static', filename='js/enterprise.js') }}"></script>
-{% endif %}
+ 
 
 {% block scripts %}{% endblock %}
 

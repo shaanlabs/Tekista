@@ -1,9 +1,10 @@
-from flask import render_template, redirect, url_for, flash, request
-from flask_login import login_user, logout_user, login_required, current_user
-from app import db
+from flask import render_template, request, flash, redirect, url_for
+from flask_login import login_required, login_user, logout_user, current_user
+# import forms (added)
+from .forms import LoginForm, RegisterForm
+from models import User, db
+
 from . import auth_bp
-from .forms import RegisterForm, LoginForm
-from models import User
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -36,3 +37,18 @@ def login():
 def logout():
 	logout_user()
 	return redirect(url_for('auth.login'))
+
+@auth_bp.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+	"""
+	Simple forgot-password endpoint. On POST accept an 'email' field and flash a neutral message.
+	Replace the TODO with your password-reset token/email sending implementation.
+	"""
+	if request.method == 'POST':
+		email = request.form.get('email', '').strip()
+		# TODO: look up user and send password reset email if registered
+		flash('If that email is registered, you will receive password reset instructions shortly.', 'info')
+		# Redirect to login or another appropriate page
+		return redirect(url_for('auth.login'))
+	# Render a template at templates/auth/forgot_password.html (create if missing)
+	return render_template('auth/forgot_password.html')

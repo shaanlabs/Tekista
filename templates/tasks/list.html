@@ -1,0 +1,72 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %}Tasks - Tekista{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-xl font-semibold text-white">Tasks</h1>
+  <div class="flex items-center gap-2">
+    <form method="get" class="flex items-center gap-2">
+      <select name="project_id" class="bg-white/5 border border-white/10 text-sm text-gray-200 rounded px-2 py-1">
+        <option value="">All Projects</option>
+        {% for p in projects %}
+        <option value="{{ p.id }}" {% if request.args.get('project_id', type=int) == p.id %}selected{% endif %}>{{ p.title }}</option>
+        {% endfor %}
+      </select>
+      <select name="assignee" class="bg-white/5 border border-white/10 text-sm text-gray-200 rounded px-2 py-1">
+        <option value="">All Assignees</option>
+        {% for u in users %}
+        <option value="{{ u.id }}" {% if request.args.get('assignee', type=int) == u.id %}selected{% endif %}>{{ u.username }}</option>
+        {% endfor %}
+      </select>
+      <select name="status" class="bg-white/5 border border-white/10 text-sm text-gray-200 rounded px-2 py-1">
+        <option value="">All Statuses</option>
+        {% for s in ['To Do','In Progress','Done'] %}
+        <option value="{{ s }}" {% if request.args.get('status') == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <button class="px-3 py-1.5 rounded border border-white/10 bg-accent/20 text-white text-sm hover:bg-accent/30">Filter</button>
+    </form>
+  </div>
+</div>
+
+<div class="rounded border border-white/10 bg-white/5">
+  <div class="grid grid-cols-12 text-xs uppercase text-gray-400 px-4 py-2 border-b border-white/10">
+    <div class="col-span-5">Task</div>
+    <div class="col-span-2">Project</div>
+    <div class="col-span-2">Assignees</div>
+    <div class="col-span-1">Status</div>
+    <div class="col-span-2 text-right">Due</div>
+  </div>
+  {% if tasks %}
+    {% for t in tasks %}
+    <div class="grid grid-cols-12 items-center px-4 py-3 border-b border-white/5 hover:bg-white/10">
+      <div class="col-span-5">
+        <a href="{{ url_for('tasks.task_detail', task_id=t.id) }}" class="text-sm text-white hover:underline">{{ t.title }}</a>
+        {% if t.description %}
+          <div class="text-xs text-gray-400 line-clamp-1">{{ t.description }}</div>
+        {% endif %}
+      </div>
+      <div class="col-span-2 text-sm text-gray-300">
+        {% if t.project %}<a href="{{ url_for('projects.project_detail', project_id=t.project.id) }}" class="hover:underline">{{ t.project.title }}</a>{% else %}-{% endif %}
+      </div>
+      <div class="col-span-2 text-sm text-gray-300">
+        {% if t.assignees %}
+          <div class="truncate">
+            {% for u in t.assignees %}<span class="mr-1">{{ u.username }}</span>{% endfor %}
+          </div>
+        {% else %}-{% endif %}
+      </div>
+      <div class="col-span-1">
+        <span class="text-xs px-2 py-1 rounded border border-white/10 text-gray-300">{{ t.status }}</span>
+      </div>
+      <div class="col-span-2 text-right text-sm text-gray-300">
+        {{ t.due_date.isoformat() if t.due_date else '-' }}
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="px-4 py-6 text-sm text-gray-400">No tasks found.</div>
+  {% endif %}
+</div>
+{% endblock %}

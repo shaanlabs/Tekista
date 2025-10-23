@@ -1,7 +1,8 @@
 # app.py
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, session, jsonify, request
 from flask_login import LoginManager, login_required, current_user
 from flask_mail import Mail
+from flask_wtf.csrf import CSRFProtect, generate_csrf
 import os
 import sys
 import logging
@@ -18,6 +19,7 @@ from socket_events import init_socketio
 login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 mail = Mail()
+csrf = CSRFProtect()
 
 def create_app():
     app = Flask(__name__, template_folder="templates")
@@ -33,18 +35,31 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
+    # Initialize CSRF protection
+    csrf = CSRFProtect()
+    csrf.init_app(app)
+
+    # expose csrf_token() to templates (so {{ csrf_token() }} works)
+    @app.context_processor
+    def inject_csrf_token():
+        return {"csrf_token": generate_csrf}
+
     # Register blueprints
-    from auth.routes import auth_bp
+    from auth import auth_bp
     from projects.routes import projects_bp
     from tasks.routes import tasks_bp
     from api.routes import api_bp
     from ai.routes import aibp as ai_bp
 
-    app.register_blueprint(auth_bp)
+    # register blueprint at root so routes like /login are available
+    # (previously registered with url_prefix='/auth' which caused 404s for /login)
+    app.register_blueprint(auth_bp)  # removed url_prefix='/auth'
+
     app.register_blueprint(projects_bp, url_prefix="/projects")
     app.register_blueprint(tasks_bp, url_prefix="/tasks")
     app.register_blueprint(api_bp, url_prefix="/api")
     app.register_blueprint(ai_bp, url_prefix="/ai")
+    # Enterprise removed
 
     # Initialize Socket.IO and attach to app extensions for global access
     socketio = init_socketio(app)
@@ -64,25 +79,17 @@ def create_app():
             return jsonify({"error": "Resource not found"}), 404
         return render_template('404.html'), 404
 
-    # Add index route
+    # Add index route -> use new dashboard as the home page
     @app.route('/')
-    def index():
-        return render_template('index.html', 
-                            ai_enabled=app.config.get('ENABLE_AI_FEATURES', False))
-    
-    # Add enterprise dashboard route
-    @app.route('/enterprise')
     @login_required
-    def enterprise_dashboard():
-        return render_template('enterprise_dashboard.html')
+    def index():
+        return render_template('dashboard.html')
+    
+    # Enterprise dashboard removed
 
     return app
 
 # Optional: for direct run (but usually use `flask run`)
 if __name__ == "__main__":
     app = create_app()
-    socketio = app.extensions.get('socketio')
-    if socketio:
-        socketio.run(app, debug=True)
-    else:
-        app.run(debug=True)
+    app.run()

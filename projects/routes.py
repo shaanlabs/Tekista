@@ -176,6 +176,38 @@ def project_detail(project_id):
     return render_template('projects/detail.html', project=project, tasks=tasks)
 
 
+@projects_bp.route('/<int:project_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    form = ProjectForm(obj=project)
+    form.users.choices = [(u.id, u.username) for u in User.query.order_by(User.username)]
+    if form.validate_on_submit():
+        project.title = form.title.data
+        project.description = form.description.data
+        project.deadline = form.deadline.data
+        # update users
+        project.users.clear()
+        for user_id in form.users.data:
+            user = User.query.get(user_id)
+            if user:
+                project.users.append(user)
+        db.session.commit()
+        flash('Project updated successfully!', 'success')
+        return redirect(url_for('projects.project_detail', project_id=project.id))
+    return render_template('projects/edit.html', form=form, project=project)
+
+
+@projects_bp.route('/<int:project_id>/delete', methods=['POST'])
+@login_required
+def delete_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    db.session.delete(project)
+    db.session.commit()
+    flash('Project deleted', 'success')
+    return redirect(url_for('projects.list_projects'))
+
+
 # Kanban Board View
 @projects_bp.route('/<int:project_id>/kanban')
 @login_required

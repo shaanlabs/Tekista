@@ -4,7 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
-# Initialize db here to avoid circular imports
 db = SQLAlchemy()
 
 # Define association tables FIRST — at top level
@@ -33,6 +32,10 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    # Optional enterprise fields (FKs declared as strings to avoid import cycles)
+    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=True)
+    custom_role_id = db.Column(db.Integer, db.ForeignKey('custom_role.id'), nullable=True)
     api_token = db.Column(db.String(128), unique=True, index=True, nullable=True)
     token_expiration = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -83,6 +86,8 @@ class Project(db.Model):
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text)
     deadline = db.Column(db.Date)
+    # Optional enterprise field to associate projects with organizations
+    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     users = db.relationship('User', secondary=project_users, back_populates='projects')
     tasks = db.relationship('Task', back_populates='project', cascade='all, delete-orphan')

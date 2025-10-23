@@ -1,31 +1,22 @@
-{% extends 'base.html' %}
+{% extends 'layouts/app.html' %}
 {% block title %}Gantt - {{ project.title }}{% endblock %}
 {% block content %}
-<div class="enterprise-card">
-	<div class="card-header-enterprise">
-		<h3 class="card-title-enterprise">Gantt Chart</h3>
-		<div class="card-actions">
-			<a href="{{ url_for('projects.project_detail', project_id=project.id) }}" class="btn-enterprise btn-enterprise-secondary">
-				<i class="fas fa-arrow-left"></i> Back
-			</a>
-		</div>
-	</div>
-	<div class="card-body">
-		<div class="chart-container">
-			<div class="chart-header">
-				<h3 class="chart-title">Timeline</h3>
-			</div>
-			<div id="gantt-container" class="chart-placeholder">Timeline renders here</div>
-		</div>
-	</div>
+<div>
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-xl font-semibold text-white">Gantt · {{ project.title }}</h1>
+    <a href="{{ url_for('projects.project_detail', project_id=project.id) }}" class="px-3 py-1.5 rounded border border-white/10 bg-white/5 text-sm text-white hover:bg-white/10">Back</a>
+  </div>
+  <div class="rounded border border-white/10 bg-white/5">
+    <div class="px-4 py-2 text-xs uppercase text-gray-400 border-b border-white/10">Timeline</div>
+    <div id="gantt-container" class="p-4 text-sm text-gray-400">Timeline renders here</div>
+  </div>
 </div>
 
 {% block scripts %}
 <script>
-// Simple client-side render scaffold (replace with library like frappe-gantt later)
+// Placeholder for gantt render integration
 document.addEventListener('DOMContentLoaded', function(){
-	const tasks = {{ tasks|tojson }};
-	// You can plug tasks into a gantt lib; this is a placeholder
+  const ganttTasks = {{ tasks|tojson }};
 });
 </script>
 {% endblock %}
