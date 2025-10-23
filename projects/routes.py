@@ -76,7 +76,7 @@
 # 	filename = f'project_{p.id}_tasks.csv'
 # 	return Response(output, mimetype='text/csv', headers={"Content-Disposition": f"attachment;filename={filename}"})
 # projects/routes.py
-from flask import render_template, redirect, url_for, flash, request, Response
+from flask import render_template, redirect, url_for, flash, request, Response, abort
 from flask_login import login_required, current_user
 from sqlalchemy import exists
 from sqlalchemy.orm import selectinload
@@ -236,6 +236,9 @@ def project_gantt(project_id):
 @projects_bp.route('/<int:project_id>/export')
 @login_required
 def export_project_csv(project_id):
+    # Admin only
+    if not (getattr(current_user, 'role', None) and getattr(current_user.role, 'name', None) == 'Admin'):
+        abort(403)
     project = Project.query.get_or_404(project_id)
 
     from io import StringIO
@@ -266,6 +269,19 @@ def export_project_csv(project_id):
 
     output = si.getvalue()
     si.close()
+
+    # Audit log
+    try:
+        db.session.add(AuditLog(
+            actor_id=current_user.id,
+            action='export_csv',
+            target_type='project',
+            target_id=project.id,
+            meta=f'CSV export: project_{project.id}_tasks.csv'
+        ))
+        db.session.commit()
+    except Exception:
+        pass
 
     filename = f'project_{project.id}_tasks.csv'
     return Response(

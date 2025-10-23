@@ -3,6 +3,9 @@
 {% block title %}Tasks - Tekista{% endblock %}
 
 {% block content %}
+{% set sel_project = (request.args.get('project_id') or '0')|int %}
+{% set sel_assignee = (request.args.get('assignee') or '0')|int %}
+{% set sel_status = request.args.get('status') %}
 <div class="flex items-center justify-between mb-6">
   <h1 class="text-xl font-semibold text-white">Tasks</h1>
   <div class="flex items-center gap-2">
@@ -10,19 +13,19 @@
       <select name="project_id" class="bg-white/5 border border-white/10 text-sm text-gray-200 rounded px-2 py-1">
         <option value="">All Projects</option>
         {% for p in projects %}
-        <option value="{{ p.id }}" {% if request.args.get('project_id', type=int) == p.id %}selected{% endif %}>{{ p.title }}</option>
+        <option value="{{ p.id }}" {% if sel_project == p.id %}selected{% endif %}>{{ p.title }}</option>
         {% endfor %}
       </select>
       <select name="assignee" class="bg-white/5 border border-white/10 text-sm text-gray-200 rounded px-2 py-1">
         <option value="">All Assignees</option>
         {% for u in users %}
-        <option value="{{ u.id }}" {% if request.args.get('assignee', type=int) == u.id %}selected{% endif %}>{{ u.username }}</option>
+        <option value="{{ u.id }}" {% if sel_assignee == u.id %}selected{% endif %}>{{ u.username }}</option>
         {% endfor %}
       </select>
       <select name="status" class="bg-white/5 border border-white/10 text-sm text-gray-200 rounded px-2 py-1">
         <option value="">All Statuses</option>
         {% for s in ['To Do','In Progress','Done'] %}
-        <option value="{{ s }}" {% if request.args.get('status') == s %}selected{% endif %}>{{ s }}</option>
+        <option value="{{ s }}" {% if sel_status == s %}selected{% endif %}>{{ s }}</option>
         {% endfor %}
       </select>
       <button class="px-3 py-1.5 rounded border border-white/10 bg-accent/20 text-white text-sm hover:bg-accent/30">Filter</button>

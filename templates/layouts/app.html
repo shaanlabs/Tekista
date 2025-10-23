@@ -26,6 +26,48 @@
       }
     }
   </script>
+  <script>
+    // Notifications dropdown wiring
+    (async function(){
+      const bell = document.getElementById('notifBell');
+      const menu = document.getElementById('notifMenu');
+      const badge = document.getElementById('notifBadge');
+      const list = document.getElementById('notifList');
+      const markAll = document.getElementById('notifMarkAll');
+
+      async function refreshCount(){
+        try{
+          const r = await fetch('/api/notifications/unread-count');
+          const d = await r.json();
+          if (badge) badge.classList.toggle('hidden', !(d && d.unread_count > 0));
+        }catch(e){}
+      }
+
+      async function loadList(){
+        try{
+          const r = await fetch('/api/notifications?unread_only=true&limit=10');
+          const d = await r.json();
+          const items = (d && d.notifications) ? d.notifications : [];
+          if (!list) return;
+          list.innerHTML = items.length ? items.map(n => `
+            <div class=\"px-3 py-2 text-sm text-gray-300\">${n.title || 'Update'}</div>
+          `).join('') : '<div class="px-3 py-2 text-sm text-gray-400">No unread</div>';
+        }catch(e){ if(list) list.innerHTML = '<div class="px-3 py-2 text-sm text-gray-400">Failed to load</div>'; }
+      }
+
+      bell?.addEventListener('click', async ()=>{
+        menu?.classList.toggle('hidden');
+        await loadList();
+      });
+      markAll?.addEventListener('click', async ()=>{
+        try{ await fetch('/api/notifications/mark-all-read', {method:'POST'}); }catch(e){}
+        await refreshCount();
+        await loadList();
+      });
+
+      await refreshCount();
+    })();
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root { --accent: #3182CE; }
@@ -56,10 +98,19 @@
       </div>
       <div class="flex items-center gap-2">
         <!-- Notifications -->
-        <button class="relative inline-flex items-center justify-center w-9 h-9 rounded border border-white/10 text-gray-300 hover:text-white hover:border-white/20">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.25 18.75a2.25 2.25 0 1 1-4.5 0m9-3.75H5.25l1.318-1.318A2.25 2.25 0 0 0 7.5 12.84V9.75a4.5 4.5 0 0 1 9 0v3.09c0 .597.237 1.17.659 1.592L18.75 15z"/></svg>
-          <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent rounded-full"></span>
-        </button>
+        <div class="relative">
+          <button id="notifBell" class="relative inline-flex items-center justify-center w-9 h-9 rounded border border-white/10 text-gray-300 hover:text-white hover:border-white/20">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.25 18.75a2.25 2.25 0 1 1-4.5 0m9-3.75H5.25l1.318-1.318A2.25 2.25 0 0 0 7.5 12.84V9.75a4.5 4.5 0 0 1 9 0v3.09c0 .597.237 1.17.659 1.592L18.75 15z"/></svg>
+            <span id="notifBadge" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent rounded-full hidden"></span>
+          </button>
+          <div id="notifMenu" class="hidden absolute right-0 mt-2 w-64 rounded border border-white/10 bg-black/60 backdrop-blur p-1">
+            <div id="notifList" class="max-h-72 overflow-auto"></div>
+            <button id="notifMarkAll" class="w-full text-left px-3 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/5">Mark all as read</button>
+          </div>
+        </div>
+
+        <!-- AI Button -->
+        <a href="{{ url_for('ai_assistant') }}" class="inline-flex items-center justify-center w-9 h-9 rounded border border-white/10 text-gray-300 hover:text-white hover:border-white/20">AI</a>
         <!-- Theme toggle -->
         <button id="themeToggle" class="inline-flex items-center justify-center w-9 h-9 rounded border border-white/10 text-gray-300 hover:text-white hover:border-white/20">Aa</button>
         <!-- Profile dropdown -->
@@ -97,11 +148,11 @@
             <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4"/><rect x="3" y="4" width="18" height="16" rx="2" ry="2" stroke-width="1.5"/></svg>
             <span>My Tasks</span>
           </a>
-          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
+          <a href="{{ url_for('inbox') }}" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
             <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"/></svg>
             <span>Inbox</span>
           </a>
-          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
+          <a href="{{ url_for('calendar') }}" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
             <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3M4 11h16M5 19h14a2 2 0 002-2v-6H3v6a2 2 0 002 2z"/></svg>
             <span>Calendar</span>
           </a>
@@ -118,15 +169,15 @@
             <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4"/><rect x="3" y="4" width="18" height="16" rx="2" ry="2" stroke-width="1.5"/></svg>
             <span>Tasks</span>
           </a>
-          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
+          <a href="{{ url_for('teams') }}" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
             <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5V4H2v16h5m10 0V10M7 20v-6h10v6"/></svg>
             <span>Teams</span>
           </a>
-          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
+          <a href="{{ url_for('files') }}" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
             <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7h16M4 12h16M4 17h16"/></svg>
             <span>Files</span>
           </a>
-          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
+          <a href="{{ url_for('reports') }}" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
             <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 3a8 8 0 100 16 8 8 0 000-16zm1 4H8v6h2v-2h2a2 2 0 100-4z"/></svg>
             <span>Reports</span>
           </a>
@@ -135,11 +186,11 @@
         <!-- Account -->
         <div class="mt-auto">
           <div class="px-3 mb-2 text-[10px] uppercase tracking-wider text-gray-500">Account</div>
-          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
+          <a href="{{ url_for('settings') }}" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
             <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A10 10 0 1118.88 4.196 10 10 0 015.12 17.804z"/><path stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M15 9a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             <span>Settings / Profile</span>
           </a>
-          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
+          <a href="{{ url_for('help') }}" class="flex items-center gap-2 px-3 py-2 rounded text-sm text-gray-300 hover:text-white hover:bg-white/5">
             <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h8M8 14h5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             <span>Help / Support</span>
           </a>

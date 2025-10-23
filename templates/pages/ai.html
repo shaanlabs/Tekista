@@ -1,0 +1,55 @@
+{% extends 'layouts/app.html' %}
+{% block title %}AI Assistant - Tekista{% endblock %}
+{% block content %}
+<div class="max-w-4xl">
+  <h1 class="text-xl font-semibold text-white mb-4">AI Assistant</h1>
+  <div class="rounded border border-white/10 bg-white/5">
+    <div class="px-4 py-2 text-xs uppercase text-gray-400 border-b border-white/10">Chat</div>
+    <div id="aiMessages" class="p-4 space-y-3 min-h-[240px]">
+      <div class="text-sm text-gray-400">Ask about projects, tasks, risks or summaries.</div>
+    </div>
+    <div class="border-t border-white/10 p-3 flex items-center gap-2">
+      <input id="aiInput" type="text" class="flex-1 px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200" placeholder="Type your message..." />
+      <button id="aiSend" class="px-3 py-2 rounded border border-white/10 bg-accent/20 text-white text-sm hover:bg-accent/30">Send</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(async function(){
+  const input = document.getElementById('aiInput');
+  const send = document.getElementById('aiSend');
+  const box = document.getElementById('aiMessages');
+  function add(role, text){
+    const div = document.createElement('div');
+    div.className = 'text-sm ' + (role==='assistant' ? 'text-gray-200' : 'text-accent');
+    div.textContent = (role==='assistant' ? 'Assistant: ' : 'You: ') + text;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  }
+  async function callAI(text){
+    // Example: call summary endpoint if starts with 'summary', else route to chat if exists
+    try {
+      let res;
+      if(text.toLowerCase().startsWith('summary')){
+        res = await fetch('/ai/summary', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text })});
+      } else if(text.toLowerCase().startsWith('risks')){
+        res = await fetch('/ai/risks', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text })});
+      } else {
+        res = await fetch('/ai/chat', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ message: text })});
+      }
+      const data = await res.json();
+      add('assistant', data.reply || data.summary || JSON.stringify(data));
+    } catch(e){
+      add('assistant', 'Error contacting AI API');
+    }
+  }
+  send.addEventListener('click', async ()=>{
+    const text = input.value.trim(); if(!text) return;
+    add('user', text); input.value='';
+    await callAI(text);
+  });
+})();
+</script>
+{% endblock %}

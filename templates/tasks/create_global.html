@@ -1,0 +1,60 @@
+{% extends 'layouts/app.html' %}
+{% block title %}New Task - Tekista{% endblock %}
+{% block content %}
+<div class="max-w-2xl">
+  <h1 class="text-xl font-semibold text-white mb-4">Create Task</h1>
+  <form method="post" class="space-y-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <div>
+      <label class="block text-sm text-gray-300 mb-1">Project</label>
+      <select name="project_id" required class="w-full px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200">
+        <option value="">Select a project</option>
+        {% for p in projects %}
+        <option value="{{ p.id }}">{{ p.title }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm text-gray-300 mb-1">Title</label>
+      <input name="title" required placeholder="Task title" class="w-full px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200 placeholder-gray-500" />
+    </div>
+
+    <div>
+      <label class="block text-sm text-gray-300 mb-1">Description</label>
+      <textarea name="description" rows="3" placeholder="Describe the task" class="w-full px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200 placeholder-gray-500"></textarea>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">Due Date</label>
+        <input type="date" name="due_date" class="w-full px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200" />
+      </div>
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">Priority</label>
+        <select name="priority" class="w-full px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200">
+          <option>Normal</option>
+          <option>High</option>
+          <option>Critical</option>
+          <option>Low</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm text-gray-300 mb-1">Assignees</label>
+      <select name="assignees" multiple class="w-full px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200">
+        {% for u in users %}
+        <option value="{{ u.id }}">{{ u.username }}</option>
+        {% endfor %}
+      </select>
+      <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
+    </div>
+
+    <div>
+      <button class="px-4 py-2 rounded border border-white/10 bg-accent/20 text-white text-sm hover:bg-accent/30">Create Task</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

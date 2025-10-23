@@ -1,0 +1,57 @@
+{% extends 'layouts/app.html' %}
+{% block title %}Admin · Users - Tekista{% endblock %}
+{% block content %}
+<div class="max-w-5xl">
+  <h1 class="text-xl font-semibold text-white mb-4">Admin · Users</h1>
+
+  <form method="get" class="mb-4 flex items-center gap-2">
+    <input type="text" name="q" value="{{ request.args.get('q','') }}" placeholder="Search username or email" class="flex-1 px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200 placeholder-gray-500" />
+    <select name="role" class="px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200">
+      <option value="">All roles</option>
+      {% for r in roles %}
+      <option value="{{ r.name }}" {% if request.args.get('role') == r.name %}selected{% endif %}>{{ r.name }}</option>
+      {% endfor %}
+    </select>
+    <button class="px-3 py-2 rounded border border-white/10 bg-white/5 text-white text-sm hover:bg-white/10">Search</button>
+  </form>
+
+  <div class="rounded border border-white/10 bg-white/5">
+    <div class="px-4 py-2 text-xs uppercase text-gray-400 border-b border-white/10">Manage Roles</div>
+    {% if users %}
+    <div class="divide-y divide-white/5">
+      {% for u in users %}
+      <div class="px-4 py-3 flex items-center justify-between gap-4">
+        <div class="min-w-0">
+          <div class="text-sm text-white truncate">{{ u.username }}</div>
+          <div class="text-xs text-gray-400 truncate">{{ u.email }}</div>
+        </div>
+        <div class="shrink-0 flex items-center gap-3">
+          <form method="post" class="flex items-center gap-2">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input type="hidden" name="action" value="set_role" />
+            <input type="hidden" name="user_id" value="{{ u.id }}" />
+            <select name="role" class="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-200 text-sm">
+              {% for r in roles %}
+              <option value="{{ r.name }}" {% if u.role and u.role.name == r.name %}selected{% endif %}>{{ r.name }}</option>
+              {% endfor %}
+            </select>
+            <button class="px-2 py-1 rounded border border-white/10 bg-white/5 text-white text-sm hover:bg-white/10">Save</button>
+          </form>
+
+          <form method="post" class="flex items-center gap-2">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input type="hidden" name="action" value="reset_password" />
+            <input type="hidden" name="user_id" value="{{ u.id }}" />
+            <input type="password" name="new_password" placeholder="New password" class="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-200 text-sm" />
+            <button class="px-2 py-1 rounded border border-white/10 bg-accent/20 text-white text-sm hover:bg-accent/30">Reset</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="px-4 py-6 text-sm text-gray-400">No users found.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

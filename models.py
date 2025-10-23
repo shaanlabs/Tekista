@@ -39,6 +39,8 @@ class User(UserMixin, db.Model):
     api_token = db.Column(db.String(128), unique=True, index=True, nullable=True)
     token_expiration = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # rbac relationship
+    role = db.relationship('Role')
 
     # relationships — now 'project_users' and 'task_assignees' exist!
     projects = db.relationship('Project', secondary=project_users, back_populates='users')
@@ -78,6 +80,44 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+
+
+class Role(db.Model):
+    __tablename__ = "role"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True, nullable=False)
+    description = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Role {self.name}>'
+
+
+class CustomRole(db.Model):
+    __tablename__ = "custom_role"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True, nullable=False)
+    description = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<CustomRole {self.name}>'
+
+
+class AuditLog(db.Model):
+    __tablename__ = "audit_log"
+    id = db.Column(db.Integer, primary_key=True)
+    actor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    action = db.Column(db.String(80), nullable=False)
+    target_type = db.Column(db.String(80))
+    target_id = db.Column(db.Integer)
+    meta = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    actor = db.relationship('User')
+
+    def __repr__(self):
+        return f'<AuditLog {self.action} #{self.id}>'
 
 
 class Project(db.Model):

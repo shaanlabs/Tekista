@@ -1,0 +1,51 @@
+{% extends 'layouts/app.html' %}
+{% block title %}Files - Tekista{% endblock %}
+{% block content %}
+<div class="max-w-6xl">
+  <h1 class="text-xl font-semibold text-white mb-4">Files</h1>
+  <form method="get" class="mb-4 flex items-center gap-2">
+    <select name="project_id" class="px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200">
+      <option value="">Select a project</option>
+      {% for p in projects %}
+      <option value="{{ p.id }}" {% if current_project and current_project.id == p.id %}selected{% endif %}>{{ p.title }}</option>
+      {% endfor %}
+    </select>
+    <button class="px-3 py-2 rounded border border-white/10 bg-white/5 text-white text-sm hover:bg-white/10">View</button>
+  </form>
+
+  {% if current_project %}
+  <div class="rounded border border-white/10 bg-white/5">
+    <div class="px-4 py-2 text-xs uppercase text-gray-400 border-b border-white/10">{{ current_project.title }} Files</div>
+    <div class="p-4">
+      <form method="post" action="{{ url_for('files_upload') }}" enctype="multipart/form-data" class="flex items-center gap-2 mb-4">
+        <input type="hidden" name="project_id" value="{{ current_project.id }}" />
+        <input type="file" name="file" class="text-sm text-gray-300" />
+        <button class="px-3 py-1.5 rounded border border-white/10 bg-accent/20 text-white text-sm hover:bg-accent/30">Upload</button>
+      </form>
+      {% if files %}
+      <div class="space-y-2">
+        {% for f in files %}
+        <div class="flex items-center justify-between text-sm text-gray-300">
+          <span class="truncate mr-3">{{ f }}</span>
+          <div class="shrink-0 flex items-center gap-2">
+            <a href="{{ url_for('files_download', project_id=current_project.id, filename=f) }}" class="px-2 py-1 rounded border border-white/10 bg-white/5 hover:bg-white/10">Download</a>
+            <form method="post" action="{{ url_for('files_delete') }}" onsubmit="return confirm('Delete this file?')">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <input type="hidden" name="project_id" value="{{ current_project.id }}" />
+              <input type="hidden" name="filename" value="{{ f }}" />
+              <button class="px-2 py-1 rounded border border-white/10 bg-white/5 text-red-300 hover:bg-white/10">Delete</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-sm text-gray-400">No files uploaded yet.</div>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div class="rounded border border-white/10 bg-white/5 p-4 text-sm text-gray-400">Choose a project to view and upload files.</div>
+  {% endif %}
+</div>
+{% endblock %}
