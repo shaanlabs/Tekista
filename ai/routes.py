@@ -14,7 +14,7 @@ except ImportError:
 
 aibp = Blueprint('ai', __name__)
 
-@aibp.route('/api/ai/estimate-duration', methods=['POST'])
+@aibp.route('/estimate-duration', methods=['POST'])
 @login_required
 def estimate_duration():
     """Estimate task duration based on similar tasks"""
@@ -29,7 +29,7 @@ def estimate_duration():
     days = ai_assistant.estimate_task_duration(title, description, project_id)
     return jsonify({"estimated_days": days})
 
-@aibp.route('/api/ai/risks')
+@aibp.route('/risks')
 @login_required
 def get_risks():
     """Get tasks at risk of missing deadlines"""
@@ -46,7 +46,7 @@ def get_risks():
     
     return jsonify(result)
 
-@aibp.route('/api/ai/summary')
+@aibp.route('/summary')
 @login_required
 def get_summary():
     """Get AI-generated project summary"""
@@ -54,7 +54,7 @@ def get_summary():
     summary = ai_assistant.generate_ai_summary(project_id)
     return jsonify({"summary": summary})
 
-@aibp.route('/api/ai/create-task', methods=['POST'])
+@aibp.route('/create-task', methods=['POST'])
 @login_required
 def create_task_from_nl():
     """Create task from natural language input"""
@@ -79,7 +79,7 @@ def create_task_from_nl():
         "task_id": result['task_id']
     })
 
-@aibp.route('/api/ai/workload')
+@aibp.route('/workload')
 @login_required
 def get_workload():
     """Get workload balance analysis"""
@@ -87,7 +87,7 @@ def get_workload():
     workload = ai_assistant.analyze_workload_balance(project_id)
     return jsonify(workload)
 
-@aibp.route('/api/ai/suggestions')
+@aibp.route('/suggestions')
 @login_required
 def get_suggestions():
     """Get personalized AI suggestions"""
@@ -95,7 +95,7 @@ def get_suggestions():
     suggestions = ai_assistant.get_ai_suggestions(user_id)
     return jsonify({"suggestions": suggestions})
 
-@aibp.route('/api/ai/chat', methods=['POST'])
+@aibp.route('/chat', methods=['POST'])
 @login_required
 def chat():
 	"""Chat with the AI assistant (Ollama by default, OpenAI as fallback if configured)"""
@@ -114,7 +114,7 @@ def chat():
 			task_assignees, Task.id == task_assignees.c.task_id
 		).filter(
 			task_assignees.c.user_id == user.id,
-			Task.status != 'Done'
+			Task.status != 'Completed'
 		).order_by(Task.due_date.asc()).limit(5).all()
 		# Prepare context
 		context = f"Current user: {user.username}\n"
