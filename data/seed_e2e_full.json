@@ -1,0 +1,3488 @@
+{
+  "users": [
+    {
+      "userId": 1,
+      "name": "Admin 1",
+      "email": "admin1@example.com",
+      "role": "Admin",
+      "availability_status": "Busy",
+      "current_workload": 6,
+      "skills": []
+    },
+    {
+      "userId": 2,
+      "name": "Admin 2",
+      "email": "admin2@example.com",
+      "role": "Admin",
+      "availability_status": "Busy",
+      "current_workload": 20,
+      "skills": []
+    },
+    {
+      "userId": 3,
+      "name": "Admin 3",
+      "email": "admin3@example.com",
+      "role": "Admin",
+      "availability_status": "Available",
+      "current_workload": 52,
+      "skills": []
+    },
+    {
+      "userId": 4,
+      "name": "Admin 4",
+      "email": "admin4@example.com",
+      "role": "Admin",
+      "availability_status": "Available",
+      "current_workload": 52,
+      "skills": []
+    },
+    {
+      "userId": 5,
+      "name": "Admin 5",
+      "email": "admin5@example.com",
+      "role": "Admin",
+      "availability_status": "In a Meeting",
+      "current_workload": 10,
+      "skills": []
+    },
+    {
+      "userId": 6,
+      "name": "PM 1",
+      "email": "pm1@example.com",
+      "role": "Manager",
+      "availability_status": "Available",
+      "current_workload": 12,
+      "skills": []
+    },
+    {
+      "userId": 7,
+      "name": "PM 2",
+      "email": "pm2@example.com",
+      "role": "Manager",
+      "availability_status": "Available",
+      "current_workload": 23,
+      "skills": []
+    },
+    {
+      "userId": 8,
+      "name": "PM 3",
+      "email": "pm3@example.com",
+      "role": "Manager",
+      "availability_status": "Available",
+      "current_workload": 48,
+      "skills": []
+    },
+    {
+      "userId": 9,
+      "name": "PM 4",
+      "email": "pm4@example.com",
+      "role": "Manager",
+      "availability_status": "Available",
+      "current_workload": 22,
+      "skills": []
+    },
+    {
+      "userId": 10,
+      "name": "PM 5",
+      "email": "pm5@example.com",
+      "role": "Manager",
+      "availability_status": "Busy",
+      "current_workload": 54,
+      "skills": []
+    },
+    {
+      "userId": 11,
+      "name": "PM 6",
+      "email": "pm6@example.com",
+      "role": "Manager",
+      "availability_status": "Available",
+      "current_workload": 24,
+      "skills": []
+    },
+    {
+      "userId": 12,
+      "name": "PM 7",
+      "email": "pm7@example.com",
+      "role": "Manager",
+      "availability_status": "Available",
+      "current_workload": 27,
+      "skills": []
+    },
+    {
+      "userId": 13,
+      "name": "PM 8",
+      "email": "pm8@example.com",
+      "role": "Manager",
+      "availability_status": "In a Meeting",
+      "current_workload": 10,
+      "skills": []
+    },
+    {
+      "userId": 14,
+      "name": "PM 9",
+      "email": "pm9@example.com",
+      "role": "Manager",
+      "availability_status": "Busy",
+      "current_workload": 20,
+      "skills": []
+    },
+    {
+      "userId": 15,
+      "name": "PM 10",
+      "email": "pm10@example.com",
+      "role": "Manager",
+      "availability_status": "Busy",
+      "current_workload": 31,
+      "skills": []
+    },
+    {
+      "userId": 16,
+      "name": "PM 11",
+      "email": "pm11@example.com",
+      "role": "Manager",
+      "availability_status": "Available",
+      "current_workload": 23,
+      "skills": []
+    },
+    {
+      "userId": 17,
+      "name": "PM 12",
+      "email": "pm12@example.com",
+      "role": "Manager",
+      "availability_status": "Out of Office",
+      "current_workload": 31,
+      "skills": []
+    },
+    {
+      "userId": 18,
+      "name": "PM 13",
+      "email": "pm13@example.com",
+      "role": "Manager",
+      "availability_status": "Available",
+      "current_workload": 34,
+      "skills": []
+    },
+    {
+      "userId": 19,
+      "name": "PM 14",
+      "email": "pm14@example.com",
+      "role": "Manager",
+      "availability_status": "Available",
+      "current_workload": 64,
+      "skills": []
+    },
+    {
+      "userId": 20,
+      "name": "PM 15",
+      "email": "pm15@example.com",
+      "role": "Manager",
+      "availability_status": "Available",
+      "current_workload": 26,
+      "skills": []
+    },
+    {
+      "userId": 21,
+      "name": "Member 1",
+      "email": "member1@example.com",
+      "role": "Member",
+      "availability_status": "In a Meeting",
+      "current_workload": 93,
+      "skills": [
+        "UI Design",
+        "Go",
+        "Azure"
+      ]
+    },
+    {
+      "userId": 22,
+      "name": "Member 2",
+      "email": "member2@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 37,
+      "skills": [
+        "Cypress",
+        "GCP",
+        "QA",
+        "Swift"
+      ]
+    },
+    {
+      "userId": 23,
+      "name": "Member 3",
+      "email": "member3@example.com",
+      "role": "Member",
+      "availability_status": "Busy",
+      "current_workload": 5,
+      "skills": [
+        "C#",
+        "NLP",
+        "NoSQL",
+        "Node.js"
+      ]
+    },
+    {
+      "userId": 24,
+      "name": "Member 4",
+      "email": "member4@example.com",
+      "role": "Member",
+      "availability_status": "In a Meeting",
+      "current_workload": 12,
+      "skills": [
+        "SQL",
+        "Kubernetes",
+        "Playwright"
+      ]
+    },
+    {
+      "userId": 25,
+      "name": "Member 5",
+      "email": "member5@example.com",
+      "role": "Member",
+      "availability_status": "In a Meeting",
+      "current_workload": 20,
+      "skills": [
+        "GCP",
+        "Swift",
+        "Selenium"
+      ]
+    },
+    {
+      "userId": 26,
+      "name": "Member 6",
+      "email": "member6@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 87,
+      "skills": [
+        "Node.js",
+        "Cypress",
+        "Playwright",
+        "Kotlin"
+      ]
+    },
+    {
+      "userId": 27,
+      "name": "Member 7",
+      "email": "member7@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 31,
+      "skills": [
+        "Kubernetes",
+        "Azure"
+      ]
+    },
+    {
+      "userId": 28,
+      "name": "Member 8",
+      "email": "member8@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 81,
+      "skills": [
+        "UI Design",
+        "C#",
+        "Selenium",
+        "AWS"
+      ]
+    },
+    {
+      "userId": 29,
+      "name": "Member 9",
+      "email": "member9@example.com",
+      "role": "Member",
+      "availability_status": "In a Meeting",
+      "current_workload": 7,
+      "skills": [
+        "Marketing",
+        "React"
+      ]
+    },
+    {
+      "userId": 30,
+      "name": "Member 10",
+      "email": "member10@example.com",
+      "role": "Member",
+      "availability_status": "In a Meeting",
+      "current_workload": 51,
+      "skills": [
+        "Node.js",
+        "Swift",
+        "QA"
+      ]
+    },
+    {
+      "userId": 31,
+      "name": "Member 11",
+      "email": "member11@example.com",
+      "role": "Member",
+      "availability_status": "In a Meeting",
+      "current_workload": 40,
+      "skills": [
+        "Playwright",
+        "Figma"
+      ]
+    },
+    {
+      "userId": 32,
+      "name": "Member 12",
+      "email": "member12@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 82,
+      "skills": [
+        "Java",
+        "SQL",
+        "C#"
+      ]
+    },
+    {
+      "userId": 33,
+      "name": "Member 13",
+      "email": "member13@example.com",
+      "role": "Member",
+      "availability_status": "Busy",
+      "current_workload": 68,
+      "skills": [
+        "ML",
+        "QA",
+        "Docker"
+      ]
+    },
+    {
+      "userId": 34,
+      "name": "Member 14",
+      "email": "member14@example.com",
+      "role": "Member",
+      "availability_status": "In a Meeting",
+      "current_workload": 51,
+      "skills": [
+        "C#",
+        "Java",
+        "UX Design"
+      ]
+    },
+    {
+      "userId": 35,
+      "name": "Member 15",
+      "email": "member15@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 6,
+      "skills": [
+        "Java",
+        "Playwright"
+      ]
+    },
+    {
+      "userId": 36,
+      "name": "Member 16",
+      "email": "member16@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 87,
+      "skills": [
+        "Cypress",
+        "Node.js",
+        "Azure"
+      ]
+    },
+    {
+      "userId": 37,
+      "name": "Member 17",
+      "email": "member17@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 59,
+      "skills": [
+        "SQL",
+        "UI Design",
+        "Python",
+        "Selenium"
+      ]
+    },
+    {
+      "userId": 38,
+      "name": "Member 18",
+      "email": "member18@example.com",
+      "role": "Member",
+      "availability_status": "Busy",
+      "current_workload": 87,
+      "skills": [
+        "NLP",
+        "SQL",
+        "Playwright",
+        "AWS"
+      ]
+    },
+    {
+      "userId": 39,
+      "name": "Member 19",
+      "email": "member19@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 55,
+      "skills": [
+        "Kubernetes",
+        "Python"
+      ]
+    },
+    {
+      "userId": 40,
+      "name": "Member 20",
+      "email": "member20@example.com",
+      "role": "Member",
+      "availability_status": "Out of Office",
+      "current_workload": 92,
+      "skills": [
+        "UX Design",
+        "NLP",
+        "Kotlin"
+      ]
+    },
+    {
+      "userId": 41,
+      "name": "Member 21",
+      "email": "member21@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 13,
+      "skills": [
+        "NoSQL",
+        "Marketing",
+        "Playwright",
+        "UX Design"
+      ]
+    },
+    {
+      "userId": 42,
+      "name": "Member 22",
+      "email": "member22@example.com",
+      "role": "Member",
+      "availability_status": "Busy",
+      "current_workload": 19,
+      "skills": [
+        "NLP",
+        "Kotlin",
+        "UI Design"
+      ]
+    },
+    {
+      "userId": 43,
+      "name": "Member 23",
+      "email": "member23@example.com",
+      "role": "Member",
+      "availability_status": "Out of Office",
+      "current_workload": 67,
+      "skills": [
+        "Cypress",
+        "AWS"
+      ]
+    },
+    {
+      "userId": 44,
+      "name": "Member 24",
+      "email": "member24@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 14,
+      "skills": [
+        "Marketing",
+        "SEO",
+        "NoSQL"
+      ]
+    },
+    {
+      "userId": 45,
+      "name": "Member 25",
+      "email": "member25@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 30,
+      "skills": [
+        "Node.js",
+        "ML",
+        "Figma",
+        "Marketing"
+      ]
+    },
+    {
+      "userId": 46,
+      "name": "Member 26",
+      "email": "member26@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 68,
+      "skills": [
+        "Java",
+        "Selenium"
+      ]
+    },
+    {
+      "userId": 47,
+      "name": "Member 27",
+      "email": "member27@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 70,
+      "skills": [
+        "SQL",
+        "UX Design"
+      ]
+    },
+    {
+      "userId": 48,
+      "name": "Member 28",
+      "email": "member28@example.com",
+      "role": "Member",
+      "availability_status": "In a Meeting",
+      "current_workload": 54,
+      "skills": [
+        "UI Design",
+        "NLP"
+      ]
+    },
+    {
+      "userId": 49,
+      "name": "Member 29",
+      "email": "member29@example.com",
+      "role": "Member",
+      "availability_status": "Busy",
+      "current_workload": 25,
+      "skills": [
+        "NoSQL",
+        "Azure",
+        "Selenium",
+        "Playwright"
+      ]
+    },
+    {
+      "userId": 50,
+      "name": "Member 30",
+      "email": "member30@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 66,
+      "skills": [
+        "Go",
+        "C#",
+        "Node.js"
+      ]
+    },
+    {
+      "userId": 51,
+      "name": "Member 31",
+      "email": "member31@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 75,
+      "skills": [
+        "C#",
+        "QA",
+        "Python",
+        "Node.js"
+      ]
+    },
+    {
+      "userId": 52,
+      "name": "Member 32",
+      "email": "member32@example.com",
+      "role": "Member",
+      "availability_status": "Busy",
+      "current_workload": 7,
+      "skills": [
+        "Node.js",
+        "React"
+      ]
+    },
+    {
+      "userId": 53,
+      "name": "Member 33",
+      "email": "member33@example.com",
+      "role": "Member",
+      "availability_status": "In a Meeting",
+      "current_workload": 9,
+      "skills": [
+        "C#",
+        "SQL",
+        "Selenium",
+        "Figma"
+      ]
+    },
+    {
+      "userId": 54,
+      "name": "Member 34",
+      "email": "member34@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 16,
+      "skills": [
+        "QA",
+        "Figma",
+        "C#",
+        "SEO"
+      ]
+    },
+    {
+      "userId": 55,
+      "name": "Member 35",
+      "email": "member35@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 52,
+      "skills": [
+        "Go",
+        "Selenium"
+      ]
+    },
+    {
+      "userId": 56,
+      "name": "Member 36",
+      "email": "member36@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 54,
+      "skills": [
+        "Kubernetes",
+        "ML",
+        "React"
+      ]
+    },
+    {
+      "userId": 57,
+      "name": "Member 37",
+      "email": "member37@example.com",
+      "role": "Member",
+      "availability_status": "Busy",
+      "current_workload": 82,
+      "skills": [
+        "React",
+        "Azure"
+      ]
+    },
+    {
+      "userId": 58,
+      "name": "Member 38",
+      "email": "member38@example.com",
+      "role": "Member",
+      "availability_status": "Busy",
+      "current_workload": 13,
+      "skills": [
+        "Swift",
+        "UI Design"
+      ]
+    },
+    {
+      "userId": 59,
+      "name": "Member 39",
+      "email": "member39@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 54,
+      "skills": [
+        "SQL",
+        "Kubernetes"
+      ]
+    },
+    {
+      "userId": 60,
+      "name": "Member 40",
+      "email": "member40@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 9,
+      "skills": [
+        "SEO",
+        "UI Design",
+        "Go"
+      ]
+    },
+    {
+      "userId": 61,
+      "name": "Member 41",
+      "email": "member41@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 69,
+      "skills": [
+        "Node.js",
+        "NLP"
+      ]
+    },
+    {
+      "userId": 62,
+      "name": "Member 42",
+      "email": "member42@example.com",
+      "role": "Member",
+      "availability_status": "In a Meeting",
+      "current_workload": 21,
+      "skills": [
+        "Figma",
+        "Swift",
+        "Azure"
+      ]
+    },
+    {
+      "userId": 63,
+      "name": "Member 43",
+      "email": "member43@example.com",
+      "role": "Member",
+      "availability_status": "Out of Office",
+      "current_workload": 21,
+      "skills": [
+        "Python",
+        "Azure",
+        "SQL"
+      ]
+    },
+    {
+      "userId": 64,
+      "name": "Member 44",
+      "email": "member44@example.com",
+      "role": "Member",
+      "availability_status": "Out of Office",
+      "current_workload": 58,
+      "skills": [
+        "Docker",
+        "Data Science",
+        "ML"
+      ]
+    },
+    {
+      "userId": 65,
+      "name": "Member 45",
+      "email": "member45@example.com",
+      "role": "Member",
+      "availability_status": "Out of Office",
+      "current_workload": 71,
+      "skills": [
+        "Data Science",
+        "Figma",
+        "Java",
+        "Swift"
+      ]
+    },
+    {
+      "userId": 66,
+      "name": "Member 46",
+      "email": "member46@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 7,
+      "skills": [
+        "ML",
+        "UI Design",
+        "React",
+        "AWS"
+      ]
+    },
+    {
+      "userId": 67,
+      "name": "Member 47",
+      "email": "member47@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 74,
+      "skills": [
+        "UX Design",
+        "Kotlin",
+        "React"
+      ]
+    },
+    {
+      "userId": 68,
+      "name": "Member 48",
+      "email": "member48@example.com",
+      "role": "Member",
+      "availability_status": "Out of Office",
+      "current_workload": 10,
+      "skills": [
+        "Node.js",
+        "Cypress"
+      ]
+    },
+    {
+      "userId": 69,
+      "name": "Member 49",
+      "email": "member49@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 30,
+      "skills": [
+        "Go",
+        "QA",
+        "C#"
+      ]
+    },
+    {
+      "userId": 70,
+      "name": "Member 50",
+      "email": "member50@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 5,
+      "skills": [
+        "Node.js",
+        "Docker",
+        "Selenium",
+        "QA"
+      ]
+    },
+    {
+      "userId": 71,
+      "name": "Member 51",
+      "email": "member51@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 40,
+      "skills": [
+        "Swift",
+        "Selenium",
+        "Data Science"
+      ]
+    },
+    {
+      "userId": 72,
+      "name": "Member 52",
+      "email": "member52@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 33,
+      "skills": [
+        "Java",
+        "Selenium",
+        "Playwright"
+      ]
+    },
+    {
+      "userId": 73,
+      "name": "Member 53",
+      "email": "member53@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 40,
+      "skills": [
+        "Python",
+        "Kubernetes"
+      ]
+    },
+    {
+      "userId": 74,
+      "name": "Member 54",
+      "email": "member54@example.com",
+      "role": "Member",
+      "availability_status": "Busy",
+      "current_workload": 72,
+      "skills": [
+        "Node.js",
+        "UI Design"
+      ]
+    },
+    {
+      "userId": 75,
+      "name": "Member 55",
+      "email": "member55@example.com",
+      "role": "Member",
+      "availability_status": "Available",
+      "current_workload": 33,
+      "skills": [
+        "GCP",
+        "Node.js"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "projectId": 1,
+      "projectName": "Project A",
+      "projectManagerId": 11,
+      "status": "Completed"
+    },
+    {
+      "projectId": 2,
+      "projectName": "Project B",
+      "projectManagerId": 13,
+      "status": "Active"
+    },
+    {
+      "projectId": 3,
+      "projectName": "Project C",
+      "projectManagerId": 17,
+      "status": "Completed"
+    },
+    {
+      "projectId": 4,
+      "projectName": "Project D",
+      "projectManagerId": 18,
+      "status": "Active"
+    },
+    {
+      "projectId": 5,
+      "projectName": "Project E",
+      "projectManagerId": 6,
+      "status": "Active"
+    },
+    {
+      "projectId": 6,
+      "projectName": "Project F",
+      "projectManagerId": 14,
+      "status": "Active"
+    },
+    {
+      "projectId": 7,
+      "projectName": "Project G",
+      "projectManagerId": 16,
+      "status": "Active"
+    },
+    {
+      "projectId": 8,
+      "projectName": "Project H",
+      "projectManagerId": 20,
+      "status": "Active"
+    },
+    {
+      "projectId": 9,
+      "projectName": "Project I",
+      "projectManagerId": 7,
+      "status": "Active"
+    },
+    {
+      "projectId": 10,
+      "projectName": "Project J",
+      "projectManagerId": 17,
+      "status": "Completed"
+    },
+    {
+      "projectId": 11,
+      "projectName": "Project K",
+      "projectManagerId": 10,
+      "status": "Active"
+    },
+    {
+      "projectId": 12,
+      "projectName": "Project L",
+      "projectManagerId": 9,
+      "status": "Active"
+    },
+    {
+      "projectId": 13,
+      "projectName": "Project M",
+      "projectManagerId": 9,
+      "status": "Paused"
+    },
+    {
+      "projectId": 14,
+      "projectName": "Project N",
+      "projectManagerId": 19,
+      "status": "Active"
+    },
+    {
+      "projectId": 15,
+      "projectName": "Project O",
+      "projectManagerId": 13,
+      "status": "Active"
+    }
+  ],
+  "tasks": [
+    {
+      "taskId": 1,
+      "taskTitle": "Task 1",
+      "projectId": 5,
+      "priority": "High",
+      "required_skills": [
+        "Node.js"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-03"
+    },
+    {
+      "taskId": 2,
+      "taskTitle": "Task 2",
+      "projectId": 7,
+      "priority": "High",
+      "required_skills": [
+        "Python"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-24"
+    },
+    {
+      "taskId": 3,
+      "taskTitle": "Task 3",
+      "projectId": 13,
+      "priority": "Low",
+      "required_skills": [
+        "Kotlin",
+        "ML"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-28"
+    },
+    {
+      "taskId": 4,
+      "taskTitle": "Task 4",
+      "projectId": 9,
+      "priority": "High",
+      "required_skills": [
+        "Go"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-16"
+    },
+    {
+      "taskId": 5,
+      "taskTitle": "Task 5",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "UI Design"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-15"
+    },
+    {
+      "taskId": 6,
+      "taskTitle": "Task 6",
+      "projectId": 14,
+      "priority": "Medium",
+      "required_skills": [
+        "Docker"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 7,
+      "taskTitle": "Task 7",
+      "projectId": 1,
+      "priority": "Medium",
+      "required_skills": [
+        "GCP"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-20"
+    },
+    {
+      "taskId": 8,
+      "taskTitle": "Task 8",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "GCP"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-07"
+    },
+    {
+      "taskId": 9,
+      "taskTitle": "Task 9",
+      "projectId": 9,
+      "priority": "High",
+      "required_skills": [
+        "Cypress",
+        "ML"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 10,
+      "taskTitle": "Task 10",
+      "projectId": 15,
+      "priority": "High",
+      "required_skills": [
+        "SEO"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-08"
+    },
+    {
+      "taskId": 11,
+      "taskTitle": "Task 11",
+      "projectId": 3,
+      "priority": "High",
+      "required_skills": [
+        "Kotlin"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-06"
+    },
+    {
+      "taskId": 12,
+      "taskTitle": "Task 12",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "SEO",
+        "Selenium"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-06"
+    },
+    {
+      "taskId": 13,
+      "taskTitle": "Task 13",
+      "projectId": 13,
+      "priority": "Medium",
+      "required_skills": [
+        "SEO"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-05"
+    },
+    {
+      "taskId": 14,
+      "taskTitle": "Task 14",
+      "projectId": 2,
+      "priority": "Medium",
+      "required_skills": [
+        "Figma"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 15,
+      "taskTitle": "Task 15",
+      "projectId": 4,
+      "priority": "High",
+      "required_skills": [
+        "GCP",
+        "NoSQL"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-08"
+    },
+    {
+      "taskId": 16,
+      "taskTitle": "Task 16",
+      "projectId": 14,
+      "priority": "Medium",
+      "required_skills": [
+        "Selenium"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-20"
+    },
+    {
+      "taskId": 17,
+      "taskTitle": "Task 17",
+      "projectId": 7,
+      "priority": "Medium",
+      "required_skills": [
+        "NLP"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-22"
+    },
+    {
+      "taskId": 18,
+      "taskTitle": "Task 18",
+      "projectId": 6,
+      "priority": "Medium",
+      "required_skills": [
+        "Selenium",
+        "Marketing"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-31"
+    },
+    {
+      "taskId": 19,
+      "taskTitle": "Task 19",
+      "projectId": 6,
+      "priority": "High",
+      "required_skills": [
+        "SQL"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-19"
+    },
+    {
+      "taskId": 20,
+      "taskTitle": "Task 20",
+      "projectId": 10,
+      "priority": "High",
+      "required_skills": [
+        "React",
+        "Go"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-02"
+    },
+    {
+      "taskId": 21,
+      "taskTitle": "Task 21",
+      "projectId": 7,
+      "priority": "Medium",
+      "required_skills": [
+        "Docker",
+        "Cypress"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-30"
+    },
+    {
+      "taskId": 22,
+      "taskTitle": "Task 22",
+      "projectId": 2,
+      "priority": "Medium",
+      "required_skills": [
+        "SQL"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-15"
+    },
+    {
+      "taskId": 23,
+      "taskTitle": "Task 23",
+      "projectId": 12,
+      "priority": "Medium",
+      "required_skills": [
+        "GCP"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-27"
+    },
+    {
+      "taskId": 24,
+      "taskTitle": "Task 24",
+      "projectId": 2,
+      "priority": "High",
+      "required_skills": [
+        "Cypress",
+        "AWS"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-04"
+    },
+    {
+      "taskId": 25,
+      "taskTitle": "Task 25",
+      "projectId": 14,
+      "priority": "Low",
+      "required_skills": [
+        "UX Design",
+        "NoSQL"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-04"
+    },
+    {
+      "taskId": 26,
+      "taskTitle": "Task 26",
+      "projectId": 7,
+      "priority": "Medium",
+      "required_skills": [
+        "UI Design",
+        "Java"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-20"
+    },
+    {
+      "taskId": 27,
+      "taskTitle": "Task 27",
+      "projectId": 7,
+      "priority": "Medium",
+      "required_skills": [
+        "Selenium",
+        "ML"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-19"
+    },
+    {
+      "taskId": 28,
+      "taskTitle": "Task 28",
+      "projectId": 10,
+      "priority": "Medium",
+      "required_skills": [
+        "UI Design",
+        "Marketing"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-14"
+    },
+    {
+      "taskId": 29,
+      "taskTitle": "Task 29",
+      "projectId": 5,
+      "priority": "Medium",
+      "required_skills": [
+        "SEO",
+        "QA"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-02"
+    },
+    {
+      "taskId": 30,
+      "taskTitle": "Task 30",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "Kubernetes",
+        "Selenium"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-20"
+    },
+    {
+      "taskId": 31,
+      "taskTitle": "Task 31",
+      "projectId": 9,
+      "priority": "Medium",
+      "required_skills": [
+        "Selenium"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-16"
+    },
+    {
+      "taskId": 32,
+      "taskTitle": "Task 32",
+      "projectId": 5,
+      "priority": "Medium",
+      "required_skills": [
+        "Node.js",
+        "Marketing"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-07"
+    },
+    {
+      "taskId": 33,
+      "taskTitle": "Task 33",
+      "projectId": 4,
+      "priority": "Medium",
+      "required_skills": [
+        "SEO"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-20"
+    },
+    {
+      "taskId": 34,
+      "taskTitle": "Task 34",
+      "projectId": 3,
+      "priority": "Low",
+      "required_skills": [
+        "Figma"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-02"
+    },
+    {
+      "taskId": 35,
+      "taskTitle": "Task 35",
+      "projectId": 14,
+      "priority": "High",
+      "required_skills": [
+        "Docker",
+        "Playwright"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-01"
+    },
+    {
+      "taskId": 36,
+      "taskTitle": "Task 36",
+      "projectId": 4,
+      "priority": "High",
+      "required_skills": [
+        "Figma",
+        "Azure"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 37,
+      "taskTitle": "Task 37",
+      "projectId": 3,
+      "priority": "Medium",
+      "required_skills": [
+        "NLP"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-07"
+    },
+    {
+      "taskId": 38,
+      "taskTitle": "Task 38",
+      "projectId": 15,
+      "priority": "Low",
+      "required_skills": [
+        "C#",
+        "Kotlin"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-08"
+    },
+    {
+      "taskId": 39,
+      "taskTitle": "Task 39",
+      "projectId": 12,
+      "priority": "Medium",
+      "required_skills": [
+        "UI Design"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 40,
+      "taskTitle": "Task 40",
+      "projectId": 15,
+      "priority": "High",
+      "required_skills": [
+        "Java",
+        "SEO"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-28"
+    },
+    {
+      "taskId": 41,
+      "taskTitle": "Task 41",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "NLP",
+        "Kubernetes"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-02"
+    },
+    {
+      "taskId": 42,
+      "taskTitle": "Task 42",
+      "projectId": 14,
+      "priority": "High",
+      "required_skills": [
+        "Marketing",
+        "UI Design"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-28"
+    },
+    {
+      "taskId": 43,
+      "taskTitle": "Task 43",
+      "projectId": 15,
+      "priority": "Low",
+      "required_skills": [
+        "Kubernetes",
+        "SQL"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-07"
+    },
+    {
+      "taskId": 44,
+      "taskTitle": "Task 44",
+      "projectId": 4,
+      "priority": "High",
+      "required_skills": [
+        "NLP",
+        "UX Design"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-29"
+    },
+    {
+      "taskId": 45,
+      "taskTitle": "Task 45",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "Node.js",
+        "Data Science"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-23"
+    },
+    {
+      "taskId": 46,
+      "taskTitle": "Task 46",
+      "projectId": 4,
+      "priority": "Medium",
+      "required_skills": [
+        "UI Design",
+        "Node.js"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 47,
+      "taskTitle": "Task 47",
+      "projectId": 3,
+      "priority": "Medium",
+      "required_skills": [
+        "Data Science"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-20"
+    },
+    {
+      "taskId": 48,
+      "taskTitle": "Task 48",
+      "projectId": 2,
+      "priority": "Medium",
+      "required_skills": [
+        "UI Design",
+        "Kubernetes"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-27"
+    },
+    {
+      "taskId": 49,
+      "taskTitle": "Task 49",
+      "projectId": 1,
+      "priority": "Medium",
+      "required_skills": [
+        "Azure",
+        "NLP"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-11-01"
+    },
+    {
+      "taskId": 50,
+      "taskTitle": "Task 50",
+      "projectId": 12,
+      "priority": "Low",
+      "required_skills": [
+        "Figma",
+        "Python"
+      ],
+      "status": "To-Do",
+      "assigned_to": null,
+      "due_date": "2025-10-25"
+    },
+    {
+      "taskId": 51,
+      "taskTitle": "Task 51",
+      "projectId": 5,
+      "priority": "High",
+      "required_skills": [
+        "UI Design",
+        "ML"
+      ],
+      "status": "To-Do",
+      "assigned_to": 66,
+      "due_date": "2025-11-06"
+    },
+    {
+      "taskId": 52,
+      "taskTitle": "Task 52",
+      "projectId": 9,
+      "priority": "High",
+      "required_skills": [
+        "Figma"
+      ],
+      "status": "To-Do",
+      "assigned_to": 54,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 53,
+      "taskTitle": "Task 53",
+      "projectId": 5,
+      "priority": "Medium",
+      "required_skills": [
+        "Azure"
+      ],
+      "status": "To-Do",
+      "assigned_to": 27,
+      "due_date": "2025-10-24"
+    },
+    {
+      "taskId": 54,
+      "taskTitle": "Task 54",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "ML",
+        "Kotlin"
+      ],
+      "status": "To-Do",
+      "assigned_to": 74,
+      "due_date": "2025-10-28"
+    },
+    {
+      "taskId": 55,
+      "taskTitle": "Task 55",
+      "projectId": 15,
+      "priority": "Low",
+      "required_skills": [
+        "Azure"
+      ],
+      "status": "To-Do",
+      "assigned_to": 27,
+      "due_date": "2025-11-01"
+    },
+    {
+      "taskId": 56,
+      "taskTitle": "Task 56",
+      "projectId": 10,
+      "priority": "Medium",
+      "required_skills": [
+        "Playwright"
+      ],
+      "status": "To-Do",
+      "assigned_to": 35,
+      "due_date": "2025-10-27"
+    },
+    {
+      "taskId": 57,
+      "taskTitle": "Task 57",
+      "projectId": 3,
+      "priority": "High",
+      "required_skills": [
+        "React"
+      ],
+      "status": "To-Do",
+      "assigned_to": 66,
+      "due_date": "2025-10-22"
+    },
+    {
+      "taskId": 58,
+      "taskTitle": "Task 58",
+      "projectId": 7,
+      "priority": "Medium",
+      "required_skills": [
+        "AWS",
+        "NLP"
+      ],
+      "status": "To-Do",
+      "assigned_to": 38,
+      "due_date": "2025-10-26"
+    },
+    {
+      "taskId": 59,
+      "taskTitle": "Task 59",
+      "projectId": 5,
+      "priority": "High",
+      "required_skills": [
+        "SQL",
+        "Marketing"
+      ],
+      "status": "To-Do",
+      "assigned_to": 26,
+      "due_date": "2025-10-29"
+    },
+    {
+      "taskId": 60,
+      "taskTitle": "Task 60",
+      "projectId": 1,
+      "priority": "High",
+      "required_skills": [
+        "GCP"
+      ],
+      "status": "To-Do",
+      "assigned_to": 75,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 61,
+      "taskTitle": "Task 61",
+      "projectId": 11,
+      "priority": "Low",
+      "required_skills": [
+        "NLP"
+      ],
+      "status": "To-Do",
+      "assigned_to": 61,
+      "due_date": "2025-10-14"
+    },
+    {
+      "taskId": 62,
+      "taskTitle": "Task 62",
+      "projectId": 4,
+      "priority": "Low",
+      "required_skills": [
+        "Cypress"
+      ],
+      "status": "To-Do",
+      "assigned_to": 22,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 63,
+      "taskTitle": "Task 63",
+      "projectId": 4,
+      "priority": "Low",
+      "required_skills": [
+        "QA"
+      ],
+      "status": "To-Do",
+      "assigned_to": 70,
+      "due_date": "2025-10-20"
+    },
+    {
+      "taskId": 64,
+      "taskTitle": "Task 64",
+      "projectId": 8,
+      "priority": "Medium",
+      "required_skills": [
+        "Kotlin",
+        "Cypress"
+      ],
+      "status": "To-Do",
+      "assigned_to": 26,
+      "due_date": "2025-11-02"
+    },
+    {
+      "taskId": 65,
+      "taskTitle": "Task 65",
+      "projectId": 12,
+      "priority": "High",
+      "required_skills": [
+        "NoSQL"
+      ],
+      "status": "To-Do",
+      "assigned_to": 41,
+      "due_date": "2025-10-17"
+    },
+    {
+      "taskId": 66,
+      "taskTitle": "Task 66",
+      "projectId": 10,
+      "priority": "Low",
+      "required_skills": [
+        "QA",
+        "Selenium"
+      ],
+      "status": "To-Do",
+      "assigned_to": 70,
+      "due_date": "2025-10-26"
+    },
+    {
+      "taskId": 67,
+      "taskTitle": "Task 67",
+      "projectId": 7,
+      "priority": "High",
+      "required_skills": [
+        "Node.js"
+      ],
+      "status": "To-Do",
+      "assigned_to": 70,
+      "due_date": "2025-11-01"
+    },
+    {
+      "taskId": 68,
+      "taskTitle": "Task 68",
+      "projectId": 12,
+      "priority": "High",
+      "required_skills": [
+        "Go"
+      ],
+      "status": "To-Do",
+      "assigned_to": 60,
+      "due_date": "2025-11-05"
+    },
+    {
+      "taskId": 69,
+      "taskTitle": "Task 69",
+      "projectId": 13,
+      "priority": "Medium",
+      "required_skills": [
+        "SEO"
+      ],
+      "status": "To-Do",
+      "assigned_to": 60,
+      "due_date": "2025-11-01"
+    },
+    {
+      "taskId": 70,
+      "taskTitle": "Task 70",
+      "projectId": 13,
+      "priority": "Low",
+      "required_skills": [
+        "Selenium",
+        "GCP"
+      ],
+      "status": "To-Do",
+      "assigned_to": 25,
+      "due_date": "2025-10-16"
+    },
+    {
+      "taskId": 71,
+      "taskTitle": "Task 71",
+      "projectId": 9,
+      "priority": "Medium",
+      "required_skills": [
+        "Docker"
+      ],
+      "status": "To-Do",
+      "assigned_to": 70,
+      "due_date": "2025-10-29"
+    },
+    {
+      "taskId": 72,
+      "taskTitle": "Task 72",
+      "projectId": 2,
+      "priority": "Medium",
+      "required_skills": [
+        "Playwright",
+        "Marketing"
+      ],
+      "status": "To-Do",
+      "assigned_to": 41,
+      "due_date": "2025-10-28"
+    },
+    {
+      "taskId": 73,
+      "taskTitle": "Task 73",
+      "projectId": 12,
+      "priority": "Low",
+      "required_skills": [
+        "ML"
+      ],
+      "status": "To-Do",
+      "assigned_to": 66,
+      "due_date": "2025-10-30"
+    },
+    {
+      "taskId": 74,
+      "taskTitle": "Task 74",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "Kubernetes",
+        "Docker"
+      ],
+      "status": "To-Do",
+      "assigned_to": 73,
+      "due_date": "2025-11-06"
+    },
+    {
+      "taskId": 75,
+      "taskTitle": "Task 75",
+      "projectId": 10,
+      "priority": "Medium",
+      "required_skills": [
+        "Marketing"
+      ],
+      "status": "To-Do",
+      "assigned_to": 41,
+      "due_date": "2025-10-16"
+    },
+    {
+      "taskId": 76,
+      "taskTitle": "Task 76",
+      "projectId": 5,
+      "priority": "High",
+      "required_skills": [
+        "NLP"
+      ],
+      "status": "To-Do",
+      "assigned_to": 61,
+      "due_date": "2025-10-28"
+    },
+    {
+      "taskId": 77,
+      "taskTitle": "Task 77",
+      "projectId": 10,
+      "priority": "Medium",
+      "required_skills": [
+        "AWS",
+        "Python"
+      ],
+      "status": "To-Do",
+      "assigned_to": 52,
+      "due_date": "2025-10-24"
+    },
+    {
+      "taskId": 78,
+      "taskTitle": "Task 78",
+      "projectId": 3,
+      "priority": "Medium",
+      "required_skills": [
+        "SEO",
+        "SQL"
+      ],
+      "status": "To-Do",
+      "assigned_to": 42,
+      "due_date": "2025-10-22"
+    },
+    {
+      "taskId": 79,
+      "taskTitle": "Task 79",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "UI Design",
+        "Python"
+      ],
+      "status": "To-Do",
+      "assigned_to": 37,
+      "due_date": "2025-10-30"
+    },
+    {
+      "taskId": 80,
+      "taskTitle": "Task 80",
+      "projectId": 4,
+      "priority": "Low",
+      "required_skills": [
+        "Figma",
+        "UI Design"
+      ],
+      "status": "To-Do",
+      "assigned_to": 69,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 81,
+      "taskTitle": "Task 81",
+      "projectId": 12,
+      "priority": "Medium",
+      "required_skills": [
+        "Kubernetes",
+        "SEO"
+      ],
+      "status": "To-Do",
+      "assigned_to": 22,
+      "due_date": "2025-10-16"
+    },
+    {
+      "taskId": 82,
+      "taskTitle": "Task 82",
+      "projectId": 5,
+      "priority": "Medium",
+      "required_skills": [
+        "NoSQL"
+      ],
+      "status": "To-Do",
+      "assigned_to": 41,
+      "due_date": "2025-11-04"
+    },
+    {
+      "taskId": 83,
+      "taskTitle": "Task 83",
+      "projectId": 10,
+      "priority": "Medium",
+      "required_skills": [
+        "Docker",
+        "ML"
+      ],
+      "status": "To-Do",
+      "assigned_to": 64,
+      "due_date": "2025-10-31"
+    },
+    {
+      "taskId": 84,
+      "taskTitle": "Task 84",
+      "projectId": 6,
+      "priority": "Medium",
+      "required_skills": [
+        "SQL",
+        "NoSQL"
+      ],
+      "status": "To-Do",
+      "assigned_to": 37,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 85,
+      "taskTitle": "Task 85",
+      "projectId": 2,
+      "priority": "High",
+      "required_skills": [
+        "Go",
+        "ML"
+      ],
+      "status": "To-Do",
+      "assigned_to": 55,
+      "due_date": "2025-11-07"
+    },
+    {
+      "taskId": 86,
+      "taskTitle": "Task 86",
+      "projectId": 12,
+      "priority": "Low",
+      "required_skills": [
+        "ML"
+      ],
+      "status": "To-Do",
+      "assigned_to": 66,
+      "due_date": "2025-10-29"
+    },
+    {
+      "taskId": 87,
+      "taskTitle": "Task 87",
+      "projectId": 5,
+      "priority": "High",
+      "required_skills": [
+        "Go",
+        "Marketing"
+      ],
+      "status": "To-Do",
+      "assigned_to": 33,
+      "due_date": "2025-10-23"
+    },
+    {
+      "taskId": 88,
+      "taskTitle": "Task 88",
+      "projectId": 4,
+      "priority": "Medium",
+      "required_skills": [
+        "Python",
+        "Data Science"
+      ],
+      "status": "To-Do",
+      "assigned_to": 55,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 89,
+      "taskTitle": "Task 89",
+      "projectId": 5,
+      "priority": "Low",
+      "required_skills": [
+        "UI Design"
+      ],
+      "status": "To-Do",
+      "assigned_to": 66,
+      "due_date": "2025-10-23"
+    },
+    {
+      "taskId": 90,
+      "taskTitle": "Task 90",
+      "projectId": 12,
+      "priority": "High",
+      "required_skills": [
+        "Go",
+        "Python"
+      ],
+      "status": "To-Do",
+      "assigned_to": 57,
+      "due_date": "2025-10-23"
+    },
+    {
+      "taskId": 91,
+      "taskTitle": "Task 91",
+      "projectId": 8,
+      "priority": "Medium",
+      "required_skills": [
+        "Kotlin",
+        "React"
+      ],
+      "status": "To-Do",
+      "assigned_to": 67,
+      "due_date": "2025-10-22"
+    },
+    {
+      "taskId": 92,
+      "taskTitle": "Task 92",
+      "projectId": 14,
+      "priority": "Medium",
+      "required_skills": [
+        "Azure"
+      ],
+      "status": "To-Do",
+      "assigned_to": 27,
+      "due_date": "2025-10-29"
+    },
+    {
+      "taskId": 93,
+      "taskTitle": "Task 93",
+      "projectId": 2,
+      "priority": "Medium",
+      "required_skills": [
+        "Java"
+      ],
+      "status": "To-Do",
+      "assigned_to": 35,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 94,
+      "taskTitle": "Task 94",
+      "projectId": 13,
+      "priority": "Medium",
+      "required_skills": [
+        "Node.js",
+        "C#"
+      ],
+      "status": "To-Do",
+      "assigned_to": 50,
+      "due_date": "2025-10-17"
+    },
+    {
+      "taskId": 95,
+      "taskTitle": "Task 95",
+      "projectId": 9,
+      "priority": "High",
+      "required_skills": [
+        "NLP"
+      ],
+      "status": "To-Do",
+      "assigned_to": 61,
+      "due_date": "2025-10-30"
+    },
+    {
+      "taskId": 96,
+      "taskTitle": "Task 96",
+      "projectId": 7,
+      "priority": "Medium",
+      "required_skills": [
+        "NoSQL",
+        "QA"
+      ],
+      "status": "To-Do",
+      "assigned_to": 48,
+      "due_date": "2025-10-23"
+    },
+    {
+      "taskId": 97,
+      "taskTitle": "Task 97",
+      "projectId": 10,
+      "priority": "Medium",
+      "required_skills": [
+        "NLP"
+      ],
+      "status": "To-Do",
+      "assigned_to": 61,
+      "due_date": "2025-10-20"
+    },
+    {
+      "taskId": 98,
+      "taskTitle": "Task 98",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "Kotlin"
+      ],
+      "status": "To-Do",
+      "assigned_to": 67,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 99,
+      "taskTitle": "Task 99",
+      "projectId": 3,
+      "priority": "Medium",
+      "required_skills": [
+        "Python"
+      ],
+      "status": "To-Do",
+      "assigned_to": 73,
+      "due_date": "2025-10-27"
+    },
+    {
+      "taskId": 100,
+      "taskTitle": "Task 100",
+      "projectId": 8,
+      "priority": "Medium",
+      "required_skills": [
+        "NoSQL",
+        "React"
+      ],
+      "status": "To-Do",
+      "assigned_to": 35,
+      "due_date": "2025-10-23"
+    },
+    {
+      "taskId": 101,
+      "taskTitle": "Task 101",
+      "projectId": 12,
+      "priority": "Medium",
+      "required_skills": [
+        "Node.js",
+        "Selenium"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 70,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 102,
+      "taskTitle": "Task 102",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "Docker"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 70,
+      "due_date": "2025-10-17"
+    },
+    {
+      "taskId": 103,
+      "taskTitle": "Task 103",
+      "projectId": 9,
+      "priority": "Medium",
+      "required_skills": [
+        "SQL"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 59,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 104,
+      "taskTitle": "Task 104",
+      "projectId": 2,
+      "priority": "Low",
+      "required_skills": [
+        "Cypress",
+        "ML"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 73,
+      "due_date": "2025-11-01"
+    },
+    {
+      "taskId": 105,
+      "taskTitle": "Task 105",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "Kubernetes"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 27,
+      "due_date": "2025-11-05"
+    },
+    {
+      "taskId": 106,
+      "taskTitle": "Task 106",
+      "projectId": 5,
+      "priority": "Medium",
+      "required_skills": [
+        "UX Design",
+        "UI Design"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 52,
+      "due_date": "2025-10-28"
+    },
+    {
+      "taskId": 107,
+      "taskTitle": "Task 107",
+      "projectId": 2,
+      "priority": "Medium",
+      "required_skills": [
+        "ML",
+        "AWS"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 66,
+      "due_date": "2025-11-02"
+    },
+    {
+      "taskId": 108,
+      "taskTitle": "Task 108",
+      "projectId": 5,
+      "priority": "Low",
+      "required_skills": [
+        "Selenium"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 70,
+      "due_date": "2025-11-01"
+    },
+    {
+      "taskId": 109,
+      "taskTitle": "Task 109",
+      "projectId": 10,
+      "priority": "High",
+      "required_skills": [
+        "QA",
+        "React"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 69,
+      "due_date": "2025-11-07"
+    },
+    {
+      "taskId": 110,
+      "taskTitle": "Task 110",
+      "projectId": 3,
+      "priority": "Medium",
+      "required_skills": [
+        "SQL",
+        "Kotlin"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 58,
+      "due_date": "2025-10-27"
+    },
+    {
+      "taskId": 111,
+      "taskTitle": "Task 111",
+      "projectId": 11,
+      "priority": "High",
+      "required_skills": [
+        "Figma"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 54,
+      "due_date": "2025-10-25"
+    },
+    {
+      "taskId": 112,
+      "taskTitle": "Task 112",
+      "projectId": 7,
+      "priority": "Medium",
+      "required_skills": [
+        "Kotlin"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 67,
+      "due_date": "2025-10-24"
+    },
+    {
+      "taskId": 113,
+      "taskTitle": "Task 113",
+      "projectId": 7,
+      "priority": "Medium",
+      "required_skills": [
+        "Selenium",
+        "Azure"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 49,
+      "due_date": "2025-11-07"
+    },
+    {
+      "taskId": 114,
+      "taskTitle": "Task 114",
+      "projectId": 9,
+      "priority": "Low",
+      "required_skills": [
+        "AWS"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 66,
+      "due_date": "2025-10-22"
+    },
+    {
+      "taskId": 115,
+      "taskTitle": "Task 115",
+      "projectId": 6,
+      "priority": "Low",
+      "required_skills": [
+        "UX Design",
+        "Marketing"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 41,
+      "due_date": "2025-10-14"
+    },
+    {
+      "taskId": 116,
+      "taskTitle": "Task 116",
+      "projectId": 11,
+      "priority": "High",
+      "required_skills": [
+        "Docker",
+        "React"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 33,
+      "due_date": "2025-10-30"
+    },
+    {
+      "taskId": 117,
+      "taskTitle": "Task 117",
+      "projectId": 6,
+      "priority": "Medium",
+      "required_skills": [
+        "Playwright",
+        "Kubernetes"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 24,
+      "due_date": "2025-11-07"
+    },
+    {
+      "taskId": 118,
+      "taskTitle": "Task 118",
+      "projectId": 1,
+      "priority": "Medium",
+      "required_skills": [
+        "NoSQL"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 41,
+      "due_date": "2025-10-28"
+    },
+    {
+      "taskId": 119,
+      "taskTitle": "Task 119",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "Python"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 73,
+      "due_date": "2025-11-03"
+    },
+    {
+      "taskId": 120,
+      "taskTitle": "Task 120",
+      "projectId": 10,
+      "priority": "High",
+      "required_skills": [
+        "NoSQL"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 41,
+      "due_date": "2025-10-31"
+    },
+    {
+      "taskId": 121,
+      "taskTitle": "Task 121",
+      "projectId": 1,
+      "priority": "Medium",
+      "required_skills": [
+        "C#"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 54,
+      "due_date": "2025-10-17"
+    },
+    {
+      "taskId": 122,
+      "taskTitle": "Task 122",
+      "projectId": 8,
+      "priority": "High",
+      "required_skills": [
+        "Figma"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 54,
+      "due_date": "2025-11-05"
+    },
+    {
+      "taskId": 123,
+      "taskTitle": "Task 123",
+      "projectId": 5,
+      "priority": "Medium",
+      "required_skills": [
+        "Docker",
+        "Marketing"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 51,
+      "due_date": "2025-10-29"
+    },
+    {
+      "taskId": 124,
+      "taskTitle": "Task 124",
+      "projectId": 4,
+      "priority": "Medium",
+      "required_skills": [
+        "Azure"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 27,
+      "due_date": "2025-10-20"
+    },
+    {
+      "taskId": 125,
+      "taskTitle": "Task 125",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "Node.js"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 70,
+      "due_date": "2025-10-22"
+    },
+    {
+      "taskId": 126,
+      "taskTitle": "Task 126",
+      "projectId": 13,
+      "priority": "High",
+      "required_skills": [
+        "AWS",
+        "SEO"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 53,
+      "due_date": "2025-10-22"
+    },
+    {
+      "taskId": 127,
+      "taskTitle": "Task 127",
+      "projectId": 14,
+      "priority": "Low",
+      "required_skills": [
+        "Marketing",
+        "QA"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 58,
+      "due_date": "2025-11-04"
+    },
+    {
+      "taskId": 128,
+      "taskTitle": "Task 128",
+      "projectId": 8,
+      "priority": "High",
+      "required_skills": [
+        "UI Design",
+        "Figma"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 43,
+      "due_date": "2025-10-24"
+    },
+    {
+      "taskId": 129,
+      "taskTitle": "Task 129",
+      "projectId": 9,
+      "priority": "High",
+      "required_skills": [
+        "Kubernetes",
+        "AWS"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 33,
+      "due_date": "2025-11-05"
+    },
+    {
+      "taskId": 130,
+      "taskTitle": "Task 130",
+      "projectId": 4,
+      "priority": "Medium",
+      "required_skills": [
+        "NLP"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 61,
+      "due_date": "2025-10-27"
+    },
+    {
+      "taskId": 131,
+      "taskTitle": "Task 131",
+      "projectId": 1,
+      "priority": "Medium",
+      "required_skills": [
+        "Data Science",
+        "SEO"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 45,
+      "due_date": "2025-10-26"
+    },
+    {
+      "taskId": 132,
+      "taskTitle": "Task 132",
+      "projectId": 11,
+      "priority": "High",
+      "required_skills": [
+        "Figma"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 54,
+      "due_date": "2025-10-15"
+    },
+    {
+      "taskId": 133,
+      "taskTitle": "Task 133",
+      "projectId": 3,
+      "priority": "Medium",
+      "required_skills": [
+        "Go",
+        "Kubernetes"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 27,
+      "due_date": "2025-10-30"
+    },
+    {
+      "taskId": 134,
+      "taskTitle": "Task 134",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "Docker"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 70,
+      "due_date": "2025-11-03"
+    },
+    {
+      "taskId": 135,
+      "taskTitle": "Task 135",
+      "projectId": 3,
+      "priority": "Low",
+      "required_skills": [
+        "AWS",
+        "Cypress"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 43,
+      "due_date": "2025-11-05"
+    },
+    {
+      "taskId": 136,
+      "taskTitle": "Task 136",
+      "projectId": 7,
+      "priority": "Medium",
+      "required_skills": [
+        "Selenium",
+        "UI Design"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 37,
+      "due_date": "2025-10-26"
+    },
+    {
+      "taskId": 137,
+      "taskTitle": "Task 137",
+      "projectId": 6,
+      "priority": "Medium",
+      "required_skills": [
+        "UI Design",
+        "React"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 66,
+      "due_date": "2025-11-02"
+    },
+    {
+      "taskId": 138,
+      "taskTitle": "Task 138",
+      "projectId": 2,
+      "priority": "Medium",
+      "required_skills": [
+        "C#",
+        "ML"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 26,
+      "due_date": "2025-10-27"
+    },
+    {
+      "taskId": 139,
+      "taskTitle": "Task 139",
+      "projectId": 2,
+      "priority": "High",
+      "required_skills": [
+        "Kubernetes"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 27,
+      "due_date": "2025-10-19"
+    },
+    {
+      "taskId": 140,
+      "taskTitle": "Task 140",
+      "projectId": 12,
+      "priority": "Medium",
+      "required_skills": [
+        "React"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 66,
+      "due_date": "2025-10-24"
+    },
+    {
+      "taskId": 141,
+      "taskTitle": "Task 141",
+      "projectId": 13,
+      "priority": "Low",
+      "required_skills": [
+        "GCP",
+        "Docker"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 30,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 142,
+      "taskTitle": "Task 142",
+      "projectId": 9,
+      "priority": "Medium",
+      "required_skills": [
+        "Kotlin"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 67,
+      "due_date": "2025-10-19"
+    },
+    {
+      "taskId": 143,
+      "taskTitle": "Task 143",
+      "projectId": 2,
+      "priority": "Medium",
+      "required_skills": [
+        "Cypress",
+        "Selenium"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 36,
+      "due_date": "2025-10-29"
+    },
+    {
+      "taskId": 144,
+      "taskTitle": "Task 144",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "Kubernetes"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 27,
+      "due_date": "2025-11-03"
+    },
+    {
+      "taskId": 145,
+      "taskTitle": "Task 145",
+      "projectId": 5,
+      "priority": "Medium",
+      "required_skills": [
+        "SEO"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 60,
+      "due_date": "2025-10-28"
+    },
+    {
+      "taskId": 146,
+      "taskTitle": "Task 146",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "Node.js"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 70,
+      "due_date": "2025-10-28"
+    },
+    {
+      "taskId": 147,
+      "taskTitle": "Task 147",
+      "projectId": 6,
+      "priority": "High",
+      "required_skills": [
+        "Playwright",
+        "Docker"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 65,
+      "due_date": "2025-10-22"
+    },
+    {
+      "taskId": 148,
+      "taskTitle": "Task 148",
+      "projectId": 8,
+      "priority": "High",
+      "required_skills": [
+        "Azure"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 27,
+      "due_date": "2025-10-29"
+    },
+    {
+      "taskId": 149,
+      "taskTitle": "Task 149",
+      "projectId": 2,
+      "priority": "Medium",
+      "required_skills": [
+        "QA",
+        "NoSQL"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 65,
+      "due_date": "2025-10-23"
+    },
+    {
+      "taskId": 150,
+      "taskTitle": "Task 150",
+      "projectId": 1,
+      "priority": "High",
+      "required_skills": [
+        "SQL",
+        "Python"
+      ],
+      "status": "In-Progress",
+      "assigned_to": 37,
+      "due_date": "2025-11-01"
+    },
+    {
+      "taskId": 151,
+      "taskTitle": "Task 151",
+      "projectId": 14,
+      "priority": "Medium",
+      "required_skills": [
+        "Cypress"
+      ],
+      "status": "Completed",
+      "assigned_to": 22,
+      "due_date": "2025-11-06"
+    },
+    {
+      "taskId": 152,
+      "taskTitle": "Task 152",
+      "projectId": 8,
+      "priority": "High",
+      "required_skills": [
+        "NLP",
+        "SEO"
+      ],
+      "status": "Completed",
+      "assigned_to": 35,
+      "due_date": "2025-11-02"
+    },
+    {
+      "taskId": 153,
+      "taskTitle": "Task 153",
+      "projectId": 13,
+      "priority": "Medium",
+      "required_skills": [
+        "Cypress"
+      ],
+      "status": "Completed",
+      "assigned_to": 22,
+      "due_date": "2025-10-22"
+    },
+    {
+      "taskId": 154,
+      "taskTitle": "Task 154",
+      "projectId": 11,
+      "priority": "High",
+      "required_skills": [
+        "Playwright"
+      ],
+      "status": "Completed",
+      "assigned_to": 35,
+      "due_date": "2025-10-17"
+    },
+    {
+      "taskId": 155,
+      "taskTitle": "Task 155",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "NoSQL"
+      ],
+      "status": "Completed",
+      "assigned_to": 41,
+      "due_date": "2025-11-08"
+    },
+    {
+      "taskId": 156,
+      "taskTitle": "Task 156",
+      "projectId": 8,
+      "priority": "Low",
+      "required_skills": [
+        "ML",
+        "Java"
+      ],
+      "status": "Completed",
+      "assigned_to": 26,
+      "due_date": "2025-10-23"
+    },
+    {
+      "taskId": 157,
+      "taskTitle": "Task 157",
+      "projectId": 6,
+      "priority": "High",
+      "required_skills": [
+        "Swift"
+      ],
+      "status": "Completed",
+      "assigned_to": 22,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 158,
+      "taskTitle": "Task 158",
+      "projectId": 13,
+      "priority": "Medium",
+      "required_skills": [
+        "UX Design",
+        "SQL"
+      ],
+      "status": "Completed",
+      "assigned_to": 47,
+      "due_date": "2025-10-19"
+    },
+    {
+      "taskId": 159,
+      "taskTitle": "Task 159",
+      "projectId": 5,
+      "priority": "High",
+      "required_skills": [
+        "SEO",
+        "NoSQL"
+      ],
+      "status": "Completed",
+      "assigned_to": 44,
+      "due_date": "2025-11-06"
+    },
+    {
+      "taskId": 160,
+      "taskTitle": "Task 160",
+      "projectId": 14,
+      "priority": "Medium",
+      "required_skills": [
+        "Kubernetes"
+      ],
+      "status": "Completed",
+      "assigned_to": 27,
+      "due_date": "2025-10-16"
+    },
+    {
+      "taskId": 161,
+      "taskTitle": "Task 161",
+      "projectId": 3,
+      "priority": "High",
+      "required_skills": [
+        "Selenium"
+      ],
+      "status": "Completed",
+      "assigned_to": 70,
+      "due_date": "2025-11-06"
+    },
+    {
+      "taskId": 162,
+      "taskTitle": "Task 162",
+      "projectId": 11,
+      "priority": "High",
+      "required_skills": [
+        "Node.js",
+        "SEO"
+      ],
+      "status": "Completed",
+      "assigned_to": 46,
+      "due_date": "2025-10-14"
+    },
+    {
+      "taskId": 163,
+      "taskTitle": "Task 163",
+      "projectId": 5,
+      "priority": "Medium",
+      "required_skills": [
+        "GCP",
+        "Selenium"
+      ],
+      "status": "Completed",
+      "assigned_to": 25,
+      "due_date": "2025-11-06"
+    },
+    {
+      "taskId": 164,
+      "taskTitle": "Task 164",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "Marketing",
+        "Playwright"
+      ],
+      "status": "Completed",
+      "assigned_to": 41,
+      "due_date": "2025-10-25"
+    },
+    {
+      "taskId": 165,
+      "taskTitle": "Task 165",
+      "projectId": 2,
+      "priority": "Medium",
+      "required_skills": [
+        "Python",
+        "Cypress"
+      ],
+      "status": "Completed",
+      "assigned_to": 56,
+      "due_date": "2025-10-24"
+    },
+    {
+      "taskId": 166,
+      "taskTitle": "Task 166",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "Playwright"
+      ],
+      "status": "Completed",
+      "assigned_to": 35,
+      "due_date": "2025-10-28"
+    },
+    {
+      "taskId": 167,
+      "taskTitle": "Task 167",
+      "projectId": 15,
+      "priority": "High",
+      "required_skills": [
+        "Go",
+        "Java"
+      ],
+      "status": "Completed",
+      "assigned_to": 23,
+      "due_date": "2025-10-15"
+    },
+    {
+      "taskId": 168,
+      "taskTitle": "Task 168",
+      "projectId": 5,
+      "priority": "High",
+      "required_skills": [
+        "Go"
+      ],
+      "status": "Completed",
+      "assigned_to": 60,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 169,
+      "taskTitle": "Task 169",
+      "projectId": 15,
+      "priority": "Medium",
+      "required_skills": [
+        "Kubernetes",
+        "GCP"
+      ],
+      "status": "Completed",
+      "assigned_to": 63,
+      "due_date": "2025-11-06"
+    },
+    {
+      "taskId": 170,
+      "taskTitle": "Task 170",
+      "projectId": 12,
+      "priority": "High",
+      "required_skills": [
+        "QA",
+        "ML"
+      ],
+      "status": "Completed",
+      "assigned_to": 33,
+      "due_date": "2025-11-06"
+    },
+    {
+      "taskId": 171,
+      "taskTitle": "Task 171",
+      "projectId": 3,
+      "priority": "High",
+      "required_skills": [
+        "Marketing"
+      ],
+      "status": "Completed",
+      "assigned_to": 41,
+      "due_date": "2025-10-29"
+    },
+    {
+      "taskId": 172,
+      "taskTitle": "Task 172",
+      "projectId": 10,
+      "priority": "Medium",
+      "required_skills": [
+        "React",
+        "Data Science"
+      ],
+      "status": "Completed",
+      "assigned_to": 44,
+      "due_date": "2025-10-20"
+    },
+    {
+      "taskId": 173,
+      "taskTitle": "Task 173",
+      "projectId": 8,
+      "priority": "Medium",
+      "required_skills": [
+        "GCP"
+      ],
+      "status": "Completed",
+      "assigned_to": 75,
+      "due_date": "2025-10-17"
+    },
+    {
+      "taskId": 174,
+      "taskTitle": "Task 174",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "React",
+        "Azure"
+      ],
+      "status": "Completed",
+      "assigned_to": 57,
+      "due_date": "2025-10-22"
+    },
+    {
+      "taskId": 175,
+      "taskTitle": "Task 175",
+      "projectId": 4,
+      "priority": "High",
+      "required_skills": [
+        "Node.js",
+        "Selenium"
+      ],
+      "status": "Completed",
+      "assigned_to": 70,
+      "due_date": "2025-10-20"
+    },
+    {
+      "taskId": 176,
+      "taskTitle": "Task 176",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "React"
+      ],
+      "status": "Overdue",
+      "assigned_to": 66,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 177,
+      "taskTitle": "Task 177",
+      "projectId": 4,
+      "priority": "High",
+      "required_skills": [
+        "Node.js"
+      ],
+      "status": "Overdue",
+      "assigned_to": 70,
+      "due_date": "2025-10-15"
+    },
+    {
+      "taskId": 178,
+      "taskTitle": "Task 178",
+      "projectId": 4,
+      "priority": "Medium",
+      "required_skills": [
+        "AWS"
+      ],
+      "status": "Overdue",
+      "assigned_to": 66,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 179,
+      "taskTitle": "Task 179",
+      "projectId": 13,
+      "priority": "High",
+      "required_skills": [
+        "SQL"
+      ],
+      "status": "Overdue",
+      "assigned_to": 59,
+      "due_date": "2025-10-21"
+    },
+    {
+      "taskId": 180,
+      "taskTitle": "Task 180",
+      "projectId": 9,
+      "priority": "Medium",
+      "required_skills": [
+        "Go"
+      ],
+      "status": "Overdue",
+      "assigned_to": 60,
+      "due_date": "2025-10-23"
+    },
+    {
+      "taskId": 181,
+      "taskTitle": "Task 181",
+      "projectId": 3,
+      "priority": "Low",
+      "required_skills": [
+        "QA"
+      ],
+      "status": "Overdue",
+      "assigned_to": 70,
+      "due_date": "2025-10-23"
+    },
+    {
+      "taskId": 182,
+      "taskTitle": "Task 182",
+      "projectId": 3,
+      "priority": "Medium",
+      "required_skills": [
+        "ML"
+      ],
+      "status": "Overdue",
+      "assigned_to": 66,
+      "due_date": "2025-10-15"
+    },
+    {
+      "taskId": 183,
+      "taskTitle": "Task 183",
+      "projectId": 2,
+      "priority": "High",
+      "required_skills": [
+        "Kubernetes",
+        "NLP"
+      ],
+      "status": "Overdue",
+      "assigned_to": 44,
+      "due_date": "2025-10-14"
+    },
+    {
+      "taskId": 184,
+      "taskTitle": "Task 184",
+      "projectId": 2,
+      "priority": "Medium",
+      "required_skills": [
+        "Cypress"
+      ],
+      "status": "Overdue",
+      "assigned_to": 22,
+      "due_date": "2025-10-15"
+    },
+    {
+      "taskId": 185,
+      "taskTitle": "Task 185",
+      "projectId": 5,
+      "priority": "Medium",
+      "required_skills": [
+        "React"
+      ],
+      "status": "Overdue",
+      "assigned_to": 66,
+      "due_date": "2025-10-17"
+    },
+    {
+      "taskId": 186,
+      "taskTitle": "Task 186",
+      "projectId": 7,
+      "priority": "Medium",
+      "required_skills": [
+        "Data Science",
+        "Kubernetes"
+      ],
+      "status": "Overdue",
+      "assigned_to": 25,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 187,
+      "taskTitle": "Task 187",
+      "projectId": 10,
+      "priority": "Low",
+      "required_skills": [
+        "SQL"
+      ],
+      "status": "Overdue",
+      "assigned_to": 59,
+      "due_date": "2025-10-14"
+    },
+    {
+      "taskId": 188,
+      "taskTitle": "Task 188",
+      "projectId": 9,
+      "priority": "High",
+      "required_skills": [
+        "Cypress",
+        "UX Design"
+      ],
+      "status": "Overdue",
+      "assigned_to": 39,
+      "due_date": "2025-10-15"
+    },
+    {
+      "taskId": 189,
+      "taskTitle": "Task 189",
+      "projectId": 10,
+      "priority": "Medium",
+      "required_skills": [
+        "Playwright"
+      ],
+      "status": "Overdue",
+      "assigned_to": 35,
+      "due_date": "2025-10-15"
+    },
+    {
+      "taskId": 190,
+      "taskTitle": "Task 190",
+      "projectId": 12,
+      "priority": "High",
+      "required_skills": [
+        "Kubernetes",
+        "C#"
+      ],
+      "status": "Overdue",
+      "assigned_to": 47,
+      "due_date": "2025-10-16"
+    },
+    {
+      "taskId": 191,
+      "taskTitle": "Task 191",
+      "projectId": 7,
+      "priority": "Medium",
+      "required_skills": [
+        "AWS"
+      ],
+      "status": "Overdue",
+      "assigned_to": 66,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 192,
+      "taskTitle": "Task 192",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "Selenium"
+      ],
+      "status": "Overdue",
+      "assigned_to": 70,
+      "due_date": "2025-10-22"
+    },
+    {
+      "taskId": 193,
+      "taskTitle": "Task 193",
+      "projectId": 2,
+      "priority": "High",
+      "required_skills": [
+        "Docker"
+      ],
+      "status": "Overdue",
+      "assigned_to": 70,
+      "due_date": "2025-10-18"
+    },
+    {
+      "taskId": 194,
+      "taskTitle": "Task 194",
+      "projectId": 13,
+      "priority": "Low",
+      "required_skills": [
+        "QA"
+      ],
+      "status": "Overdue",
+      "assigned_to": 70,
+      "due_date": "2025-10-15"
+    },
+    {
+      "taskId": 195,
+      "taskTitle": "Task 195",
+      "projectId": 6,
+      "priority": "Medium",
+      "required_skills": [
+        "GCP",
+        "Selenium"
+      ],
+      "status": "Overdue",
+      "assigned_to": 25,
+      "due_date": "2025-10-17"
+    },
+    {
+      "taskId": 196,
+      "taskTitle": "Task 196",
+      "projectId": 14,
+      "priority": "High",
+      "required_skills": [
+        "NoSQL"
+      ],
+      "status": "Overdue",
+      "assigned_to": 41,
+      "due_date": "2025-10-19"
+    },
+    {
+      "taskId": 197,
+      "taskTitle": "Task 197",
+      "projectId": 6,
+      "priority": "Low",
+      "required_skills": [
+        "Java"
+      ],
+      "status": "Overdue",
+      "assigned_to": 35,
+      "due_date": "2025-10-16"
+    },
+    {
+      "taskId": 198,
+      "taskTitle": "Task 198",
+      "projectId": 4,
+      "priority": "High",
+      "required_skills": [
+        "UI Design",
+        "GCP"
+      ],
+      "status": "Overdue",
+      "assigned_to": 28,
+      "due_date": "2025-10-19"
+    },
+    {
+      "taskId": 199,
+      "taskTitle": "Task 199",
+      "projectId": 10,
+      "priority": "Medium",
+      "required_skills": [
+        "UI Design",
+        "NLP"
+      ],
+      "status": "Overdue",
+      "assigned_to": 42,
+      "due_date": "2025-10-14"
+    },
+    {
+      "taskId": 200,
+      "taskTitle": "Task 200",
+      "projectId": 11,
+      "priority": "Medium",
+      "required_skills": [
+        "Cypress"
+      ],
+      "status": "Overdue",
+      "assigned_to": 22,
+      "due_date": "2025-10-19"
+    }
+  ]
+}

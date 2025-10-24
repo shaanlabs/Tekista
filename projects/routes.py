@@ -152,6 +152,46 @@ def create_project():
     return render_template('projects/create.html', form=form)
 
 
+@projects_bp.route('/create-smart', methods=['GET', 'POST'])
+@login_required
+def create_project_smart():
+    # Only Admin/Manager can access smart create
+    role_name = getattr(getattr(current_user, 'role', None), 'name', None)
+    if role_name not in ('Admin','Manager','Project Manager'):
+        abort(403)
+    if request.method == 'POST':
+        data = request.get_json(silent=True) or {}
+        title = data.get('title')
+        if not title:
+            return {'error':'title required'}, 400
+        p = Project(title=title, description=data.get('description'))
+        # deadline
+        dl = data.get('deadline')
+        if dl:
+            try:
+                p.deadline = datetime.fromisoformat(dl).date()
+            except Exception:
+                pass
+        # Attach PM and team members
+        pm_id = data.get('project_manager_id')
+        team_ids = data.get('team_member_ids', []) or []
+        try:
+            if pm_id:
+                pm = User.query.get(int(pm_id))
+                if pm:
+                    p.users.append(pm)
+            for uid in team_ids:
+                u = User.query.get(int(uid))
+                if u and u not in p.users:
+                    p.users.append(u)
+        except Exception:
+            pass
+        db.session.add(p); db.session.commit()
+        return {'id': p.id}, 201
+    # GET renders smart UI
+    return render_template('projects/create_smart.html')
+
+
 @projects_bp.route('/<int:project_id>')
 @login_required
 def project_detail(project_id):

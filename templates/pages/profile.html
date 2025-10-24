@@ -1,0 +1,150 @@
+{% extends 'layouts/app.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="max-w-5xl space-y-6">
+  <h1 class="text-xl font-semibold text-white">My Profile</h1>
+
+  <form method="post" class="space-y-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="label text-gray-300">Availability</label>
+        <select name="availability" class="select select-bordered w-full">
+          {% for opt in ['Available','Busy','In a Meeting','On a Break','Out of Office'] %}
+          <option value="{{ opt }}" {% if user.availability==opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+        <p class="text-xs text-gray-400 mt-1">AI may auto-set to "In a Meeting" during calendar events.</p>
+      </div>
+      <div>
+        <label class="label text-gray-300">Current Workload</label>
+        <div class="p-2 rounded bg-base-200 text-white">{{ '%.0f'|format(user.current_workload or 0) }}%</div>
+      </div>
+      <div>
+        <label class="label text-gray-300">Tasks Completed (Last 30d)</label>
+        <div class="p-2 rounded bg-base-200 text-white">{{ tasks_30d }}</div>
+      </div>
+      <div>
+        <label class="label text-gray-300">Data Reliability Score</label>
+        <div class="p-2 rounded bg-base-200 text-white">{% if reliability is not none %}{{ '%.0f'|format(reliability) }}%{% else %}-{% endif %}</div>
+      </div>
+    </div>
+
+    <div>
+      <label class="label text-gray-300">My Skills</label>
+      <div id="skill-pills" class="flex flex-wrap gap-2 mb-2">
+        {% for s in skills_list %}
+        <span class="badge badge-outline text-white flex items-center gap-1">
+          {{ s }}
+          <button type="button" class="ml-1 text-xs opacity-70 hover:opacity-100" aria-label="Remove {{ s }}" onclick="removeSkill('{{ s }}')">✕</button>
+        </span>
+        {% endfor %}
+      </div>
+      <div class="relative">
+        <input id="skill-input" class="input input-bordered w-full" placeholder="Type to add a skill..." autocomplete="off" />
+        <div id="skill-suggest" class="absolute z-10 mt-1 w-full rounded bg-base-200 border border-white/10 max-h-48 overflow-auto hidden"></div>
+      </div>
+      <p class="text-xs text-gray-400 mt-1">Suggestions are based on team history and a curated list.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="label text-gray-300">Job Title</label>
+        <input name="job_title" class="input input-bordered w-full" value="{{ prof.job_title or '' }}" />
+      </div>
+      <div>
+        <label class="label text-gray-300">Department</label>
+        <select name="department" class="select select-bordered w-full">
+          {% set depts = ['Engineering','Product','Design','Marketing','Sales','Support','Operations'] %}
+          <option value="">-- Select --</option>
+          {% for d in depts %}
+          <option value="{{ d }}" {% if prof.department==d %}selected{% endif %}>{{ d }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="label text-gray-300">Hobbies & Interests</label>
+      <textarea name="interests" rows="4" class="textarea textarea-bordered w-full" placeholder="e.g., Retro gaming, cycling, open source">{{ prof.interests or '' }}</textarea>
+    </div>
+
+    <div>
+      <button class="btn btn-primary">Save Profile</button>
+    </div>
+  </form>
+
+  <div id="toast" role="status" aria-live="polite" class="fixed bottom-4 right-4 hidden"></div>
+</div>
+
+<script>
+const toastEl = document.getElementById('toast');
+function showToast(msg, type='info'){
+  toastEl.textContent = msg;
+  toastEl.className = 'px-3 py-2 rounded text-sm ' + (type==='error' ? 'bg-red-600 text-white' : 'bg-base-200 text-white');
+  toastEl.classList.remove('hidden');
+  clearTimeout(window.__toast);
+  window.__toast = setTimeout(()=>toastEl.classList.add('hidden'), 2500);
+}
+
+const input = document.getElementById('skill-input');
+const suggestBox = document.getElementById('skill-suggest');
+
+let debounce;
+input.addEventListener('input', () => {
+  clearTimeout(debounce);
+  const q = input.value.trim();
+  if(!q){ suggestBox.classList.add('hidden'); suggestBox.innerHTML=''; return; }
+  debounce = setTimeout(async () => {
+    try{
+      const res = await fetch('/api/skills/suggest?q=' + encodeURIComponent(q));
+      const items = await res.json();
+      renderSuggest(items.map(i => i.skill));
+    }catch(e){ showToast('Failed to fetch suggestions','error'); }
+  }, 200);
+});
+
+function renderSuggest(items){
+  suggestBox.innerHTML='';
+  if(!items.length){ suggestBox.classList.add('hidden'); return; }
+  items.slice(0,10).forEach(s => {
+    const opt = document.createElement('div');
+    opt.className = 'px-3 py-2 hover:bg-white/5 cursor-pointer';
+    opt.textContent = s;
+    opt.onclick = () => addSkill(s);
+    suggestBox.appendChild(opt);
+  });
+  suggestBox.classList.remove('hidden');
+}
+
+async function addSkill(skill){
+  try{
+    const res = await fetch('/api/me/skills', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({add:[skill]})});
+    const data = await res.json();
+    updatePills(data.skills);
+    input.value=''; suggestBox.classList.add('hidden');
+    showToast('Skill added');
+  }catch(e){ showToast('Failed to add skill','error'); }
+}
+
+async function removeSkill(skill){
+  try{
+    const res = await fetch('/api/me/skills', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({remove:[skill]})});
+    const data = await res.json();
+    updatePills(data.skills);
+    showToast('Skill removed');
+  }catch(e){ showToast('Failed to remove skill','error'); }
+}
+
+function updatePills(skills){
+  const c = document.getElementById('skill-pills');
+  c.innerHTML='';
+  skills.forEach(s => {
+    const span = document.createElement('span');
+    span.className = 'badge badge-outline text-white flex items-center gap-1';
+    span.innerHTML = `${s} <button type="button" class="ml-1 text-xs opacity-70 hover:opacity-100" aria-label="Remove ${s}" onclick="removeSkill('${s.replace(/'/g, "\'")}')">✕</button>`;
+    c.appendChild(span);
+  });
+}
+</script>
+{% endblock %}

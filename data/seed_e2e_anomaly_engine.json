@@ -1,0 +1,124 @@
+{
+  "users": [
+    {"userId": 1, "name": "Admin 1", "email": "admin1@example.com", "role": "Admin", "availability_status": "Available", "current_workload": 20},
+    {"userId": 2, "name": "Admin 2", "email": "admin2@example.com", "role": "Admin", "availability_status": "Busy", "current_workload": 50},
+    {"userId": 3, "name": "Admin 3", "email": "admin3@example.com", "role": "Admin", "availability_status": "In a Meeting", "current_workload": 40},
+    {"userId": 4, "name": "Admin 4", "email": "admin4@example.com", "role": "Admin", "availability_status": "Available", "current_workload": 10},
+    {"userId": 5, "name": "Admin 5", "email": "admin5@example.com", "role": "Admin", "availability_status": "Available", "current_workload": 30},
+    
+    {"userId": 6, "name": "PM 1", "email": "pm1@example.com", "role": "Manager", "availability_status": "Available", "current_workload": 35},
+    {"userId": 7, "name": "PM 2", "email": "pm2@example.com", "role": "Manager", "availability_status": "Busy", "current_workload": 55},
+    {"userId": 8, "name": "PM 3", "email": "pm3@example.com", "role": "Manager", "availability_status": "Available", "current_workload": 25},
+    {"userId": 9, "name": "PM 4", "email": "pm4@example.com", "role": "Manager", "availability_status": "In a Meeting", "current_workload": 40},
+    {"userId": 10, "name": "PM 5", "email": "pm5@example.com", "role": "Manager", "availability_status": "Available", "current_workload": 20},
+    {"userId": 11, "name": "PM 6", "email": "pm6@example.com", "role": "Manager", "availability_status": "Available", "current_workload": 60},
+    {"userId": 12, "name": "PM 7", "email": "pm7@example.com", "role": "Manager", "availability_status": "Busy", "current_workload": 45},
+    {"userId": 13, "name": "PM 8", "email": "pm8@example.com", "role": "Manager", "availability_status": "Available", "current_workload": 30},
+    {"userId": 14, "name": "PM 9", "email": "pm9@example.com", "role": "Manager", "availability_status": "Available", "current_workload": 15},
+    {"userId": 15, "name": "PM 10", "email": "pm10@example.com", "role": "Manager", "availability_status": "In a Meeting", "current_workload": 35},
+    {"userId": 16, "name": "PM 11", "email": "pm11@example.com", "role": "Manager", "availability_status": "Available", "current_workload": 30},
+    {"userId": 17, "name": "PM 12", "email": "pm12@example.com", "role": "Manager", "availability_status": "Busy", "current_workload": 50},
+    {"userId": 18, "name": "PM 13", "email": "pm13@example.com", "role": "Manager", "availability_status": "Available", "current_workload": 40},
+    {"userId": 19, "name": "PM 14", "email": "pm14@example.com", "role": "Manager", "availability_status": "Available", "current_workload": 25},
+    {"userId": 20, "name": "PM 15", "email": "pm15@example.com", "role": "Manager", "availability_status": "Available", "current_workload": 30}
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  ],
+  "projects": [
+    {"projectId": 1, "projectName": "Project Alpha", "projectManagerId": 6, "status": "Active"},
+    {"projectId": 2, "projectName": "Project Beta", "projectManagerId": 7, "status": "Active"},
+    {"projectId": 3, "projectName": "Project Gamma", "projectManagerId": 8, "status": "Active"},
+    {"projectId": 4, "projectName": "Project Delta", "projectManagerId": 9, "status": "Active"},
+    {"projectId": 5, "projectName": "Project Epsilon", "projectManagerId": 10, "status": "Active"},
+    {"projectId": 6, "projectName": "Project Zeta", "projectManagerId": 11, "status": "Active"},
+    {"projectId": 7, "projectName": "Project Eta", "projectManagerId": 12, "status": "Active"},
+    {"projectId": 8, "projectName": "Project Theta", "projectManagerId": 13, "status": "Active"},
+    {"projectId": 9, "projectName": "Project Iota", "projectManagerId": 14, "status": "Active"},
+    {"projectId": 10, "projectName": "Project Kappa", "projectManagerId": 15, "status": "Active"},
+    {"projectId": 11, "projectName": "Project Lambda", "projectManagerId": 16, "status": "Active"},
+    {"projectId": 12, "projectName": "Project Mu", "projectManagerId": 17, "status": "Paused"},
+    {"projectId": 13, "projectName": "Project Nu", "projectManagerId": 18, "status": "Active"},
+    {"projectId": 14, "projectName": "Project Xi", "projectManagerId": 19, "status": "Completed"},
+    {"projectId": 15, "projectName": "Project Omicron", "projectManagerId": 20, "status": "Active"}
+  ],
+  "tasks": [
+  ]
+}

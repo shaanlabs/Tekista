@@ -12,6 +12,19 @@
         <div>
           <div class="text-sm text-white">{{ u.username }}</div>
           <div class="text-xs text-gray-400">{{ u.email }}</div>
+          <div class="text-xs text-gray-400">Workload: {{ '%.0f' % (u.current_workload or 0) }}% · Availability: <span id="avl-{{ u.id }}">{{ u.availability or 'Available' }}</span></div>
+        </div>
+        {% set role_name = (current_user.role.name if current_user.role else None) %}
+        {% set can_edit = (u.id == current_user.id) or (role_name in ['Admin','Manager']) %}
+        <div>
+          {% if can_edit %}
+          <select data-uid="{{ u.id }}" class="avlSelect px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-200 text-sm">
+            {% for s in ['Available','Busy','In a Meeting','On a Break','Out of Office'] %}
+            <option value="{{ s }}" {% if (u.availability or 'Available') == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+          <button type="button" class="setAvl px-2 py-1 ml-2 rounded border border-white/10 bg-accent/20 text-white text-xs hover:bg-accent/30" data-uid="{{ u.id }}">Update</button>
+          {% endif %}
         </div>
       </div>
       {% endfor %}
@@ -21,4 +34,29 @@
     {% endif %}
   </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+(function(){
+  async function setAvailability(userId, status){
+    const r = await fetch(`/api/users/${userId}/availability`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({status})});
+    return r.json();
+  }
+  document.querySelectorAll('.setAvl').forEach(btn =>{
+    btn.addEventListener('click', async ()=>{
+      const uid = btn.getAttribute('data-uid');
+      const sel = document.querySelector(`select.avlSelect[data-uid="${uid}"]`);
+      if(!sel) return;
+      btn.disabled = true; btn.textContent = 'Saving...';
+      try{
+        const res = await setAvailability(uid, sel.value);
+        const span = document.getElementById(`avl-${uid}`);
+        if(span && res && (res.availability||res.status)) span.textContent = res.availability || res.status;
+        btn.textContent = 'Updated';
+        setTimeout(()=>{btn.textContent='Update'; btn.disabled=false;}, 800);
+      }catch(e){ btn.textContent='Error'; setTimeout(()=>{btn.textContent='Update'; btn.disabled=false;}, 1500); }
+    });
+  });
+})();
+</script>
 {% endblock %}

@@ -14,6 +14,7 @@ def task_to_dict(t):
 		'description': t.description,
 		'status': t.status,
 		'priority': t.priority,
+		'estimated_hours': getattr(t, 'estimated_hours', None),
 		'due_date': str(t.due_date) if t.due_date else None,
 		'assignees': [{'id': u.id, 'username': u.username} for u in t.assignees],
 		'project_id': t.project_id
@@ -86,6 +87,11 @@ def api_tasks():
 		return jsonify({'error':'title and project_id required'}), 400
 	project = Project.query.get_or_404(project_id)
 	t = Task(title=title, description=data.get('description'), priority=data.get('priority','Normal'), project=project)
+	if 'estimated_hours' in data:
+		try:
+			t.estimated_hours = float(data.get('estimated_hours') or 4.0)
+		except Exception:
+			pass
 	# set assignees
 	for uid in data.get('assignees', []):
 		u = User.query.get(uid)
@@ -106,6 +112,11 @@ def api_task_detail(task_id):
         if 'description' in data: t.description = data['description']
         if 'status' in data: t.status = data['status']
         if 'priority' in data: t.priority = data['priority']
+        if 'estimated_hours' in data:
+            try:
+                t.estimated_hours = float(data.get('estimated_hours') or 4.0)
+            except Exception:
+                pass
         if 'project_id' in data: t.project_id = data['project_id']
         if 'assignees' in data:
             t.assignees.clear()
@@ -159,11 +170,11 @@ def api_analytics_metrics():
 	# Calculate metrics (guard against null due_date)
 	total_projects = Project.query.count()
 	total_tasks = Task.query.count()
-	completed_tasks = Task.query.filter_by(status='Done').count()
+	completed_tasks = Task.query.filter_by(status='Completed').count()
 	overdue_tasks = Task.query.filter(
 		Task.due_date != None,  # noqa: E711
 		Task.due_date < datetime.now().date(),
-		Task.status != 'Done'
+		Task.status != 'Completed'
 	).count()
 	# Simple productivity metric (avoid relying on non-existent created_at)
 	recent_completed = completed_tasks
@@ -191,7 +202,7 @@ def api_analytics_performance():
 		performance_data = db.session.query(
 			func.date(Task.due_date).label('date'),
 			func.count(Task.id).label('total'),
-			func.sum(func.case([(Task.status == 'Done', 1)], else_=0)).label('completed')
+			func.sum(func.case([(Task.status == 'Completed', 1)], else_=0)).label('completed')
 		).filter(
 			Task.due_date != None,  # noqa: E711
 			Task.due_date >= start_date
@@ -204,7 +215,7 @@ def api_analytics_performance():
 		} for row in performance_data])
 	except Exception:
 		total = Task.query.count()
-		completed = Task.query.filter_by(status='Done').count()
+		completed = Task.query.filter_by(status='Completed').count()
 		return jsonify([{
 			'date': str(datetime.now().date()),
 			'total': total,

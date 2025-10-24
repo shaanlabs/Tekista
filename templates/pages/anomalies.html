@@ -1,0 +1,44 @@
+{% extends 'layouts/app.html' %}
+{% block title %}Anomalies - Admin{% endblock %}
+{% block content %}
+<div class="max-w-7xl">
+  <h1 class="text-xl font-semibold text-white mb-4">Anomalies (Admin)</h1>
+  <form method="get" class="mb-4 grid grid-cols-1 md:grid-cols-5 gap-2">
+    <input name="user_id" class="input input-bordered" placeholder="User ID" value="{{ request.args.get('user_id','') }}" />
+    <input name="type" class="input input-bordered" placeholder="Type" value="{{ request.args.get('type','') }}" />
+    <input name="severity" class="input input-bordered" placeholder="Severity" value="{{ request.args.get('severity','') }}" />
+    <input name="since" class="input input-bordered" placeholder="Since (ISO)" value="{{ request.args.get('since','') }}" />
+    <button class="btn btn-primary">Filter</button>
+  </form>
+  <div class="overflow-x-auto">
+    <table class="table table-zebra w-full">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>When</th>
+          <th>User</th>
+          <th>Type</th>
+          <th>Severity</th>
+          <th>Resolved</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in events %}
+        <tr>
+          <td>{{ e.id }}</td>
+          <td>{{ e.occurred_at }}</td>
+          <td>{% if e.user_id %}{{ users_map.get(e.user_id).username if users_map.get(e.user_id) else e.user_id }}{% else %}-{% endif %}</td>
+          <td>{{ e.type }}</td>
+          <td>{{ e.severity }}</td>
+          <td>{{ 'Yes' if e.resolved else 'No' }}</td>
+          <td><a class="link" href="{{ url_for('admin_investigate', anomaly_id=e.id) }}">Investigate</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-gray-400">No anomalies found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

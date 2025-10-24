@@ -43,6 +43,11 @@
     </div>
 
     <div>
+      <label class="block text-sm text-gray-300 mb-1">Estimated Hours</label>
+      <input type="number" step="0.5" min="0" name="estimated_hours" placeholder="e.g. 4.0" class="w-full px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200 placeholder-gray-500" />
+    </div>
+
+    <div>
       <label class="block text-sm text-gray-300 mb-1">Assignees</label>
       <select name="assignees" multiple class="w-full px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-200">
         {% for u in users %}

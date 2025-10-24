@@ -1,0 +1,29 @@
+{% extends 'layouts/app.html' %}
+{% block title %}Reliability - Admin{% endblock %}
+{% block content %}
+<div class="max-w-7xl">
+  <h1 class="text-xl font-semibold text-white mb-4">User Data Reliability (Admin)</h1>
+  <div class="overflow-x-auto">
+    <table class="table table-zebra w-full">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Score</th>
+          <th>Computed At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          <td>{% if r.user_id %}{{ users_map.get(r.user_id).username if users_map.get(r.user_id) else r.user_id }}{% else %}-{% endif %}</td>
+          <td>{{ '%.1f'|format(r.score or 0) }}%</td>
+          <td>{{ r.computed_at }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="text-gray-400">No reliability scores computed yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

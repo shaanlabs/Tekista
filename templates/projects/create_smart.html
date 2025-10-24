@@ -1,0 +1,291 @@
+{% extends 'layouts/app.html' %}
+{% block title %}Create Project (Smart){% endblock %}
+{% block content %}
+<div class="max-w-4xl space-y-6">
+  <h1 class="text-xl font-semibold text-white">Create Project</h1>
+  <div class="space-y-4">
+    <div>
+      <label class="label text-gray-300">Project Title</label>
+      <input id="p-title" class="input input-bordered w-full" placeholder="e.g., Website Redesign" />
+    </div>
+    <div>
+      <label class="label text-gray-300">Description</label>
+      <textarea id="p-desc" rows="4" class="textarea textarea-bordered w-full" placeholder="Describe the project"></textarea>
+    </div>
+    <div>
+      <label class="label text-gray-300">Deadline</label>
+      <input id="p-deadline" type="date" class="input input-bordered" />
+    </div>
+  </div>
+
+  <div class="space-y-2">
+    <h2 class="text-lg font-semibold text-white">Assign Project Manager</h2>
+    <input id="pm-search" class="input input-bordered w-full" placeholder="Search PM..." aria-label="Search Project Managers" />
+    <div class="relative">
+      <div id="pm-loading" class="hidden absolute inset-0 bg-black/20 grid place-items-center rounded" aria-hidden="true"><div class="text-xs text-gray-300">Loading…</div></div>
+      <div id="pm-list" class="divide-y divide-white/5 rounded bg-base-200" role="listbox" aria-label="Project Manager Candidates" aria-busy="false"></div>
+    </div>
+  </div>
+
+  <div class="space-y-2">
+    <h2 class="text-lg font-semibold text-white">Build Your Team</h2>
+    <label class="label text-gray-300">Required Skills</label>
+    <div id="req-skill-pills" class="flex flex-wrap gap-2 mb-2"></div>
+    <div class="relative">
+      <input id="skills-input" class="input input-bordered w-full" placeholder="Type a skill and press Enter" aria-autocomplete="list" aria-expanded="false" aria-controls="skills-suggest" />
+      <div id="skills-suggest" role="listbox" aria-label="Skill suggestions" class="absolute z-10 mt-1 w-full rounded bg-base-200 border border-white/10 max-h-48 overflow-auto hidden"></div>
+    </div>
+    <div class="flex items-center gap-2">
+      <input id="preset-name" class="input input-bordered" placeholder="Preset name (e.g., Web FE)" aria-label="Preset name" />
+      <button id="btn-save-preset" class="btn btn-sm">Save Preset</button>
+    </div>
+    <div id="preset-list" class="flex flex-wrap gap-2 text-sm"></div>
+    <div class="relative">
+      <div id="team-loading" class="hidden absolute inset-0 bg-black/20 grid place-items-center rounded" aria-hidden="true"><div class="text-xs text-gray-300">Loading…</div></div>
+      <div id="team-list" class="divide-y divide-white/5 rounded bg-base-200" role="listbox" aria-label="Team Member Candidates" aria-busy="false"></div>
+    </div>
+  </div>
+
+  <div>
+    <button id="btn-create" class="btn btn-primary">Create Project</button>
+  </div>
+</div>
+
+<script>
+let selectedPM = null;
+let selectedTeam = new Set();
+let requiredSkills = [];
+
+const pmLoading = document.getElementById('pm-loading');
+const teamLoading = document.getElementById('team-loading');
+
+async function fetchPMs() {
+  try{
+    pmLoading.classList.remove('hidden');
+    const res = await fetch('/api/users/pm-candidates');
+    const data = await res.json();
+    renderPMList(data);
+  } finally {
+    pmLoading.classList.add('hidden');
+  }
+}
+
+function renderPMList(items) {
+  const q = (document.getElementById('pm-search').value || '').toLowerCase();
+  const list = document.getElementById('pm-list');
+  list.innerHTML = '';
+  list.setAttribute('aria-busy','true');
+  items.filter(x => x.username.toLowerCase().includes(q)).forEach(u => {
+    const row = document.createElement('div');
+    row.className = 'p-3 flex items-center justify-between hover:bg-white/5';
+    row.setAttribute('role', 'option');
+    row.setAttribute('aria-selected', selectedPM === u.id ? 'true' : 'false');
+    const left = document.createElement('div');
+    left.innerHTML = `<div class="text-white">${u.username}</div><div class="text-xs text-gray-400">Managing ${u.active_projects} Active Projects · Workload ${Math.round(u.workload||0)}%</div>`;
+    const right = document.createElement('div');
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-sm ' + (selectedPM === u.id ? 'btn-secondary' : '');
+    btn.textContent = selectedPM === u.id ? 'Selected' : 'Select';
+    btn.onclick = () => { selectedPM = u.id; fetchPMs(); };
+    right.appendChild(btn);
+    row.appendChild(left); row.appendChild(right);
+    list.appendChild(row);
+  });
+  if(!list.children.length){
+    const empty = document.createElement('div');
+    empty.className = 'p-3 text-sm text-gray-400';
+    empty.textContent = 'No managers match your search.';
+    list.appendChild(empty);
+  }
+  list.setAttribute('aria-busy','false');
+}
+
+async function fetchTeam() {
+  try{
+    teamLoading.classList.remove('hidden');
+    const skills = requiredSkills.join(',');
+    const res = await fetch('/api/users/team-candidates?skills=' + encodeURIComponent(skills));
+    const data = await res.json();
+    renderTeamList(data);
+  } finally {
+    teamLoading.classList.add('hidden');
+  }
+}
+
+function renderTeamList(items) {
+  const list = document.getElementById('team-list');
+  list.innerHTML = '';
+  list.setAttribute('aria-busy','true');
+  items.forEach(u => {
+    const row = document.createElement('div');
+    row.className = 'p-3 flex items-center justify-between hover:bg-white/5';
+    row.setAttribute('role','option');
+    const left = document.createElement('div');
+    const skills = (u.skills || []).slice(0,5);
+    const skillChips = skills.map(s=>`<button type=\"button\" class=\"badge badge-outline hover:bg-white/10\" title=\"Add ${s} to required\" onclick=\"addRequiredSkill('${s.replace(/'/g, "\\'" )}')\">${s}</button>`).join(' ');
+    left.innerHTML = `<div class=\"text-white\">${u.username} <span class=\"text-xs text-gray-400\">[${u.availability}]</span></div>` +
+                     `<div class=\\\"text-xs text-gray-400\\\">Workload ${Math.round(u.workload||0)}% · Tasks Done (30d): ${u.tasks_done_30d}</div>` +
+                     `<div class=\\\"mt-1 flex gap-1 flex-wrap\\\">${skillChips}</div>`;
+    const right = document.createElement('div');
+    const btn = document.createElement('button');
+    const isSel = selectedTeam.has(u.id);
+    btn.className = 'btn btn-sm ' + (isSel ? 'btn-secondary' : '');
+    btn.textContent = isSel ? 'Added' : 'Add';
+    btn.onclick = () => { if (isSel) { selectedTeam.delete(u.id); } else { selectedTeam.add(u.id); } renderTeamList(items); };
+    right.appendChild(btn);
+    row.appendChild(left); row.appendChild(right);
+    list.appendChild(row);
+  });
+  if(!list.children.length){
+    const empty = document.createElement('div');
+    empty.className = 'p-3 text-sm text-gray-400';
+    empty.textContent = 'No team members match your search.';
+    list.appendChild(empty);
+  }
+  list.setAttribute('aria-busy','false');
+}
+
+async function createProject() {
+  const payload = {
+    title: document.getElementById('p-title').value,
+    description: document.getElementById('p-desc').value,
+    deadline: document.getElementById('p-deadline').value || null,
+    project_manager_id: selectedPM,
+    team_member_ids: Array.from(selectedTeam)
+  };
+  const btn = document.getElementById('btn-create');
+  btn.setAttribute('disabled', 'true');
+  btn.textContent = 'Creating…';
+  try{
+    const res = await fetch('/projects/create-smart', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (res.ok) {
+      const data = await res.json();
+      window.location.href = '/projects/' + data.id;
+    } else {
+      alert('Failed to create project');
+    }
+  } finally {
+    btn.removeAttribute('disabled');
+    btn.textContent = 'Create Project';
+  }
+}
+
+document.getElementById('pm-search').addEventListener('input', fetchPMs);
+
+// Required skills pill input
+const skillsInput = document.getElementById('skills-input');
+const skillsSuggest = document.getElementById('skills-suggest');
+let skillsDeb;
+
+skillsInput.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter' && skillsInput.value.trim()){
+    e.preventDefault();
+    addRequiredSkill(skillsInput.value.trim());
+  }
+  if(e.key==='ArrowDown') moveSuggestFocus(1);
+  if(e.key==='ArrowUp') moveSuggestFocus(-1);
+  if(e.key==='Escape'){ skillsSuggest.classList.add('hidden'); }
+});
+
+skillsInput.addEventListener('input', ()=>{
+  clearTimeout(skillsDeb);
+  const q = skillsInput.value.trim();
+  if(!q){ skillsSuggest.classList.add('hidden'); skillsSuggest.innerHTML=''; return; }
+  skillsDeb = setTimeout(async()=>{
+    try{
+      const res = await fetch('/api/skills/suggest?q='+encodeURIComponent(q));
+      const items = await res.json();
+      renderSkillSuggest(items.map(i=>i.skill));
+    }catch(e){ /* silent */ }
+  },200);
+});
+
+function renderSkillSuggest(items){
+  skillsSuggest.innerHTML='';
+  if(!items.length){ skillsSuggest.classList.add('hidden'); return; }
+  items.slice(0,10).forEach((s,idx)=>{
+    const opt = document.createElement('div');
+    opt.className='px-3 py-2 hover:bg-white/5 cursor-pointer';
+    opt.setAttribute('role','option');
+    opt.setAttribute('tabindex','-1');
+    opt.id = 'opt-'+idx;
+    opt.textContent = s;
+    opt.onclick = ()=>{ addRequiredSkill(s); };
+    skillsSuggest.appendChild(opt);
+  });
+  skillsSuggest.classList.remove('hidden');
+  skillsInput.setAttribute('aria-expanded','true');
+}
+
+function moveSuggestFocus(delta){
+  const opts = Array.from(skillsSuggest.querySelectorAll('[role="option"]'));
+  if(!opts.length) return;
+  let idx = opts.findIndex(el=>el===document.activeElement);
+  idx = (idx<0) ? 0 : Math.max(0, Math.min(opts.length-1, idx+delta));
+  opts[idx].focus();
+}
+
+function addRequiredSkill(s){
+  if(!s) return;
+  if(!requiredSkills.includes(s)) requiredSkills.push(s);
+  renderReqSkillPills();
+  skillsInput.value=''; skillsSuggest.classList.add('hidden');
+  fetchTeam();
+}
+
+function removeReqSkill(s){
+  requiredSkills = requiredSkills.filter(x=>x!==s);
+  renderReqSkillPills();
+  fetchTeam();
+}
+
+function renderReqSkillPills(){
+  const c = document.getElementById('req-skill-pills');
+  c.innerHTML='';
+  requiredSkills.forEach(s=>{
+    const span = document.createElement('span');
+    span.className = 'badge badge-outline text-white flex items-center gap-1';
+    span.innerHTML = `${s} <button type=\"button\" class=\"ml-1 text-xs opacity-70 hover:opacity-100\" aria-label=\"Remove ${s}\" onclick=\"removeReqSkill('${s.replace(/'/g, "\\'" )}')\">✕</button>`;
+    c.appendChild(span);
+  });
+}
+
+// Presets (localStorage per user)
+const presetKey = 'req_skills_presets';
+const presetListEl = document.getElementById('preset-list');
+document.getElementById('btn-save-preset').addEventListener('click', ()=>{
+  const name = (document.getElementById('preset-name').value || '').trim();
+  if(!name || !requiredSkills.length) return;
+  const presets = JSON.parse(localStorage.getItem(presetKey) || '{}');
+  presets[name] = requiredSkills.slice();
+  localStorage.setItem(presetKey, JSON.stringify(presets));
+  renderPresets();
+});
+
+function renderPresets(){
+  const presets = JSON.parse(localStorage.getItem(presetKey) || '{}');
+  presetListEl.innerHTML='';
+  Object.entries(presets).forEach(([name, skills])=>{
+    const group = document.createElement('div');
+    group.className = 'flex items-center gap-1';
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-xs';
+    btn.textContent = name;
+    btn.title = skills.join(', ');
+    btn.onclick = ()=>{ requiredSkills = skills.slice(); renderReqSkillPills(); fetchTeam(); };
+    const del = document.createElement('button');
+    del.className = 'btn btn-xs btn-ghost text-gray-400';
+    del.textContent = '✕';
+    del.title = `Delete ${name}`;
+    del.onclick = ()=>{ const p = JSON.parse(localStorage.getItem(presetKey) || '{}'); delete p[name]; localStorage.setItem(presetKey, JSON.stringify(p)); renderPresets(); };
+    group.appendChild(btn); group.appendChild(del);
+    presetListEl.appendChild(group);
+  });
+}
+
+document.getElementById('btn-create').addEventListener('click', createProject);
+
+fetchPMs();
+fetchTeam();
+</script>
+{% endblock %}

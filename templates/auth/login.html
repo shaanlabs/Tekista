@@ -150,13 +150,24 @@
                 </label>
             </div>
             
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="mb-4 space-y-2">
+              {% for category, message in messages %}
+              <div class="px-3 py-2 rounded text-sm {{ 'bg-red-500/20 border border-red-500/30 text-red-200' if category in ['danger','error'] else 'bg-white/10 border border-white/20 text-gray-200' }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
             <!-- Login Form -->
             <form method="POST" action="{{ url_for('auth.login') }}" class="glass rounded-2xl p-8 shadow-2xl">
                 {{ form.hidden_tag() }}
                 
                 <!-- Username Field -->
                 <div class="floating-label mb-6">
-                    {{ form.username(class="w-full input-field rounded-lg outline-none text-white", placeholder=" ") }}
+                    {{ form.username(class="w-full input-field rounded-lg outline-none text-white", placeholder=" ", autofocus=True) }}
                     <label for="username" class="text-white/70">Username</label>
                     {% if form.username.errors %}
                         <div class="text-red-300 text-sm mt-1">

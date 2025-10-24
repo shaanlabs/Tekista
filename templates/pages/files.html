@@ -18,6 +18,7 @@
     <div class="px-4 py-2 text-xs uppercase text-gray-400 border-b border-white/10">{{ current_project.title }} Files</div>
     <div class="p-4">
       <form method="post" action="{{ url_for('files_upload') }}" enctype="multipart/form-data" class="flex items-center gap-2 mb-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <input type="hidden" name="project_id" value="{{ current_project.id }}" />
         <input type="file" name="file" class="text-sm text-gray-300" />
         <button class="px-3 py-1.5 rounded border border-white/10 bg-accent/20 text-white text-sm hover:bg-accent/30">Upload</button>

@@ -1,0 +1,64 @@
+{% extends 'layouts/app.html' %}
+{% block title %}Investigate Anomaly - Admin{% endblock %}
+{% block content %}
+<div class="max-w-5xl">
+  <h1 class="text-xl font-semibold text-white mb-4">Investigate Anomaly</h1>
+
+  <div class="mb-4 p-4 rounded bg-base-200">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <div class="text-gray-400 text-sm">Anomaly ID</div>
+        <div class="text-white">{{ anomaly.id }}</div>
+      </div>
+      <div>
+        <div class="text-gray-400 text-sm">When</div>
+        <div class="text-white">{{ anomaly.occurred_at }}</div>
+      </div>
+      <div>
+        <div class="text-gray-400 text-sm">User</div>
+        <div class="text-white">{% if user %}{{ user.username }}{% else %}-{% endif %}</div>
+      </div>
+      <div>
+        <div class="text-gray-400 text-sm">Type</div>
+        <div class="text-white">{{ anomaly.type }}</div>
+      </div>
+      <div>
+        <div class="text-gray-400 text-sm">Severity</div>
+        <div class="text-white">{{ anomaly.severity }}</div>
+      </div>
+      <div>
+        <div class="text-gray-400 text-sm">Resolved</div>
+        <div class="text-white">{{ 'Yes' if anomaly.resolved else 'No' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <h2 class="text-lg font-semibold text-white mb-2">What the User Reported</h2>
+      <div class="p-4 rounded bg-base-200 text-sm text-gray-300">
+        {% set reported = evidence.get('reported') if evidence.get('reported') is not none else evidence %}
+        <pre class="whitespace-pre-wrap">{{ reported | tojson(indent=2) }}</pre>
+      </div>
+    </div>
+    <div>
+      <h2 class="text-lg font-semibold text-white mb-2">What the System Observed</h2>
+      <div class="p-4 rounded bg-base-200 text-sm text-gray-300">
+        {% set observed = explanation.get('observed') if explanation.get('observed') is not none else explanation %}
+        <pre class="whitespace-pre-wrap">{{ observed | tojson(indent=2) }}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <form action="{{ url_for('api_anomalies_resolve', aid=anomaly.id) }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      {% if not anomaly.resolved %}
+      <button class="btn btn-primary">Mark as Resolved</button>
+      {% else %}
+      <button class="btn" disabled>Already Resolved</button>
+      {% endif %}
+    </form>
+  </div>
+</div>
+{% endblock %}
