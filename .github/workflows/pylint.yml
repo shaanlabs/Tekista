@@ -1,38 +1,59 @@
 name: Pylint
 
-on: [push]
+on:
+  push:
+  pull_request:
 
 jobs:
-  build:
+  pylint:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
 
+    env:
+      # Make the repository root importable for intra-repo imports
+      PYTHONPATH: ${{ github.workspace }}
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pylint
-        # Install project dependencies from requirements.txt
-        # This is needed so pylint can find and verify your project's imports
-        if [ -f requirements.txt ]; then
-          pip install -r requirements.txt
-        fi
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Set PYTHONPATH for internal imports
-      run: |
-        # This tells Python/Pylint to look for modules in the current directory ('.')
-        # Fixes 'Unable to import "models"' or 'Unable to import "app"'
-        echo "PYTHONPATH=." >> $GITHUB_ENV
-        
-    - name: Analysing the code with pylint
-      run: |
-        pylint $(git ls-files '*.py')
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint
+          # Install project dependencies so pylint can resolve imports
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          # If this repo is a package, install it editable so intra-package imports resolve
+          if [ -f setup.py ] || [ -f pyproject.toml ] || [ -f setup.cfg ]; then
+            pip install -e . || true
+          fi
+
+      - name: Run Pylint
+        run: |
+          FILES="$(git ls-files '*.py')"
+          if [ -z "$FILES" ]; then
+            echo "No Python files found to lint."
+            exit 0
+          fi
+          if [ -f .pylintrc ]; then
+            echo "Using .pylintrc"
+            pylint --rcfile=.pylintrc $FILES
+          else
+            pylint $FILES
+          fi

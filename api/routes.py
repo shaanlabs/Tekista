@@ -1,4 +1,4 @@
-from flask import jsonify, request, url_for, g, Response
+from flask import jsonify, request, url_for, g, Response, abort
 from flask_login import login_required
 from datetime import datetime, timedelta
 from sqlalchemy import func
@@ -54,7 +54,7 @@ def api_projects():
 @api_bp.route('/projects/<int:project_id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @api_auth_required
 def api_project_detail(project_id):
-    p = Project.query.get_or_404(project_id)
+    p = db.session.get(Project, project_id) or abort(404)
     if request.method == 'GET':
         return jsonify(project_to_dict(p))
     if request.method in ('PUT','PATCH'):
@@ -94,7 +94,7 @@ def api_tasks():
 			pass
 	# set assignees
 	for uid in data.get('assignees', []):
-		u = User.query.get(uid)
+		u = db.session.get(User, uid)
 		if u:
 			t.assignees.append(u)
 	db.session.add(t); db.session.commit()
@@ -103,7 +103,7 @@ def api_tasks():
 @api_bp.route('/tasks/<int:task_id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @api_auth_required
 def api_task_detail(task_id):
-    t = Task.query.get_or_404(task_id)
+    t = db.session.get(Task, task_id) or abort(404)
     if request.method == 'GET':
         return jsonify(task_to_dict(t))
     if request.method in ('PUT','PATCH'):

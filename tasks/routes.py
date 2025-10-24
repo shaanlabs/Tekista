@@ -5,6 +5,7 @@ from . import tasks_bp
 from .forms import TaskForm, UpdateStatusForm, CommentForm
 from models import Task, Project, User, Comment
 from notifications import notify_task_assigned, notify_task_status_change
+import json
 
 def _availability_rank(av):
     order = {
@@ -73,7 +74,7 @@ def create_task_global():
         if not title or not project_id:
             flash('Title and Project are required', 'warning')
             return render_template('tasks/create_global.html', projects=projects, users=users)
-        project = Project.query.get_or_404(project_id)
+        project = db.session.get(Project, project_id) or abort(404)
         t = Task(title=title, description=description, priority=priority, project=project)
         if estimated_hours is not None:
             try:
@@ -89,7 +90,7 @@ def create_task_global():
             pass
         # assignees
         for uid in assignees_ids:
-            u = User.query.get(int(uid))
+            u = db.session.get(User, int(uid))
             if u:
                 t.assignees.append(u)
         # auto-assign if none provided
@@ -139,7 +140,7 @@ def create_task(project_id):
             except Exception:
                 pass
         for uid in form.assignees.data:
-            u = User.query.get(uid)
+            u = db.session.get(User, uid)
             if u:
                 t.assignees.append(u)
         # auto-assign if none provided
@@ -153,7 +154,7 @@ def create_task(project_id):
                 except Exception:
                     pass
         for dep_id in form.dependencies.data:
-            pre = Task.query.get(dep_id)
+            pre = db.session.get(Task, dep_id)
             if pre:
                 t.predecessors.append(pre)
         db.session.add(t); db.session.commit()
@@ -169,7 +170,7 @@ def create_task(project_id):
 @tasks_bp.route('/<int:task_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_task(task_id):
-    task = Task.query.get_or_404(task_id)
+    task = db.session.get(Task, task_id) or abort(404)
     form = TaskForm(obj=task)
     # populate choices
     form.assignees.choices = [(u.id, u.username) for u in User.query.order_by(User.username).all()]
@@ -185,13 +186,13 @@ def edit_task(task_id):
         # update assignees
         task.assignees.clear()
         for uid in form.assignees.data:
-            u = User.query.get(uid)
+            u = db.session.get(User, uid)
             if u:
                 task.assignees.append(u)
         # update predecessors
         task.predecessors.clear()
         for dep_id in form.dependencies.data:
-            pre = Task.query.get(dep_id)
+            pre = db.session.get(Task, dep_id)
             if pre:
                 task.predecessors.append(pre)
         db.session.commit()

@@ -140,7 +140,7 @@ def create_project():
         )
         # Associate selected users
         for user_id in form.users.data:
-            user = User.query.get(user_id)
+            user = db.session.get(User, user_id)
             if user:
                 project.users.append(user)
 
@@ -198,7 +198,9 @@ def project_detail(project_id):
     # Eager-load tasks and their assignees to avoid N+1 in template
     project = Project.query.options(
         selectinload(Project.tasks).selectinload(Task.assignees)
-    ).get_or_404(project_id)
+    ).get(project_id)
+    if not project:
+        abort(404)
 
     # Build task query based on filters
     task_query = Task.query.filter_by(project_id=project_id)
@@ -219,7 +221,7 @@ def project_detail(project_id):
 @projects_bp.route('/<int:project_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_project(project_id):
-    project = Project.query.get_or_404(project_id)
+    project = db.session.get(Project, project_id) or abort(404)
     form = ProjectForm(obj=project)
     form.users.choices = [(u.id, u.username) for u in User.query.order_by(User.username)]
     if form.validate_on_submit():
@@ -229,7 +231,7 @@ def edit_project(project_id):
         # update users
         project.users.clear()
         for user_id in form.users.data:
-            user = User.query.get(user_id)
+            user = db.session.get(User, user_id)
             if user:
                 project.users.append(user)
         db.session.commit()
