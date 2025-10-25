@@ -472,7 +472,7 @@ class SkillRecommendationEngine:
             return gaps
         
         except Exception as exc:
-            logger.error(f"Error identifying skill gaps: {str(exc)}")
+            logger.error("Error identifying skill gaps: %s", exc)
             return []
     
     @staticmethod
@@ -501,5 +501,5 @@ class SkillRecommendationEngine:
             }
         
         except Exception as exc:
-            logger.error(f"Error generating learning path: {str(exc)}")
+            logger.error("Error generating learning path: %s", exc)
             return {}

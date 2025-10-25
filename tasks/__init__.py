@@ -2,4 +2,4 @@ from flask import Blueprint
 
 tasks_bp = Blueprint('tasks', __name__, template_folder='templates')
 
-from . import routes
+from . import routes  # pylint: disable=wrong-import-position  # import after blueprint to avoid circular import

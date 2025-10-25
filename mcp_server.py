@@ -8,6 +8,7 @@ import json
 import logging
 from datetime import datetime, timedelta
 from typing import Any, Optional
+from sqlalchemy.exc import SQLAlchemyError
 
 from app import create_app
 from models import Comment, Project, Task, User, db
@@ -44,7 +45,7 @@ class TaskManagerMCPServer:
                 "task_count": len(p.tasks),
                 "created_at": p.created_at.isoformat()
             } for p in projects]
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error("Error getting projects: %s", e)
             return {"error": str(e)}
     
@@ -72,7 +73,7 @@ class TaskManagerMCPServer:
                 } for t in project.tasks],
                 "team_members": [u.username for u in project.users]
             }
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error("Error getting project details: %s", e)
             return {"error": str(e)}
     
@@ -105,7 +106,7 @@ class TaskManagerMCPServer:
                 "assignees": [u.username for u in t.assignees],
                 "created_at": t.created_at.isoformat() if hasattr(t, 'created_at') else None
             } for t in tasks]
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error("Error getting tasks: %s", e)
             return {"error": str(e)}
     
@@ -135,7 +136,7 @@ class TaskManagerMCPServer:
                 "predecessors": [{"id": p.id, "title": p.title} for p in task.predecessors],
                 "successors": [{"id": s.id, "title": s.title} for s in task.successors]
             }
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error("Error getting task details: %s", e)
             return {"error": str(e)}
     
@@ -160,7 +161,7 @@ class TaskManagerMCPServer:
                 "project_title": t.project.title if t.project else None,
                 "days_until_due": (t.due_date - datetime.utcnow().date()).days if t.due_date else None
             } for t in tasks]
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error("Error getting user tasks: %s", e)
             return {"error": str(e)}
     
@@ -187,7 +188,7 @@ class TaskManagerMCPServer:
                 "days_overdue": (datetime.utcnow().date() - t.due_date).days,
                 "assignees": [u.username for u in t.assignees]
             } for t in tasks]
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error("Error getting overdue tasks: %s", e)
             return {"error": str(e)}
     
@@ -218,7 +219,7 @@ class TaskManagerMCPServer:
                 "days_until_due": (t.due_date - today).days,
                 "assignees": [u.username for u in t.assignees]
             } for t in tasks]
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error("Error getting upcoming tasks: %s", e)
             return {"error": str(e)}
     
@@ -254,7 +255,7 @@ class TaskManagerMCPServer:
                 "overdue_tasks": overdue,
                 "team_members": len(project.users)
             }
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error("Error getting project statistics: %s", e)
             return {"error": str(e)}
     
@@ -288,7 +289,7 @@ class TaskManagerMCPServer:
                 })
             
             return sorted(workload_data, key=lambda x: x['workload_score'], reverse=True)
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error("Error getting team workload: %s", e)
             return {"error": str(e)}
     
@@ -313,7 +314,7 @@ class TaskManagerMCPServer:
                 "priority": t.priority,
                 "project_title": t.project.title if t.project else None
             } for t in tasks]
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error("Error searching tasks: %s", e)
             return {"error": str(e)}
     
@@ -346,7 +347,7 @@ class TaskManagerMCPServer:
                                             datetime.utcnow().date() <= t.due_date <= 
                                             datetime.utcnow().date() + timedelta(days=7)])
             }
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error("Error getting dashboard summary: %s", e)
             return {"error": str(e)}
     

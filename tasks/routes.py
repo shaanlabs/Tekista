@@ -4,6 +4,7 @@ from flask import abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app import db
+from sqlalchemy.exc import SQLAlchemyError
 from models import AnomalyEvent, Comment, ProcessEvent, Project, Task, User
 from notifications import notify_task_assigned, notify_task_status_change
 
@@ -33,7 +34,7 @@ def _auto_assign(task: Task, candidates):
 def _workload_delta(task: Task):
     try:
         hours = float(task.estimated_hours or 4.0)
-    except Exception:
+    except (TypeError, ValueError):
         hours = 4.0
     # 40h work week
     return max(0.0, min(100.0, (hours / 40.0) * 100.0))
@@ -83,14 +84,14 @@ def create_task_global():
         if estimated_hours is not None:
             try:
                 t.estimated_hours = float(estimated_hours)
-            except Exception:
+            except (TypeError, ValueError):
                 pass
         # parse due_date
         try:
             if due_date:
                 from datetime import date
                 t.due_date = date.fromisoformat(due_date)
-        except Exception:
+        except (TypeError, ValueError):
             pass
         # assignees
         for uid in assignees_ids:
@@ -106,7 +107,7 @@ def create_task_global():
                 t.assignees.append(pick)
                 try:
                     pick.current_workload = min(100.0, (pick.current_workload or 0.0) + _workload_delta(t))
-                except Exception:
+                except (TypeError, AttributeError):
                     pass
         db.session.add(t)
         db.session.commit()
@@ -114,7 +115,7 @@ def create_task_global():
         try:
             db.session.add(ProcessEvent(source='web', entity='task', entity_id=t.id, event_type='created', meta=f'project={project.id if project else project_id}'))
             db.session.commit()
-        except Exception:
+        except SQLAlchemyError:
             pass
         # notify
         try:
@@ -141,7 +142,7 @@ def create_task(project_id):
         if getattr(form, 'estimated_hours', None) and form.estimated_hours.data is not None:
             try:
                 t.estimated_hours = float(form.estimated_hours.data)
-            except Exception:
+            except (TypeError, ValueError):
                 pass
         for uid in form.assignees.data:
             u = db.session.get(User, uid)
@@ -242,7 +243,7 @@ def task_detail(task_id):
             try:
                 db.session.add(ProcessEvent(source='web', entity='task', entity_id=task.id, event_type='status_changed', meta=f'{old_status}->{new_status}'))
                 db.session.commit()
-            except Exception:
+            except SQLAlchemyError:
                 pass
             # anomaly: premature completion for parent with incomplete subtasks
             try:
@@ -265,7 +266,7 @@ def task_detail(task_id):
                             explanation_json=json.dumps({'reason':'Parent Completed while subtasks incomplete'})
                         ))
                         db.session.commit()
-            except Exception:
+            except SQLAlchemyError:
                 pass
             # workload adjustment when moved to Completed from a non-completed state
             try:
@@ -274,7 +275,7 @@ def task_detail(task_id):
                     for u in task.assignees:
                         u.current_workload = max(0.0, (u.current_workload or 0.0) - delta)
                     db.session.commit()
-            except Exception:
+            except SQLAlchemyError:
                 pass
             try:
                 notify_task_status_change(task, old_status, new_status)
