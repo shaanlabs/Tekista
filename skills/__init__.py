@@ -43,7 +43,7 @@ class SkillManager:
         try:
             user = User.query.get(user_id)
             if not user:
-                logger.error(f"User {user_id} not found")
+                logger.error("User %s not found", user_id)
                 return {}
             
             # Get or create skill profile
@@ -60,11 +60,11 @@ class SkillManager:
             
             db.session.commit()
             
-            logger.info(f"Initialized skills for user {user_id}")
+            logger.info("Initialized skills for user %s", user_id)
             return profile.skills or {}
         
         except Exception as exc:
-            logger.error(f"Error initializing skills: {str(exc)}")
+            logger.error("Error initializing skills: %s", exc)
             return {}
     
     @staticmethod
@@ -93,11 +93,11 @@ class SkillManager:
             profile.skills[skill_name] = max(proficiency, profile.skills.get(skill_name, 0))
             
             db.session.commit()
-            logger.info(f"Added skill '{skill_name}' to user {user_id}")
+            logger.info("Added skill '%s' to user %s", skill_name, user_id)
             return True
         
         except Exception as exc:
-            logger.error(f"Error adding skill: {str(exc)}")
+            logger.error("Error adding skill: %s", exc)
             return False
     
     @staticmethod
@@ -135,11 +135,11 @@ class SkillManager:
             profile.skills[skill_name] = new_value
             db.session.commit()
             
-            logger.info(f"Incremented '{skill_name}' for user {user_id}: {current:.1f} → {new_value:.1f}")
+            logger.info("Incremented '%s' for user %s: %.1f → %.1f", skill_name, user_id, current, new_value)
             return new_value
         
         except Exception as exc:
-            logger.error(f"Error incrementing skill: {str(exc)}")
+            logger.error("Error incrementing skill: %s", exc)
             return 0.0
     
     @staticmethod
@@ -157,14 +157,14 @@ class SkillManager:
         try:
             task = Task.query.get(task_id)
             if not task:
-                logger.error(f"Task {task_id} not found")
+                logger.error("Task %s not found", task_id)
                 return {}
             
             # Get required skills
             required_skills = task.required_skills or []
             
             if not required_skills:
-                logger.info(f"Task {task_id} has no required skills")
+                logger.info("Task %s has no required skills", task_id)
                 return {}
             
             # Increment each required skill
@@ -178,7 +178,7 @@ class SkillManager:
             return profile.skills if profile else {}
         
         except Exception as exc:
-            logger.error(f"Error updating skills from task: {str(exc)}")
+            logger.error("Error updating skills from task: %s", exc)
             return {}
     
     @staticmethod
@@ -235,7 +235,7 @@ class SkillManager:
             return profile.skills or {}
         
         except Exception as exc:
-            logger.error(f"Error getting skills: {str(exc)}")
+            logger.error("Error getting skills: %s", exc)
             return {}
     
     @staticmethod

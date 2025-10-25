@@ -52,7 +52,7 @@ class RecommendationEngine:
             return skill_overlap
         
         except Exception as exc:
-            logger.error(f"Error calculating skill overlap: {str(exc)}")
+            logger.error("Error calculating skill overlap: %s", exc)
             return 0.0
     
     @staticmethod
@@ -99,7 +99,7 @@ class RecommendationEngine:
             return max(0.0, min(1.0, similarity))
         
         except Exception as exc:
-            logger.error(f"Error calculating completion time similarity: {str(exc)}")
+            logger.error("Error calculating completion time similarity: %s", exc)
             return 0.5
     
     @staticmethod
@@ -169,7 +169,7 @@ class RecommendationEngine:
             return successful_count / total_count
         
         except Exception as exc:
-            logger.error(f"Error calculating success rate: {str(exc)}")
+            logger.error("Error calculating success rate: %s", exc)
             return 0.5
     
     @staticmethod
@@ -213,7 +213,7 @@ class RecommendationEngine:
                 return 0.0  # Task doesn't fit
         
         except Exception as exc:
-            logger.error(f"Error calculating workload fit: {str(exc)}")
+            logger.error("Error calculating workload fit: %s", exc)
             return 0.5
     
     @staticmethod
@@ -255,7 +255,7 @@ class RecommendationEngine:
             return max(0.0, min(1.0, match))
         
         except Exception as exc:
-            logger.error(f"Error calculating experience match: {str(exc)}")
+            logger.error("Error calculating experience match: %s", exc)
             return 0.5
     
     @staticmethod
@@ -290,7 +290,7 @@ class RecommendationEngine:
             return min(boost, 1.5)  # Cap at 1.5
         
         except Exception as exc:
-            logger.error(f"Error calculating priority boost: {str(exc)}")
+            logger.error("Error calculating priority boost: %s", exc)
             return 1.0
     
     @staticmethod
@@ -344,7 +344,7 @@ class RecommendationEngine:
             return max(0, min(100, score * 100))
         
         except Exception as exc:
-            logger.error(f"Error calculating recommendation score: {str(exc)}")
+            logger.error("Error calculating recommendation score: %s", exc)
             return 0.0
     
     @staticmethod
@@ -367,7 +367,7 @@ class RecommendationEngine:
         try:
             user = User.query.get(user_id)
             if not user:
-                logger.error(f"User {user_id} not found")
+                logger.error("User %s not found", user_id)
                 return []
             
             # Get available tasks (not completed, not assigned)
@@ -385,7 +385,7 @@ class RecommendationEngine:
             available_tasks = query.all()
             
             if not available_tasks:
-                logger.info(f"No available tasks for user {user_id}")
+                logger.info("No available tasks for user %s", user_id)
                 return []
             
             # Calculate scores for each task
@@ -418,12 +418,12 @@ class RecommendationEngine:
             # Sort by score (highest first)
             task_scores.sort(key=lambda x: x['recommendation_score'], reverse=True)
             
-            logger.info(f"Generated {len(task_scores)} recommendations for user {user_id}")
+            logger.info("Generated %s recommendations for user %s", len(task_scores), user_id)
             
             return task_scores[:top_n]
         
         except Exception as exc:
-            logger.error(f"Error generating recommendations for user {user_id}: {str(exc)}")
+            logger.error("Error generating recommendations for user %s: %s", user_id, exc)
             return []
     
     @staticmethod
@@ -477,7 +477,7 @@ class RecommendationEngine:
             }
         
         except Exception as exc:
-            logger.error(f"Error getting personalized recommendations: {str(exc)}")
+            logger.error("Error getting personalized recommendations: %s", exc)
             return {
                 'user_id': user_id,
                 'recommendations': [],

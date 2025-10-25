@@ -67,7 +67,7 @@ class PerformanceService:
             return on_time_count / len(assignments) if assignments else 0.5
         
         except Exception as exc:
-            logger.error(f"Error calculating on-time ratio for user {user_id}: {str(exc)}")
+            logger.error("Error calculating on-time ratio for user %s: %s", user_id, exc)
             return 0.5
     
     @staticmethod
@@ -96,7 +96,7 @@ class PerformanceService:
             return total_skill_match / len(assignments) if assignments else 0.5
         
         except Exception as exc:
-            logger.error(f"Error calculating skill accuracy for user {user_id}: {str(exc)}")
+            logger.error("Error calculating skill accuracy for user %s: %s", user_id, exc)
             return 0.5
     
     @staticmethod
@@ -134,7 +134,7 @@ class PerformanceService:
             return total_difficulty / count if count > 0 else 0.5
         
         except Exception as exc:
-            logger.error(f"Error calculating difficulty factor for user {user_id}: {str(exc)}")
+            logger.error("Error calculating difficulty factor for user %s: %s", user_id, exc)
             return 0.5
     
     @staticmethod
@@ -180,13 +180,13 @@ class PerformanceService:
             
             user = User.query.get(user_id)
             if not user:
-                logger.error(f"User {user_id} not found")
+                logger.error("User %s not found", user_id)
                 return {"success": False, "error": "User not found"}
             
             # Get user skill profile
             profile = UserSkillProfile.query.filter_by(user_id=user_id).first()
             if not profile:
-                logger.warning(f"No skill profile for user {user_id}")
+                logger.warning("No skill profile for user %s", user_id)
                 return {"success": False, "error": "No skill profile"}
             
             # Calculate metrics
@@ -253,8 +253,10 @@ class PerformanceService:
             db.session.commit()
             
             logger.info(
-                f"Updated performance for user {user_id}: "
-                f"{old_score:.1f} → {performance_score:.1f}"
+                "Updated performance for user %s: %.1f → %.1f",
+                user_id,
+                old_score,
+                performance_score,
             )
             
             return {
@@ -271,7 +273,7 @@ class PerformanceService:
             }
         
         except Exception as exc:
-            logger.error(f"Error updating performance for user {user_id}: {str(exc)}")
+            logger.error("Error updating performance for user %s: %s", user_id, exc)
             return {"success": False, "error": str(exc)}
     
     @staticmethod
@@ -310,7 +312,7 @@ class PerformanceService:
             } for log in logs]
         
         except Exception as exc:
-            logger.error(f"Error getting performance history for user {user_id}: {str(exc)}")
+            logger.error("Error getting performance history for user %s: %s", user_id, exc)
             return []
     
     @staticmethod
@@ -375,7 +377,7 @@ class PerformanceService:
             }
         
         except Exception as exc:
-            logger.error(f"Error getting performance summary for user {user_id}: {str(exc)}")
+            logger.error("Error getting performance summary for user %s: %s", user_id, exc)
             return {"error": str(exc)}
     
     @staticmethod
@@ -422,7 +424,7 @@ class PerformanceService:
             }
         
         except Exception as exc:
-            logger.error(f"Error getting team performance summary: {str(exc)}")
+            logger.error("Error getting team performance summary: %s", exc)
             return {"error": str(exc)}
     
     @staticmethod
@@ -475,5 +477,5 @@ class PerformanceService:
             }
         
         except Exception as exc:
-            logger.error(f"Error getting performance trends for user {user_id}: {str(exc)}")
+            logger.error("Error getting performance trends for user %s: %s", user_id, exc)
             return {"error": str(exc)}

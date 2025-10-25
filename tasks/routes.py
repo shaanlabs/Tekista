@@ -4,7 +4,7 @@ from flask import abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app import db
-from models import Comment, Project, Task, User
+from models import AnomalyEvent, Comment, ProcessEvent, Project, Task, User
 from notifications import notify_task_assigned, notify_task_status_change
 
 from . import tasks_bp
@@ -108,10 +108,10 @@ def create_task_global():
                     pick.current_workload = min(100.0, (pick.current_workload or 0.0) + _workload_delta(t))
                 except Exception:
                     pass
-        db.session.add(t); db.session.commit()
+        db.session.add(t)
+        db.session.commit()
         # process event: task created
         try:
-            from models import ProcessEvent
             db.session.add(ProcessEvent(source='web', entity='task', entity_id=t.id, event_type='created', meta=f'project={project.id if project else project_id}'))
             db.session.commit()
         except Exception:
@@ -161,7 +161,8 @@ def create_task(project_id):
             pre = db.session.get(Task, dep_id)
             if pre:
                 t.predecessors.append(pre)
-        db.session.add(t); db.session.commit()
+        db.session.add(t)
+        db.session.commit()
         # Notify assignees (if emails configured)
         try:
             notify_task_assigned(t)
@@ -239,7 +240,6 @@ def task_detail(task_id):
             db.session.commit()
             # process event: status change
             try:
-                from models import ProcessEvent
                 db.session.add(ProcessEvent(source='web', entity='task', entity_id=task.id, event_type='status_changed', meta=f'{old_status}->{new_status}'))
                 db.session.commit()
             except Exception:
@@ -251,7 +251,6 @@ def task_detail(task_id):
                     done = sum(1 for st in task.subtasks if st.status == 'Completed')
                     ratio = (done / max(1, total))
                     if ratio < 1.0:
-                        from models import AnomalyEvent
                         evidence = {
                             'parent_task_id': task.id,
                             'subtasks_total': total,

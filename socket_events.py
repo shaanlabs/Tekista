@@ -40,7 +40,7 @@ def init_socketio(app):
             # Get unread count
             unread_count = NotificationService.get_unread_count(user_id)
             
-            logger.info(f"User {user_id} connected. Unread: {unread_count}")
+            logger.info("User %s connected. Unread: %s", user_id, unread_count)
             
             # Emit connection confirmation
             emit('connected', {
@@ -57,7 +57,7 @@ def init_socketio(app):
                 del active_users[user_id]
             
             leave_room(f'user_{user_id}')
-            logger.info(f"User {user_id} disconnected")
+            logger.info("User %s disconnected", user_id)
     
     @socketio.on('mark_notification_read')
     def handle_mark_read(data):
@@ -124,10 +124,10 @@ def emit_notification(user_id: int, notification_data: dict):
             room=f'user_{user_id}'
         )
         
-        logger.info(f"Emitted notification to user {user_id}")
+        logger.info("Emitted notification to user %s", user_id)
     
     except Exception as exc:
-        logger.error(f"Error emitting notification: {str(exc)}")
+        logger.error("Error emitting notification: %s", exc)
 
 def emit_task_assigned(user_id: int, task_id: int, task_title: str, assigned_by_id: int):
     """Emit task assignment notification"""
@@ -205,4 +205,4 @@ def broadcast_unread_count_update(user_id: int):
         )
     
     except Exception as exc:
-        logger.error(f"Error broadcasting unread count: {str(exc)}")
+        logger.error("Error broadcasting unread count: %s", exc)
