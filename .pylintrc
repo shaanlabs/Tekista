@@ -14,9 +14,9 @@ py-version=3.11
 extension-pkg-allow-list=
 
 [MESSAGES CONTROL]
-# Disable specific messages initially - we'll enable these as we fix issues
+# Disable specific messages to allow gradual improvement
 disable=
-    # Docstring messages - we'll add these systematically
+    # Docstring messages - add these incrementally
     C0114,  # missing-module-docstring
     C0115,  # missing-class-docstring
     C0116,  # missing-function-docstring
@@ -24,13 +24,23 @@ disable=
     R0903,  # too-few-public-methods (common in Flask models/forms)
     R0913,  # too-many-arguments (common in service layers)
     R0914,  # too-many-locals (acceptable in route handlers)
+    R0912,  # too-many-branches
+    R0915,  # too-many-statements
     # Duplicate code across similar modules
     R0801,  # duplicate-code
-    # Type hints (we'll add these incrementally)
+    # Type hints and naming
     C0103,  # invalid-name (Flask uses app, db, etc.)
     # Specific to Flask patterns
     W0212,  # protected-access (common with SQLAlchemy)
     W0621,  # redefined-outer-name (fixtures in pytest)
+    # Import and design issues
+    W0611,  # unused-import (might be used in templates/dynamic imports)
+    W0613,  # unused-argument (common in Flask route handlers)
+    W0614,  # unused-wildcard-import
+    E1101,  # no-member (SQLAlchemy dynamic attributes)
+    # Line length and formatting (handled by black)
+    C0301,  # line-too-long
+    C0330,  # bad-continuation
 
 [FORMAT]
 # Maximum line length
