@@ -85,25 +85,24 @@ from sqlalchemy import exists
 from sqlalchemy.orm import selectinload
 
 # Relative imports to avoid circular dependencies
-from models import Project, Task, User, db, AuditLog
+from models import AuditLog, Project, Task, User, db
 
 from . import projects_bp
 from .forms import ProjectForm
 
 
-@projects_bp.route('/')
+@projects_bp.route("/")
 @login_required
 def list_projects():
     # Start with base query and eager-load relationships to avoid N+1
     query = Project.query.options(
-        selectinload(Project.users),
-        selectinload(Project.tasks)
+        selectinload(Project.users), selectinload(Project.tasks)
     )
 
     # Get filter parameters
-    status = request.args.get('status')
-    assignee = request.args.get('assignee', type=int)
-    deadline = request.args.get('deadline')
+    status = request.args.get("status")
+    assignee = request.args.get("assignee", type=int)
+    deadline = request.args.get("deadline")
 
     # Filter by task status (projects that have at least one task with this status)
     if status:
@@ -118,28 +117,30 @@ def list_projects():
     # Filter by deadline
     if deadline:
         try:
-            d = datetime.strptime(deadline, '%Y-%m-%d').date()
+            d = datetime.strptime(deadline, "%Y-%m-%d").date()
             query = query.filter(Project.deadline <= d)
         except ValueError:
-            flash('Invalid date format. Use YYYY-MM-DD.', 'warning')
+            flash("Invalid date format. Use YYYY-MM-DD.", "warning")
 
     projects = query.all()
     users = User.query.order_by(User.username).all()
-    return render_template('projects/list.html', projects=projects, users=users)
+    return render_template("projects/list.html", projects=projects, users=users)
 
 
-@projects_bp.route('/create', methods=['GET', 'POST'])
+@projects_bp.route("/create", methods=["GET", "POST"])
 @login_required
 def create_project():
     form = ProjectForm()
     # Dynamically set user choices for the multi-select field
-    form.users.choices = [(u.id, u.username) for u in User.query.order_by(User.username)]
+    form.users.choices = [
+        (u.id, u.username) for u in User.query.order_by(User.username)
+    ]
 
     if form.validate_on_submit():
         project = Project(
             title=form.title.data,
             description=form.description.data,
-            deadline=form.deadline.data
+            deadline=form.deadline.data,
         )
         # Associate selected users
         for user_id in form.users.data:
@@ -149,35 +150,35 @@ def create_project():
 
         db.session.add(project)
         db.session.commit()
-        flash('Project created successfully!', 'success')
-        return redirect(url_for('projects.list_projects'))
+        flash("Project created successfully!", "success")
+        return redirect(url_for("projects.list_projects"))
 
-    return render_template('projects/create.html', form=form)
+    return render_template("projects/create.html", form=form)
 
 
-@projects_bp.route('/create-smart', methods=['GET', 'POST'])
+@projects_bp.route("/create-smart", methods=["GET", "POST"])
 @login_required
 def create_project_smart():
     # Only Admin/Manager can access smart create
-    role_name = getattr(getattr(current_user, 'role', None), 'name', None)
-    if role_name not in ('Admin','Manager','Project Manager'):
+    role_name = getattr(getattr(current_user, "role", None), "name", None)
+    if role_name not in ("Admin", "Manager", "Project Manager"):
         abort(403)
-    if request.method == 'POST':
+    if request.method == "POST":
         data = request.get_json(silent=True) or {}
-        title = data.get('title')
+        title = data.get("title")
         if not title:
-            return {'error':'title required'}, 400
-        p = Project(title=title, description=data.get('description'))
+            return {"error": "title required"}, 400
+        p = Project(title=title, description=data.get("description"))
         # deadline
-        dl = data.get('deadline')
+        dl = data.get("deadline")
         if dl:
             try:
                 p.deadline = datetime.fromisoformat(dl).date()
             except Exception:
                 pass
         # Attach PM and team members
-        pm_id = data.get('project_manager_id')
-        team_ids = data.get('team_member_ids', []) or []
+        pm_id = data.get("project_manager_id")
+        team_ids = data.get("team_member_ids", []) or []
         try:
             if pm_id:
                 pm = User.query.get(int(pm_id))
@@ -191,12 +192,12 @@ def create_project_smart():
             pass
         db.session.add(p)
         db.session.commit()
-        return {'id': p.id}, 201
+        return {"id": p.id}, 201
     # GET renders smart UI
-    return render_template('projects/create_smart.html')
+    return render_template("projects/create_smart.html")
 
 
-@projects_bp.route('/<int:project_id>')
+@projects_bp.route("/<int:project_id>")
 @login_required
 def project_detail(project_id):
     # Eager-load tasks and their assignees to avoid N+1 in template
@@ -209,25 +210,29 @@ def project_detail(project_id):
     # Build task query based on filters
     task_query = Task.query.filter_by(project_id=project_id)
 
-    status = request.args.get('status')
-    assignee = request.args.get('assignee', type=int)
+    status = request.args.get("status")
+    assignee = request.args.get("assignee", type=int)
 
     if status:
         task_query = task_query.filter(Task.status == status)
     if assignee:
         # Join the User relationship and filter by User.id
-        task_query = task_query.join(Task.assignees).join(User).filter(User.id == assignee)
+        task_query = (
+            task_query.join(Task.assignees).join(User).filter(User.id == assignee)
+        )
 
     tasks = task_query.all()
-    return render_template('projects/detail.html', project=project, tasks=tasks)
+    return render_template("projects/detail.html", project=project, tasks=tasks)
 
 
-@projects_bp.route('/<int:project_id>/edit', methods=['GET', 'POST'])
+@projects_bp.route("/<int:project_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_project(project_id):
     project = db.session.get(Project, project_id) or abort(404)
     form = ProjectForm(obj=project)
-    form.users.choices = [(u.id, u.username) for u in User.query.order_by(User.username)]
+    form.users.choices = [
+        (u.id, u.username) for u in User.query.order_by(User.username)
+    ]
     if form.validate_on_submit():
         project.title = form.title.data
         project.description = form.description.data
@@ -239,51 +244,50 @@ def edit_project(project_id):
             if user:
                 project.users.append(user)
         db.session.commit()
-        flash('Project updated successfully!', 'success')
-        return redirect(url_for('projects.project_detail', project_id=project.id))
-    return render_template('projects/edit.html', form=form, project=project)
+        flash("Project updated successfully!", "success")
+        return redirect(url_for("projects.project_detail", project_id=project.id))
+    return render_template("projects/edit.html", form=form, project=project)
 
 
-@projects_bp.route('/<int:project_id>/delete', methods=['POST'])
+@projects_bp.route("/<int:project_id>/delete", methods=["POST"])
 @login_required
 def delete_project(project_id):
     project = Project.query.get_or_404(project_id)
     db.session.delete(project)
     db.session.commit()
-    flash('Project deleted', 'success')
-    return redirect(url_for('projects.list_projects'))
+    flash("Project deleted", "success")
+    return redirect(url_for("projects.list_projects"))
 
 
 # Kanban Board View
-@projects_bp.route('/<int:project_id>/kanban')
+@projects_bp.route("/<int:project_id>/kanban")
 @login_required
 def project_kanban(project_id):
     project = Project.query.get_or_404(project_id)
     # Group tasks by status
-    columns = {
-        'To Do': [],
-        'In Progress': [],
-        'Done': []
-    }
+    columns = {"To Do": [], "In Progress": [], "Done": []}
     for t in project.tasks:
         columns.setdefault(t.status, []).append(t)
-    return render_template('projects/kanban.html', project=project, columns=columns)
+    return render_template("projects/kanban.html", project=project, columns=columns)
 
 
 # Gantt Chart View (basic scaffold - client renders timeline)
-@projects_bp.route('/<int:project_id>/gantt')
+@projects_bp.route("/<int:project_id>/gantt")
 @login_required
 def project_gantt(project_id):
     project = Project.query.get_or_404(project_id)
     tasks = Task.query.filter_by(project_id=project_id).all()
-    return render_template('projects/gantt.html', project=project, tasks=tasks)
+    return render_template("projects/gantt.html", project=project, tasks=tasks)
 
 
-@projects_bp.route('/<int:project_id>/export')
+@projects_bp.route("/<int:project_id>/export")
 @login_required
 def export_project_csv(project_id):
     # Admin only
-    if not (getattr(current_user, 'role', None) and getattr(current_user.role, 'name', None) == 'Admin'):
+    if not (
+        getattr(current_user, "role", None)
+        and getattr(current_user.role, "name", None) == "Admin"
+    ):
         abort(403)
     project = Project.query.get_or_404(project_id)
 
@@ -294,44 +298,55 @@ def export_project_csv(project_id):
     writer = csv.writer(si)
 
     # Write header
-    writer.writerow([
-        'Task ID', 'Title', 'Description', 'Status',
-        'Priority', 'Due Date', 'Assignees'
-    ])
+    writer.writerow(
+        [
+            "Task ID",
+            "Title",
+            "Description",
+            "Status",
+            "Priority",
+            "Due Date",
+            "Assignees",
+        ]
+    )
 
     # Write rows
     for task in project.tasks:
         assignee_usernames = ";".join(u.username for u in task.assignees)
         due_date_str = task.due_date.isoformat() if task.due_date else ""
-        writer.writerow([
-            task.id,
-            task.title,
-            task.description or "",
-            task.status,
-            task.priority,
-            due_date_str,
-            assignee_usernames
-        ])
+        writer.writerow(
+            [
+                task.id,
+                task.title,
+                task.description or "",
+                task.status,
+                task.priority,
+                due_date_str,
+                assignee_usernames,
+            ]
+        )
 
     output = si.getvalue()
     si.close()
 
     # Audit log
     try:
-        db.session.add(AuditLog(
-            actor_id=current_user.id,
-            action='export_csv',
-            target_type='project',
-            target_id=project.id,
-            meta=f'CSV export: project_{project.id}_tasks.csv'
-        ))
+        db.session.add(
+            AuditLog(
+                actor_id=current_user.id,
+                action="export_csv",
+                target_type="project",
+                target_id=project.id,
+                meta=f"CSV export: project_{project.id}_tasks.csv",
+            )
+        )
         db.session.commit()
     except Exception:
         pass
 
-    filename = f'project_{project.id}_tasks.csv'
+    filename = f"project_{project.id}_tasks.csv"
     return Response(
         output,
-        mimetype='text/csv',
-        headers={"Content-Disposition": f"attachment;filename={filename}"}
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment;filename={filename}"},
     )

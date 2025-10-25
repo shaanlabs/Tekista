@@ -9,22 +9,23 @@ db = SQLAlchemy()
 
 # Define association tables FIRST — at top level
 project_users = db.Table(
-    'project_users',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('project_id', db.Integer, db.ForeignKey('project.id'))
+    "project_users",
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
+    db.Column("project_id", db.Integer, db.ForeignKey("project.id")),
 )
 
 task_assignees = db.Table(
-    'task_assignees',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('task_id', db.Integer, db.ForeignKey('task.id'))
+    "task_assignees",
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
+    db.Column("task_id", db.Integer, db.ForeignKey("task.id")),
 )
 
 task_dependencies = db.Table(
-    'task_dependencies',
-    db.Column('predecessor_id', db.Integer, db.ForeignKey('task.id')),
-    db.Column('successor_id', db.Integer, db.ForeignKey('task.id'))
+    "task_dependencies",
+    db.Column("predecessor_id", db.Integer, db.ForeignKey("task.id")),
+    db.Column("successor_id", db.Integer, db.ForeignKey("task.id")),
 )
+
 
 # Define models — they can safely reference the tables above
 class User(UserMixin, db.Model):
@@ -34,21 +35,31 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     # Optional enterprise fields (FKs declared as strings to avoid import cycles)
-    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=True)
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=True)
-    custom_role_id = db.Column(db.Integer, db.ForeignKey('custom_role.id'), nullable=True)
+    organization_id = db.Column(
+        db.Integer, db.ForeignKey("organization.id"), nullable=True
+    )
+    role_id = db.Column(db.Integer, db.ForeignKey("role.id"), nullable=True)
+    custom_role_id = db.Column(
+        db.Integer, db.ForeignKey("custom_role.id"), nullable=True
+    )
     api_token = db.Column(db.String(128), unique=True, index=True, nullable=True)
     token_expiration = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     # scheduling fields
     current_workload = db.Column(db.Float, default=0.0)  # 0..100
-    availability = db.Column(db.String(20), default='Available')  # Available|Busy|In a Meeting|On a Break|Out of Office
+    availability = db.Column(
+        db.String(20), default="Available"
+    )  # Available|Busy|In a Meeting|On a Break|Out of Office
     # rbac relationship
-    role = db.relationship('Role')
+    role = db.relationship("Role")
 
     # relationships — now 'project_users' and 'task_assignees' exist!
-    projects = db.relationship('Project', secondary=project_users, back_populates='users')
-    tasks = db.relationship('Task', secondary=task_assignees, back_populates='assignees')
+    projects = db.relationship(
+        "Project", secondary=project_users, back_populates="users"
+    )
+    tasks = db.relationship(
+        "Task", secondary=task_assignees, back_populates="assignees"
+    )
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -59,7 +70,11 @@ class User(UserMixin, db.Model):
     def get_api_token(self, expires_in=3600):
         """Generate or return existing token if still valid."""
         now = datetime.utcnow()
-        if self.api_token and self.token_expiration and self.token_expiration > now + timedelta(seconds=60):
+        if (
+            self.api_token
+            and self.token_expiration
+            and self.token_expiration > now + timedelta(seconds=60)
+        ):
             return self.api_token
         self.api_token = secrets.token_urlsafe(32)
         self.token_expiration = now + timedelta(seconds=expires_in)
@@ -83,15 +98,16 @@ class User(UserMixin, db.Model):
         return u
 
     def __repr__(self):
-        return f'<User {self.username}>'
+        return f"<User {self.username}>"
 
 
 # ========= Anomaly Engine Core =========
 
+
 class UserBehaviorBaseline(db.Model):
-    __tablename__ = 'user_behavior_baseline'
+    __tablename__ = "user_behavior_baseline"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), index=True)
     metric_key = db.Column(db.String(120), index=True)
     center = db.Column(db.Float)
     spread = db.Column(db.Float)
@@ -100,9 +116,9 @@ class UserBehaviorBaseline(db.Model):
 
 
 class UserDailyFeature(db.Model):
-    __tablename__ = 'user_daily_feature'
+    __tablename__ = "user_daily_feature"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), index=True)
     date = db.Column(db.Date, index=True)
     feature_key = db.Column(db.String(120), index=True)
     value = db.Column(db.Float)
@@ -110,9 +126,9 @@ class UserDailyFeature(db.Model):
 
 
 class AnomalyEvent(db.Model):
-    __tablename__ = 'anomaly_event'
+    __tablename__ = "anomaly_event"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), index=True)
     severity = db.Column(db.String(20))  # low|medium|high
     type = db.Column(db.String(80))
     occurred_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
@@ -120,14 +136,14 @@ class AnomalyEvent(db.Model):
     evidence_json = db.Column(db.Text)
     explanation_json = db.Column(db.Text)
     resolved = db.Column(db.Boolean, default=False)
-    resolved_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    resolved_by = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     resolved_at = db.Column(db.DateTime, nullable=True)
 
 
 class UserReliabilityScore(db.Model):
-    __tablename__ = 'user_reliability_score'
+    __tablename__ = "user_reliability_score"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), index=True)
     score = db.Column(db.Float, default=100.0)
     computed_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -140,7 +156,7 @@ class Role(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f'<Role {self.name}>'
+        return f"<Role {self.name}>"
 
 
 class CustomRole(db.Model):
@@ -151,43 +167,46 @@ class CustomRole(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f'<CustomRole {self.name}>'
+        return f"<CustomRole {self.name}>"
 
 
 class AuditLog(db.Model):
     __tablename__ = "audit_log"
     id = db.Column(db.Integer, primary_key=True)
-    actor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    actor_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     action = db.Column(db.String(80), nullable=False)
     target_type = db.Column(db.String(80))
     target_id = db.Column(db.Integer)
     meta = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    actor = db.relationship('User')
+    actor = db.relationship("User")
 
     def __repr__(self):
-        return f'<AuditLog {self.action} #{self.id}>'
+        return f"<AuditLog {self.action} #{self.id}>"
 
 
 class UserProfile(db.Model):
-    __tablename__ = 'user_profile'
+    __tablename__ = "user_profile"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), unique=True, index=True)
     job_title = db.Column(db.String(120), nullable=True)
     department = db.Column(db.String(120), nullable=True)
     interests = db.Column(db.Text, nullable=True)
-    skills_json = db.Column(db.Text, nullable=True)  # current skills snapshot for UI tags
+    skills_json = db.Column(
+        db.Text, nullable=True
+    )  # current skills snapshot for UI tags
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+
 class Organization(db.Model):
-    __tablename__ = 'organization'
+    __tablename__ = "organization"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), unique=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f'<Organization {self.name}>'
+        return f"<Organization {self.name}>"
 
 
 class Project(db.Model):
@@ -197,20 +216,24 @@ class Project(db.Model):
     description = db.Column(db.Text)
     deadline = db.Column(db.Date)
     # Optional enterprise field to associate projects with organizations
-    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=True)
+    organization_id = db.Column(
+        db.Integer, db.ForeignKey("organization.id"), nullable=True
+    )
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    users = db.relationship('User', secondary=project_users, back_populates='projects')
-    tasks = db.relationship('Task', back_populates='project', cascade='all, delete-orphan')
+    users = db.relationship("User", secondary=project_users, back_populates="projects")
+    tasks = db.relationship(
+        "Task", back_populates="project", cascade="all, delete-orphan"
+    )
 
     def progress(self):
         total = len(self.tasks)
         if total == 0:
             return 0
-        done = sum(1 for t in self.tasks if t.status == 'Completed')
+        done = sum(1 for t in self.tasks if t.status == "Completed")
         return int((done / total) * 100)
 
     def __repr__(self):
-        return f'<Project {self.title}>'
+        return f"<Project {self.title}>"
 
 
 class Task(db.Model):
@@ -219,58 +242,63 @@ class Task(db.Model):
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text)
     due_date = db.Column(db.Date)
-    priority = db.Column(db.String(20), default='Normal')  # Critical, High, Normal, Low
+    priority = db.Column(db.String(20), default="Normal")  # Critical, High, Normal, Low
     estimated_hours = db.Column(db.Float, default=4.0)
-    status = db.Column(db.String(30), default='To Do')
+    status = db.Column(db.String(30), default="To Do")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     # Subtasks
-    parent_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=True)
-    subtasks = db.relationship('Task', backref=db.backref('parent', remote_side=[id]))
+    parent_id = db.Column(db.Integer, db.ForeignKey("task.id"), nullable=True)
+    subtasks = db.relationship("Task", backref=db.backref("parent", remote_side=[id]))
     # Recurrence (RFC-style rule or simple text)
     recurrence_rule = db.Column(db.String(200), nullable=True)
     recurrence_end = db.Column(db.Date, nullable=True)
     # Templates
     is_template = db.Column(db.Boolean, default=False)
     template_name = db.Column(db.String(120), nullable=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
-    project = db.relationship('Project', back_populates='tasks')
+    project_id = db.Column(db.Integer, db.ForeignKey("project.id"))
+    project = db.relationship("Project", back_populates="tasks")
     # This is correct: back_populates='tasks' refers to User.tasks
-    assignees = db.relationship('User', secondary=task_assignees, back_populates='tasks')
-    
-    predecessors = db.relationship(
-        'Task',
-        secondary=task_dependencies,
-        primaryjoin=id==task_dependencies.c.successor_id,
-        secondaryjoin=id==task_dependencies.c.predecessor_id,
-        backref='successors'
+    assignees = db.relationship(
+        "User", secondary=task_assignees, back_populates="tasks"
     )
-    comments = db.relationship('Comment', back_populates='task', cascade='all, delete-orphan')
+
+    predecessors = db.relationship(
+        "Task",
+        secondary=task_dependencies,
+        primaryjoin=id == task_dependencies.c.successor_id,
+        secondaryjoin=id == task_dependencies.c.predecessor_id,
+        backref="successors",
+    )
+    comments = db.relationship(
+        "Comment", back_populates="task", cascade="all, delete-orphan"
+    )
 
     def can_start(self):
-        return all(p.status == 'Completed' for p in self.predecessors)
+        return all(p.status == "Completed" for p in self.predecessors)
 
     def __repr__(self):
-        return f'<Task {self.title}>'
+        return f"<Task {self.title}>"
 
 
 class Comment(db.Model):
     __tablename__ = "comment"
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text, nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    task_id = db.Column(db.Integer, db.ForeignKey('task.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    task_id = db.Column(db.Integer, db.ForeignKey("task.id"))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    author = db.relationship('User')
-    task = db.relationship('Task', back_populates='comments')
+    author = db.relationship("User")
+    task = db.relationship("Task", back_populates="comments")
 
     def __repr__(self):
-        return f'<Comment {self.id}>'
+        return f"<Comment {self.id}>"
 
 
 # ========= Advanced Phase Scaffolding (minimal, safe) =========
 
+
 class Setting(db.Model):
-    __tablename__ = 'setting'
+    __tablename__ = "setting"
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(120), unique=True, nullable=False)
     value = db.Column(db.Text, nullable=True)
@@ -279,9 +307,9 @@ class Setting(db.Model):
 
 
 class UserCalendarToken(db.Model):
-    __tablename__ = 'user_calendar_token'
+    __tablename__ = "user_calendar_token"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     provider = db.Column(db.String(30))  # google|outlook
     token_encrypted = db.Column(db.Text)
     refresh_encrypted = db.Column(db.Text)
@@ -291,9 +319,9 @@ class UserCalendarToken(db.Model):
 
 
 class UserCapacity(db.Model):
-    __tablename__ = 'user_capacity'
+    __tablename__ = "user_capacity"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     date = db.Column(db.Date, index=True)
     blocked_hours = db.Column(db.Float, default=0.0)
     capacity_hours = db.Column(db.Float, default=8.0)
@@ -302,9 +330,9 @@ class UserCapacity(db.Model):
 
 
 class TaskOutcome(db.Model):
-    __tablename__ = 'task_outcome'
+    __tablename__ = "task_outcome"
     id = db.Column(db.Integer, primary_key=True)
-    task_id = db.Column(db.Integer, db.ForeignKey('task.id'))
+    task_id = db.Column(db.Integer, db.ForeignKey("task.id"))
     estimate_vs_actual = db.Column(db.Float, nullable=True)
     qa_first_pass = db.Column(db.Boolean, default=None)
     reassignments = db.Column(db.Integer, default=0)
@@ -313,9 +341,9 @@ class TaskOutcome(db.Model):
 
 
 class UserSkillHistory(db.Model):
-    __tablename__ = 'user_skill_history'
+    __tablename__ = "user_skill_history"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     skill = db.Column(db.String(80))
     delta = db.Column(db.Float)
     reason = db.Column(db.String(200))
@@ -323,7 +351,7 @@ class UserSkillHistory(db.Model):
 
 
 class WorkflowTemplate(db.Model):
-    __tablename__ = 'workflow_template'
+    __tablename__ = "workflow_template"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
     description = db.Column(db.Text)
@@ -331,9 +359,9 @@ class WorkflowTemplate(db.Model):
 
 
 class WorkflowStep(db.Model):
-    __tablename__ = 'workflow_step'
+    __tablename__ = "workflow_step"
     id = db.Column(db.Integer, primary_key=True)
-    template_id = db.Column(db.Integer, db.ForeignKey('workflow_template.id'))
+    template_id = db.Column(db.Integer, db.ForeignKey("workflow_template.id"))
     step_order = db.Column(db.Integer, default=0)
     title = db.Column(db.String(150), nullable=False)
     required_roles = db.Column(db.String(200))
@@ -342,7 +370,7 @@ class WorkflowStep(db.Model):
 
 
 class EpicDemand(db.Model):
-    __tablename__ = 'epic_demand'
+    __tablename__ = "epic_demand"
     id = db.Column(db.Integer, primary_key=True)
     epic_id = db.Column(db.Integer, nullable=False)
     role = db.Column(db.String(80))
@@ -351,9 +379,9 @@ class EpicDemand(db.Model):
 
 
 class UserBurnoutMetric(db.Model):
-    __tablename__ = 'user_burnout_metric'
+    __tablename__ = "user_burnout_metric"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     time_in_critical_days = db.Column(db.Integer, default=0)
     context_switch_7d = db.Column(db.Integer, default=0)
     critical_tasks_active = db.Column(db.Integer, default=0)
@@ -361,46 +389,46 @@ class UserBurnoutMetric(db.Model):
 
 
 class ProjectHealth(db.Model):
-    __tablename__ = 'project_health'
+    __tablename__ = "project_health"
     id = db.Column(db.Integer, primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+    project_id = db.Column(db.Integer, db.ForeignKey("project.id"))
     health_score = db.Column(db.Float, default=0.0)
     risk_score = db.Column(db.Float, default=0.0)
     computed_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class BudgetForecast(db.Model):
-    __tablename__ = 'budget_forecast'
+    __tablename__ = "budget_forecast"
     id = db.Column(db.Integer, primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+    project_id = db.Column(db.Integer, db.ForeignKey("project.id"))
     burn_rate = db.Column(db.Float, default=0.0)
     forecast_overrun_pct = db.Column(db.Float, default=0.0)
     computed_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class AutomationRule(db.Model):
-    __tablename__ = 'automation_rule'
+    __tablename__ = "automation_rule"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     trigger_json = db.Column(db.Text)  # JSON
-    action_json = db.Column(db.Text)   # JSON
+    action_json = db.Column(db.Text)  # JSON
     enabled = db.Column(db.Boolean, default=True)
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+    created_by = db.Column(db.Integer, db.ForeignKey("user.id"))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class AutomationRun(db.Model):
-    __tablename__ = 'automation_run'
+    __tablename__ = "automation_run"
     id = db.Column(db.Integer, primary_key=True)
-    rule_id = db.Column(db.Integer, db.ForeignKey('automation_rule.id'))
-    status = db.Column(db.String(40), default='pending')
+    rule_id = db.Column(db.Integer, db.ForeignKey("automation_rule.id"))
+    status = db.Column(db.String(40), default="pending")
     started_at = db.Column(db.DateTime, default=datetime.utcnow)
     ended_at = db.Column(db.DateTime, nullable=True)
     meta = db.Column(db.Text)
 
 
 class ProcessEvent(db.Model):
-    __tablename__ = 'process_event'
+    __tablename__ = "process_event"
     id = db.Column(db.Integer, primary_key=True)
     source = db.Column(db.String(80))
     entity = db.Column(db.String(40))
@@ -411,18 +439,18 @@ class ProcessEvent(db.Model):
 
 
 class AIAgentJob(db.Model):
-    __tablename__ = 'ai_agent_job'
+    __tablename__ = "ai_agent_job"
     id = db.Column(db.Integer, primary_key=True)
     job_type = db.Column(db.String(80))  # decompose|apply_plan|summary
     payload_json = db.Column(db.Text)
-    status = db.Column(db.String(40), default='queued')
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+    status = db.Column(db.String(40), default="queued")
+    created_by = db.Column(db.Integer, db.ForeignKey("user.id"))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class AIAuditLog(db.Model):
-    __tablename__ = 'ai_audit_log'
+    __tablename__ = "ai_audit_log"
     id = db.Column(db.Integer, primary_key=True)
     actor = db.Column(db.String(80))  # AI-Agent-01
     action = db.Column(db.String(120))

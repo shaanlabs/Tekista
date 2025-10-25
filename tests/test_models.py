@@ -3,6 +3,7 @@ Tests for database models.
 
 Tests User, Project, Task, Role, and other model functionality.
 """
+
 from datetime import datetime, timedelta
 
 import pytest
@@ -17,33 +18,33 @@ class TestUserModel:
 
     def test_user_creation(self, app):
         """Test creating a user."""
-        user = User(username='testuser', email='test@example.com')
-        user.set_password('password123')
+        user = User(username="testuser", email="test@example.com")
+        user.set_password("password123")
         db.session.add(user)
         db.session.commit()
 
         assert user.id is not None
-        assert user.username == 'testuser'
-        assert user.email == 'test@example.com'
-        assert user.check_password('password123')
-        assert not user.check_password('wrongpassword')
+        assert user.username == "testuser"
+        assert user.email == "test@example.com"
+        assert user.check_password("password123")
+        assert not user.check_password("wrongpassword")
 
     def test_user_password_hash(self, user):
         """Test password hashing."""
         assert user.password_hash is not None
-        assert user.password_hash != 'testpass123'
-        assert user.check_password('testpass123')
+        assert user.password_hash != "testpass123"
+        assert user.check_password("testpass123")
 
     def test_user_role_assignment(self, user, admin_role):
         """Test assigning roles to users."""
         user.role = admin_role
         db.session.commit()
-        assert user.role.name == 'Admin'
+        assert user.role.name == "Admin"
 
     def test_user_repr(self, user):
         """Test User __repr__ method."""
         repr_str = repr(user)
-        assert 'User' in repr_str
+        assert "User" in repr_str
         assert user.username in repr_str
 
 
@@ -55,24 +56,24 @@ class TestProjectModel:
     def test_project_creation(self, app, manager_user):
         """Test creating a project."""
         project = Project(
-            title='New Project',
-            description='Project description',
-            deadline=(datetime.utcnow() + timedelta(days=30)).date()
+            title="New Project",
+            description="Project description",
+            deadline=(datetime.utcnow() + timedelta(days=30)).date(),
         )
         project.users.append(manager_user)
         db.session.add(project)
         db.session.commit()
 
         assert project.id is not None
-        assert project.title == 'New Project'
+        assert project.title == "New Project"
         assert manager_user in project.users
 
     def test_project_progress(self, project, user):
         """Test project progress calculation."""
         # Create tasks with different statuses
-        task1 = Task(title='Task 1', status='Completed', project=project)
-        task2 = Task(title='Task 2', status='In Progress', project=project)
-        task3 = Task(title='Task 3', status='To Do', project=project)
+        task1 = Task(title="Task 1", status="Completed", project=project)
+        task2 = Task(title="Task 2", status="In Progress", project=project)
+        task3 = Task(title="Task 3", status="To Do", project=project)
         db.session.add_all([task1, task2, task3])
         db.session.commit()
 
@@ -99,24 +100,24 @@ class TestTaskModel:
     def test_task_creation(self, project, user):
         """Test creating a task."""
         task = Task(
-            title='Test Task',
-            description='Task description',
-            priority='High',
-            status='To Do',
-            project=project
+            title="Test Task",
+            description="Task description",
+            priority="High",
+            status="To Do",
+            project=project,
         )
         task.assignees.append(user)
         db.session.add(task)
         db.session.commit()
 
         assert task.id is not None
-        assert task.title == 'Test Task'
-        assert task.priority == 'High'
+        assert task.title == "Test Task"
+        assert task.priority == "High"
         assert user in task.assignees
 
     def test_task_status_values(self, task):
         """Test task status values."""
-        valid_statuses = ['To Do', 'In Progress', 'Completed']
+        valid_statuses = ["To Do", "In Progress", "Completed"]
         for status in valid_statuses:
             task.status = status
             db.session.commit()
@@ -133,11 +134,7 @@ class TestTaskModel:
 
     def test_task_comments(self, task, user):
         """Test task comments relationship."""
-        comment = Comment(
-            body='Test comment',
-            author_id=user.id,
-            task_id=task.id
-        )
+        comment = Comment(body="Test comment", author_id=user.id, task_id=task.id)
         db.session.add(comment)
         db.session.commit()
 
@@ -152,12 +149,12 @@ class TestRoleModel:
 
     def test_role_creation(self, app):
         """Test creating a role."""
-        role = Role(name='Developer', description='Software Developer')
+        role = Role(name="Developer", description="Software Developer")
         db.session.add(role)
         db.session.commit()
 
         assert role.id is not None
-        assert role.name == 'Developer'
+        assert role.name == "Developer"
 
     def test_role_users_relationship(self, admin_role, admin_user, manager_user):
         """Test role-users relationship."""
@@ -177,14 +174,14 @@ class TestAuditLog:
         """Test creating an audit log entry."""
         log = AuditLog(
             actor_id=user.id,
-            action='create',
-            target_type='project',
+            action="create",
+            target_type="project",
             target_id=1,
-            meta='Test action'
+            meta="Test action",
         )
         db.session.add(log)
         db.session.commit()
 
         assert log.id is not None
         assert log.actor_id == user.id
-        assert log.action == 'create'
+        assert log.action == "create"

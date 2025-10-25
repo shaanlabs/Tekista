@@ -7,16 +7,18 @@ import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 
+from sqlalchemy.exc import SQLAlchemyError
+
 from models import db
 from notifications_models import (Notification, NotificationPreference,
                                   NotificationTemplate)
-from sqlalchemy.exc import SQLAlchemyError
 
 logger = logging.getLogger(__name__)
 
+
 class NotificationService:
     """Service for managing notifications"""
-    
+
     @staticmethod
     def create_notification(
         user_id: int,
@@ -27,11 +29,11 @@ class NotificationService:
         project_id: Optional[int] = None,
         related_user_id: Optional[int] = None,
         data: Optional[Dict] = None,
-        action_url: Optional[str] = None
+        action_url: Optional[str] = None,
     ) -> Optional[Notification]:
         """
         Create a new notification
-        
+
         Args:
             user_id: ID of the user receiving notification
             title: Notification title
@@ -42,21 +44,25 @@ class NotificationService:
             related_user_id: User who triggered the notification (optional)
             data: Additional data (optional)
             action_url: URL to navigate to (optional)
-            
+
         Returns:
             Created Notification object or None
         """
         try:
             # Check user preferences
             prefs = NotificationPreference.query.filter_by(user_id=user_id).first()
-            
+
             if prefs:
                 # Check if this notification type is enabled
-                pref_key = f'{notification_type}'
+                pref_key = f"{notification_type}"
                 if hasattr(prefs, pref_key) and not getattr(prefs, pref_key):
-                    logger.info("Notification type %s disabled for user %s", notification_type, user_id)
+                    logger.info(
+                        "Notification type %s disabled for user %s",
+                        notification_type,
+                        user_id,
+                    )
                     return None
-            
+
             # Create notification
             notification = Notification(
                 user_id=user_id,
@@ -67,19 +73,19 @@ class NotificationService:
                 project_id=project_id,
                 related_user_id=related_user_id,
                 data=data,
-                action_url=action_url
+                action_url=action_url,
             )
-            
+
             db.session.add(notification)
             db.session.commit()
-            
+
             logger.info("Created notification %s for user %s", notification.id, user_id)
             return notification
-        
+
         except SQLAlchemyError as exc:
             logger.error("Error creating notification: %s", exc)
             return None
-    
+
     @staticmethod
     def create_from_template(
         user_id: int,
@@ -89,11 +95,11 @@ class NotificationService:
         task_id: Optional[int] = None,
         project_id: Optional[int] = None,
         related_user_id: Optional[int] = None,
-        action_url: Optional[str] = None
+        action_url: Optional[str] = None,
     ) -> Optional[Notification]:
         """
         Create notification from template
-        
+
         Args:
             user_id: ID of the user
             template_key: Template key
@@ -103,19 +109,19 @@ class NotificationService:
             project_id: Related project ID (optional)
             related_user_id: Related user ID (optional)
             action_url: Action URL (optional)
-            
+
         Returns:
             Created Notification or None
         """
         try:
             template = NotificationTemplate.get_template(template_key)
-            
+
             if not template:
                 logger.warning("Template %s not found", template_key)
                 return None
-            
+
             title, message = template.render(**template_vars)
-            
+
             return NotificationService.create_notification(
                 user_id=user_id,
                 title=title,
@@ -125,59 +131,54 @@ class NotificationService:
                 project_id=project_id,
                 related_user_id=related_user_id,
                 data=template_vars,
-                action_url=action_url
+                action_url=action_url,
             )
-        
+
         except Exception as exc:
             logger.error("Error creating notification from template: %s", exc)
             return None
-    
+
     @staticmethod
     def get_user_notifications(
-        user_id: int,
-        unread_only: bool = False,
-        limit: int = 50
+        user_id: int, unread_only: bool = False, limit: int = 50
     ) -> List[Notification]:
         """
         Get notifications for a user
-        
+
         Args:
             user_id: ID of the user
             unread_only: Only return unread notifications
             limit: Maximum number of notifications
-            
+
         Returns:
             List of Notification objects
         """
         try:
             query = Notification.query.filter_by(user_id=user_id)
-            
+
             if unread_only:
                 query = query.filter_by(is_read=False)
-            
-            notifications = query.order_by(
-                Notification.created_at.desc()
-            ).limit(limit).all()
-            
+
+            notifications = (
+                query.order_by(Notification.created_at.desc()).limit(limit).all()
+            )
+
             return notifications
-        
+
         except SQLAlchemyError as exc:
             logger.error("Error getting notifications for user %s: %s", user_id, exc)
             return []
-    
+
     @staticmethod
     def get_unread_count(user_id: int) -> int:
         """Get count of unread notifications"""
         try:
-            count = Notification.query.filter_by(
-                user_id=user_id,
-                is_read=False
-            ).count()
+            count = Notification.query.filter_by(user_id=user_id, is_read=False).count()
             return count
         except SQLAlchemyError as exc:
             logger.error("Error getting unread count for user %s: %s", user_id, exc)
             return 0
-    
+
     @staticmethod
     def mark_as_read(notification_id: int) -> bool:
         """Mark notification as read"""
@@ -190,22 +191,21 @@ class NotificationService:
         except SQLAlchemyError as exc:
             logger.error("Error marking notification as read: %s", exc)
             return False
-    
+
     @staticmethod
     def mark_all_as_read(user_id: int) -> int:
         """Mark all notifications as read for user"""
         try:
-            count = Notification.query.filter_by(
-                user_id=user_id,
-                is_read=False
-            ).update({'is_read': True, 'read_at': datetime.utcnow()})
-            
+            count = Notification.query.filter_by(user_id=user_id, is_read=False).update(
+                {"is_read": True, "read_at": datetime.utcnow()}
+            )
+
             db.session.commit()
             return count
         except SQLAlchemyError as exc:
             logger.error("Error marking all notifications as read: %s", exc)
             return 0
-    
+
     @staticmethod
     def delete_notification(notification_id: int) -> bool:
         """Delete a notification"""
@@ -219,74 +219,78 @@ class NotificationService:
         except SQLAlchemyError as exc:
             logger.error("Error deleting notification: %s", exc)
             return False
-    
+
     @staticmethod
     def cleanup_old_notifications(days: int = 30) -> int:
         """Delete notifications older than N days"""
         try:
             cutoff_date = datetime.utcnow() - timedelta(days=days)
-            
+
             count = Notification.query.filter(
                 Notification.created_at < cutoff_date
             ).delete()
-            
+
             db.session.commit()
             logger.info("Cleaned up %s old notifications", count)
             return count
         except SQLAlchemyError as exc:
             logger.error("Error cleaning up old notifications: %s", exc)
             return 0
-    
+
     @staticmethod
     def get_or_create_preferences(user_id: int) -> NotificationPreference:
         """Get or create notification preferences for user"""
         try:
             prefs = NotificationPreference.query.filter_by(user_id=user_id).first()
-            
+
             if not prefs:
                 prefs = NotificationPreference(user_id=user_id)
                 db.session.add(prefs)
                 db.session.commit()
-            
+
             return prefs
         except SQLAlchemyError as exc:
             logger.error("Error getting/creating preferences: %s", exc)
             return None
-    
+
     @staticmethod
     def update_preferences(user_id: int, **kwargs) -> bool:
         """Update notification preferences"""
         try:
             prefs = NotificationService.get_or_create_preferences(user_id)
-            
+
             if not prefs:
                 return False
-            
+
             for key, value in kwargs.items():
                 if hasattr(prefs, key):
                     setattr(prefs, key, value)
-            
+
             db.session.commit()
             return True
         except SQLAlchemyError as exc:
             logger.error("Error updating preferences: %s", exc)
             return False
 
+
 # ============================================================================
 # NOTIFICATION EVENTS
 # ============================================================================
 
+
 class NotificationEvents:
     """Predefined notification events"""
-    
+
     @staticmethod
-    def task_assigned(user_id: int, task_id: int, task_title: str, assigned_by_id: int) -> Optional[Notification]:
+    def task_assigned(
+        user_id: int, task_id: int, task_title: str, assigned_by_id: int
+    ) -> Optional[Notification]:
         """Notify user about task assignment"""
         from models import User
-        
+
         assigned_by = User.query.get(assigned_by_id)
         assigned_by_name = assigned_by.username if assigned_by else "System"
-        
+
         return NotificationService.create_notification(
             user_id=user_id,
             title="📋 New Task Assigned",
@@ -294,17 +298,19 @@ class NotificationEvents:
             notification_type="task_assigned",
             task_id=task_id,
             related_user_id=assigned_by_id,
-            action_url=f"/tasks/{task_id}"
+            action_url=f"/tasks/{task_id}",
         )
-    
+
     @staticmethod
-    def task_completed(user_id: int, task_id: int, task_title: str, completed_by_id: int) -> Optional[Notification]:
+    def task_completed(
+        user_id: int, task_id: int, task_title: str, completed_by_id: int
+    ) -> Optional[Notification]:
         """Notify user about task completion"""
         from models import User
-        
+
         completed_by = User.query.get(completed_by_id)
         completed_by_name = completed_by.username if completed_by else "System"
-        
+
         return NotificationService.create_notification(
             user_id=user_id,
             title="✅ Task Completed",
@@ -312,11 +318,13 @@ class NotificationEvents:
             notification_type="task_completed",
             task_id=task_id,
             related_user_id=completed_by_id,
-            action_url=f"/tasks/{task_id}"
+            action_url=f"/tasks/{task_id}",
         )
-    
+
     @staticmethod
-    def task_overdue(user_id: int, task_id: int, task_title: str) -> Optional[Notification]:
+    def task_overdue(
+        user_id: int, task_id: int, task_title: str
+    ) -> Optional[Notification]:
         """Notify user about overdue task"""
         return NotificationService.create_notification(
             user_id=user_id,
@@ -324,31 +332,35 @@ class NotificationEvents:
             message=f"Task is overdue: {task_title}",
             notification_type="task_overdue",
             task_id=task_id,
-            action_url=f"/tasks/{task_id}"
+            action_url=f"/tasks/{task_id}",
         )
-    
+
     @staticmethod
-    def performance_update(user_id: int, new_score: float, old_score: float) -> Optional[Notification]:
+    def performance_update(
+        user_id: int, new_score: float, old_score: float
+    ) -> Optional[Notification]:
         """Notify user about performance update"""
         change = new_score - old_score
         emoji = "📈" if change > 0 else "📉"
-        
+
         return NotificationService.create_notification(
             user_id=user_id,
             title=f"{emoji} Performance Update",
             message=f"Your performance score updated: {old_score:.1f} → {new_score:.1f}",
             notification_type="performance_update",
-            data={'old_score': old_score, 'new_score': new_score}
+            data={"old_score": old_score, "new_score": new_score},
         )
-    
+
     @staticmethod
-    def comment_added(user_id: int, task_id: int, commenter_id: int, comment_text: str) -> Optional[Notification]:
+    def comment_added(
+        user_id: int, task_id: int, commenter_id: int, comment_text: str
+    ) -> Optional[Notification]:
         """Notify user about comment on task"""
         from models import User
-        
+
         commenter = User.query.get(commenter_id)
         commenter_name = commenter.username if commenter else "Someone"
-        
+
         return NotificationService.create_notification(
             user_id=user_id,
             title="💬 New Comment",
@@ -356,5 +368,5 @@ class NotificationEvents:
             notification_type="comment_added",
             task_id=task_id,
             related_user_id=commenter_id,
-            action_url=f"/tasks/{task_id}"
+            action_url=f"/tasks/{task_id}",
         )
