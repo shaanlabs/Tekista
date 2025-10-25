@@ -45,7 +45,7 @@ class TaskManagerMCPServer:
                 "created_at": p.created_at.isoformat()
             } for p in projects]
         except Exception as e:
-            logger.error(f"Error getting projects: {str(e)}")
+            logger.error("Error getting projects: %s", e)
             return {"error": str(e)}
     
     def get_project_details(self, project_id: int) -> dict:
@@ -73,7 +73,7 @@ class TaskManagerMCPServer:
                 "team_members": [u.username for u in project.users]
             }
         except Exception as e:
-            logger.error(f"Error getting project details: {str(e)}")
+            logger.error("Error getting project details: %s", e)
             return {"error": str(e)}
     
     def get_tasks(self, project_id: Optional[int] = None, status: Optional[str] = None, 
@@ -106,7 +106,7 @@ class TaskManagerMCPServer:
                 "created_at": t.created_at.isoformat() if hasattr(t, 'created_at') else None
             } for t in tasks]
         except Exception as e:
-            logger.error(f"Error getting tasks: {str(e)}")
+            logger.error("Error getting tasks: %s", e)
             return {"error": str(e)}
     
     def get_task_details(self, task_id: int) -> dict:
@@ -136,7 +136,7 @@ class TaskManagerMCPServer:
                 "successors": [{"id": s.id, "title": s.title} for s in task.successors]
             }
         except Exception as e:
-            logger.error(f"Error getting task details: {str(e)}")
+            logger.error("Error getting task details: %s", e)
             return {"error": str(e)}
     
     def get_user_tasks(self, user_id: int, status: Optional[str] = None) -> list:
@@ -161,7 +161,7 @@ class TaskManagerMCPServer:
                 "days_until_due": (t.due_date - datetime.utcnow().date()).days if t.due_date else None
             } for t in tasks]
         except Exception as e:
-            logger.error(f"Error getting user tasks: {str(e)}")
+            logger.error("Error getting user tasks: %s", e)
             return {"error": str(e)}
     
     def get_overdue_tasks(self, project_id: Optional[int] = None) -> list:
@@ -188,7 +188,7 @@ class TaskManagerMCPServer:
                 "assignees": [u.username for u in t.assignees]
             } for t in tasks]
         except Exception as e:
-            logger.error(f"Error getting overdue tasks: {str(e)}")
+            logger.error("Error getting overdue tasks: %s", e)
             return {"error": str(e)}
     
     def get_upcoming_tasks(self, days: int = 7, project_id: Optional[int] = None) -> list:
@@ -219,7 +219,7 @@ class TaskManagerMCPServer:
                 "assignees": [u.username for u in t.assignees]
             } for t in tasks]
         except Exception as e:
-            logger.error(f"Error getting upcoming tasks: {str(e)}")
+            logger.error("Error getting upcoming tasks: %s", e)
             return {"error": str(e)}
     
     def get_project_statistics(self, project_id: int) -> dict:
@@ -255,7 +255,7 @@ class TaskManagerMCPServer:
                 "team_members": len(project.users)
             }
         except Exception as e:
-            logger.error(f"Error getting project statistics: {str(e)}")
+            logger.error("Error getting project statistics: %s", e)
             return {"error": str(e)}
     
     def get_team_workload(self, project_id: Optional[int] = None) -> list:
@@ -289,7 +289,7 @@ class TaskManagerMCPServer:
             
             return sorted(workload_data, key=lambda x: x['workload_score'], reverse=True)
         except Exception as e:
-            logger.error(f"Error getting team workload: {str(e)}")
+            logger.error("Error getting team workload: %s", e)
             return {"error": str(e)}
     
     def search_tasks(self, query: str, project_id: Optional[int] = None) -> list:
@@ -314,7 +314,7 @@ class TaskManagerMCPServer:
                 "project_title": t.project.title if t.project else None
             } for t in tasks]
         except Exception as e:
-            logger.error(f"Error searching tasks: {str(e)}")
+            logger.error("Error searching tasks: %s", e)
             return {"error": str(e)}
     
     def get_dashboard_summary(self, user_id: int) -> dict:
@@ -347,7 +347,7 @@ class TaskManagerMCPServer:
                                             datetime.utcnow().date() + timedelta(days=7)])
             }
         except Exception as e:
-            logger.error(f"Error getting dashboard summary: {str(e)}")
+            logger.error("Error getting dashboard summary: %s", e)
             return {"error": str(e)}
     
     def handle_request(self, method: str, params: dict) -> Any:
@@ -385,7 +385,7 @@ class TaskManagerMCPServer:
         try:
             return handlers[method]()
         except Exception as e:
-            logger.error(f"Error handling request {method}: {str(e)}")
+            logger.error("Error handling request %s: %s", method, e)
             return {"error": str(e)}
 
 def main():

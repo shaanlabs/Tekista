@@ -140,22 +140,27 @@ def make_tasks(projects, users):
     tid = 1
     # 50 To-Do unassigned
     for _ in range(50):
-        tasks.append(new_task(tid, "To-Do", assigned=False)); tid += 1
+        tasks.append(new_task(tid, "To-Do", assigned=False))
+        tid += 1
     # 50 To-Do assigned
     for _ in range(50):
-        tasks.append(new_task(tid, "To-Do", assigned=True)); tid += 1
+        tasks.append(new_task(tid, "To-Do", assigned=True))
+        tid += 1
     # 50 In-Progress assigned
     for _ in range(50):
-        tasks.append(new_task(tid, "In-Progress", assigned=True)); tid += 1
+        tasks.append(new_task(tid, "In-Progress", assigned=True))
+        tid += 1
     # 25 Completed assigned
     for _ in range(25):
-        tasks.append(new_task(tid, "Completed", assigned=True)); tid += 1
+        tasks.append(new_task(tid, "Completed", assigned=True))
+        tid += 1
     # 25 Overdue assigned
     for _ in range(25):
         t = new_task(tid, "Overdue", assigned=True)
         # ensure overdue due_date in past
         t["due_date"] = (date.today() - timedelta(days=random.randint(1, 10))).isoformat()
-        tasks.append(t); tid += 1
+        tasks.append(t)
+        tid += 1
 
     return tasks
 

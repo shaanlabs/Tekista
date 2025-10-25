@@ -249,7 +249,7 @@ def task_detail(task_id):
                 if new_status == 'Completed' and task.subtasks:
                     total = len(task.subtasks)
                     done = sum(1 for st in task.subtasks if st.status == 'Completed')
-                    ratio = (done / max(1, total))
+                    ratio = done / max(1, total)
                     if ratio < 1.0:
                         evidence = {
                             'parent_task_id': task.id,
