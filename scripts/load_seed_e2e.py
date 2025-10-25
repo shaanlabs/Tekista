@@ -13,8 +13,13 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 # Defer importing app/models until needed to avoid ModuleNotFoundError in API-only mode
+# We'll bind these globals when entering DB/API paths.
 create_app = None
-db = User = Role = Project = Task = None
+db = None
+User = None
+Role = None
+Project = None
+Task = None
 
 
 def ensure_role(session, name: str):
@@ -116,6 +121,9 @@ def main():
         from models import Task as _Task
         from models import User as _User
         from models import db as _db
+        # Bind globals so helpers like ensure_role/upsert_user see proper classes
+        global User, Role, Project, Task, db
+        User, Role, Project, Task, db = _User, _Role, _Project, _Task, _db
         app = _create_app()
         ctx = app.app_context()
         ctx.push()
@@ -155,7 +163,11 @@ def main():
     if not (args.skip_users or args.no_upsert_users):
         # Import app/models to upsert users before API calls
         from app import create_app as _create_app
+        from models import User as _User
+        from models import Role as _Role
         from models import db as _db
+        global User, Role, db
+        User, Role, db = _User, _Role, _db
         app = _create_app(); ctx = app.app_context(); ctx.push()
         for u in seed.get('users', []):
             upsert_user(_db.session, u)

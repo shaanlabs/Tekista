@@ -85,7 +85,7 @@ from sqlalchemy import exists
 from sqlalchemy.orm import selectinload
 
 # Relative imports to avoid circular dependencies
-from models import Project, Task, User, db
+from models import Project, Task, User, db, AuditLog
 
 from . import projects_bp
 from .forms import ProjectForm
@@ -189,7 +189,8 @@ def create_project_smart():
                     p.users.append(u)
         except Exception:
             pass
-        db.session.add(p); db.session.commit()
+        db.session.add(p)
+        db.session.commit()
         return {'id': p.id}, 201
     # GET renders smart UI
     return render_template('projects/create_smart.html')
