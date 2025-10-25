@@ -3,11 +3,13 @@ Notifications Service
 Handles notification creation, delivery, and management
 """
 
-from datetime import datetime
-from typing import Optional, Dict, List
-from models import db
-from notifications_models import Notification, NotificationPreference, NotificationTemplate
 import logging
+from datetime import datetime
+from typing import Dict, List, Optional
+
+from models import db
+from notifications_models import (Notification, NotificationPreference,
+                                  NotificationTemplate)
 
 logger = logging.getLogger(__name__)
 

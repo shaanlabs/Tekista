@@ -1,4 +1,4 @@
-from models import db, User, Role
+from models import Role, User, db
 
 
 def login(client, username, password):

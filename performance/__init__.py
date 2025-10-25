@@ -3,12 +3,14 @@ Performance Tracking Service
 Automatically tracks user metrics and calculates performance scores
 """
 
-from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Tuple
-from models import db, Task, User
-from assignment.models import TaskAssignment, UserSkillProfile, AssignmentStatistics
 import logging
 import math
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Tuple
+
+from assignment.models import (AssignmentStatistics, TaskAssignment,
+                               UserSkillProfile)
+from models import Task, User, db
 
 logger = logging.getLogger(__name__)
 

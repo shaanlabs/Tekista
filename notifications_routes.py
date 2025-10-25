@@ -3,12 +3,14 @@ Notifications API Routes
 Provides endpoints for notification management
 """
 
-from flask import Blueprint, request, jsonify
-from flask_login import login_required, current_user
+import logging
+
+from flask import Blueprint, abort, jsonify, request
+from flask_login import current_user, login_required
+
 from models import db
 from notifications_models import Notification, NotificationPreference
 from notifications_service import NotificationService
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +68,7 @@ def get_unread_count():
 @login_required
 def mark_as_read(notification_id):
     """Mark notification as read"""
-    notification = Notification.query.get_or_404(notification_id)
+    notification = db.session.get(Notification, notification_id) or abort(404)
     
     # Check authorization
     if notification.user_id != current_user.id:
@@ -95,7 +97,7 @@ def mark_all_as_read():
 @login_required
 def delete_notification(notification_id):
     """Delete a notification"""
-    notification = Notification.query.get_or_404(notification_id)
+    notification = db.session.get(Notification, notification_id) or abort(404)
     
     # Check authorization
     if notification.user_id != current_user.id:

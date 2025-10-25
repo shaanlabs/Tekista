@@ -3,10 +3,12 @@ AI Recommendation System Routes
 Provides endpoints for task recommendations
 """
 
-from flask import Blueprint, request, jsonify
-from flask_login import login_required, current_user
-from recommendations import RecommendationEngine
 import logging
+
+from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
+
+from recommendations import RecommendationEngine
 
 logger = logging.getLogger(__name__)
 

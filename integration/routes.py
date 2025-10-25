@@ -3,10 +3,12 @@ Integration API Routes
 Connects all systems together
 """
 
-from flask import Blueprint, request, jsonify
-from flask_login import login_required, current_user
-from integration import TaskWorkflow, DashboardDataProvider
 import logging
+
+from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
+
+from integration import DashboardDataProvider, TaskWorkflow
 
 logger = logging.getLogger(__name__)
 
@@ -110,8 +112,8 @@ def get_team_dashboard():
 def create_sample_data():
     """Create sample data for testing"""
     try:
-        from models import db, User, Project, Task
-        
+        from models import Project, Task, User, db
+
         # Create sample project
         project = Project(
             title='Sample Project',
@@ -190,9 +192,9 @@ def create_sample_data():
 def complete_random_task():
     """Complete a random assigned task for testing"""
     try:
-        from models import db
         from assignment.models import TaskAssignment
-        
+        from models import db
+
         # Get a random assigned task
         assignment = TaskAssignment.query.filter_by(
             assigned_user_id=current_user.id,
@@ -219,8 +221,8 @@ def complete_random_task():
 def test_workflow():
     """Test the entire workflow"""
     try:
-        from models import db, Project
-        
+        from models import Project, db
+
         # 1. Create project
         project = Project(
             title='Workflow Test Project',

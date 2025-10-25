@@ -4,8 +4,10 @@ Stores performance metrics and analytics data
 """
 
 from datetime import datetime
-from models import db
+
 from sqlalchemy import Index
+
+from models import db
 
 # ============================================================================
 # PERFORMANCE LOG

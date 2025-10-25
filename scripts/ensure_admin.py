@@ -6,7 +6,7 @@ from getpass import getpass
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import create_app
-from models import db, User, Role
+from models import Role, User, db
 
 
 def main():

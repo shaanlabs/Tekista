@@ -3,10 +3,12 @@ AI Assistant API Routes
 Provides endpoints for assistant queries
 """
 
-from flask import Blueprint, request, jsonify
-from flask_login import login_required, current_user
-from assistant import AssistantQueryProcessor
 import logging
+
+from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
+
+from assistant import AssistantQueryProcessor
 
 logger = logging.getLogger(__name__)
 

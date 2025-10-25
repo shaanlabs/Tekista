@@ -3,12 +3,13 @@ Skills Management System
 Manages user skills, tracks proficiency, and provides recommendations
 """
 
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime, timedelta
-from models import db, User, Task
-from assignment.models import TaskAssignment, UserSkillProfile
 import logging
 import math
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Tuple
+
+from assignment.models import TaskAssignment, UserSkillProfile
+from models import Task, User, db
 
 logger = logging.getLogger(__name__)
 

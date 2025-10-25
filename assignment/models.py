@@ -4,9 +4,11 @@ Stores user skill profiles and task assignment history
 """
 
 from datetime import datetime
-from models import db
-from sqlalchemy.dialects.postgresql import JSON, ARRAY
+
 from sqlalchemy import Index
+from sqlalchemy.dialects.postgresql import ARRAY, JSON
+
+from models import db
 
 # ============================================================================
 # USER SKILL PROFILE

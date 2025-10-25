@@ -3,12 +3,14 @@ Admin Analytics API Routes
 Provides endpoints for analytics data
 """
 
-from flask import Blueprint, request, jsonify
-from flask_login import login_required, current_user
-from models import User
+import logging
+
+from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
+
 from analytics import AnalyticsEngine
 from enterprise import require_permission
-import logging
+from models import User
 
 logger = logging.getLogger(__name__)
 

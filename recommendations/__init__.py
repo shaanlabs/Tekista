@@ -3,13 +3,14 @@ AI Recommendation System
 Suggests suitable tasks for users based on skills, history, and success rates
 """
 
-from typing import List, Dict, Optional, Tuple
-from datetime import datetime, timedelta
-from models import db, Task, User, Project
-from assignment.models import UserSkillProfile, TaskAssignment
-from performance.models import PerformanceLog
 import logging
 import math
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Tuple
+
+from assignment.models import TaskAssignment, UserSkillProfile
+from models import Project, Task, User, db
+from performance.models import PerformanceLog
 
 logger = logging.getLogger(__name__)
 

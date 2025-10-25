@@ -1,11 +1,15 @@
-from flask import render_template, redirect, url_for, flash, request, abort
-from flask_login import login_required, current_user
-from app import db
-from . import tasks_bp
-from .forms import TaskForm, UpdateStatusForm, CommentForm
-from models import Task, Project, User, Comment
-from notifications import notify_task_assigned, notify_task_status_change
 import json
+
+from flask import abort, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
+
+from app import db
+from models import Comment, Project, Task, User
+from notifications import notify_task_assigned, notify_task_status_change
+
+from . import tasks_bp
+from .forms import CommentForm, TaskForm, UpdateStatusForm
+
 
 def _availability_rank(av):
     order = {

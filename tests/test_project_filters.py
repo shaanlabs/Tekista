@@ -1,5 +1,6 @@
 from datetime import date, timedelta
-from models import db, User, Project, Task
+
+from models import Project, Task, User, db
 
 
 def login(client, username, password):

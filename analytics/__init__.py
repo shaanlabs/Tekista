@@ -3,13 +3,15 @@ Admin Analytics System
 Provides comprehensive analytics for team and project monitoring
 """
 
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime, timedelta
-from models import db, User, Task, Project
-from assignment.models import TaskAssignment, UserSkillProfile
-from performance.models import PerformanceLog
 import logging
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Tuple
+
 from sqlalchemy import func
+
+from assignment.models import TaskAssignment, UserSkillProfile
+from models import Project, Task, User, db
+from performance.models import PerformanceLog
 
 logger = logging.getLogger(__name__)
 

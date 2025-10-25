@@ -3,10 +3,11 @@ Celery Configuration and Task Definitions
 Handles background jobs for task assignment, performance tracking, and notifications
 """
 
+import logging
+
 from celery import Celery
 from celery.schedules import crontab
 from flask import current_app
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -43,8 +44,12 @@ def assign_next_task_for_user(self, user_id):
         user_id: ID of the user who completed a task
     """
     try:
-        from assignment import AssignmentService
         from models import User
+        try:
+            from assignment import AssignmentService
+        except ImportError:
+            logger.warning("Assignment module not available; skipping auto-assignment")
+            return {"success": False, "skipped": True, "reason": "assignment_module_unavailable"}
         
         user = User.query.get(user_id)
         if not user:
@@ -99,10 +104,14 @@ def find_and_assign_tasks_for_available_users(organization_id):
         organization_id: ID of the organization
     """
     try:
-        from assignment import AssignmentService
-        from assignment.models import UserSkillProfile
         from models import User
-        from enterprise.models import UserOrganizationRole
+        try:
+            from assignment import AssignmentService
+            from assignment.models import UserSkillProfile
+            from enterprise.models import UserOrganizationRole
+        except ImportError:
+            logger.warning("Enterprise/assignment modules not available; skipping team auto-assignment")
+            return {"success": False, "skipped": True, "reason": "enterprise_modules_unavailable"}
         
         # Get all available users
         users = User.query.join(
@@ -147,8 +156,13 @@ def update_user_performance_metrics(self, user_id, assignment_id):
         assignment_id: ID of the completed assignment
     """
     try:
-        from assignment.models import TaskAssignment, AssignmentStatistics, UserSkillProfile
         from models import User
+        try:
+            from assignment.models import (AssignmentStatistics,
+                                           TaskAssignment, UserSkillProfile)
+        except ImportError:
+            logger.warning("Assignment models not available; skipping performance update")
+            return {"success": False, "skipped": True, "reason": "assignment_models_unavailable"}
         
         user = User.query.get(user_id)
         assignment = TaskAssignment.query.get(assignment_id)
@@ -211,9 +225,13 @@ def recalculate_team_performance(organization_id):
         organization_id: ID of the organization
     """
     try:
-        from assignment.models import AssignmentStatistics
         from models import User
-        from enterprise.models import UserOrganizationRole
+        try:
+            from assignment.models import AssignmentStatistics
+            from enterprise.models import UserOrganizationRole
+        except ImportError:
+            logger.warning("Enterprise/assignment models not available; skipping team performance calc")
+            return {"success": False, "skipped": True, "reason": "enterprise_models_unavailable"}
         
         users = User.query.join(
             UserOrganizationRole,
@@ -338,9 +356,14 @@ def cleanup_old_assignments():
     Clean up old completed assignments (older than 90 days)
     """
     try:
-        from assignment.models import TaskAssignment
         from datetime import datetime, timedelta
+
         from models import db
+        try:
+            from assignment.models import TaskAssignment
+        except ImportError:
+            logger.warning("Assignment models not available; skipping cleanup")
+            return {"success": False, "skipped": True, "reason": "assignment_models_unavailable"}
         
         cutoff_date = datetime.utcnow() - timedelta(days=90)
         
@@ -364,7 +387,11 @@ def generate_daily_performance_reports():
     Generate daily performance reports for all organizations
     """
     try:
-        from enterprise.models import Organization
+        try:
+            from enterprise.models import Organization
+        except ImportError:
+            logger.warning("Enterprise models not available; skipping daily reports")
+            return {"success": False, "skipped": True, "reason": "enterprise_models_unavailable"}
         
         organizations = Organization.query.all()
         

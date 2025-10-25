@@ -1,0 +1,89 @@
+[run]
+# Source code to measure
+source = .
+
+# Omit certain files and directories from coverage
+omit =
+    */venv/*
+    */env/*
+    */.venv/*
+    */tests/*
+    */test_*.py
+    */__pycache__/*
+    */migrations/*
+    */static/*
+    */templates/*
+    */uploads/*
+    */node_modules/*
+    # Optional plugin modules (not core)
+    */enterprise/*
+    */assignment/*
+    */performance/*
+    */skills/*
+    */recommendations/*
+    # Scripts and utilities
+    */scripts/*
+    */populate_db.py
+    # Configuration files
+    */config.py
+    */celery_app.py
+    # Third-party
+    */site-packages/*
+
+# Branch coverage
+branch = True
+
+# Parallel mode (for multiprocessing)
+parallel = False
+
+[report]
+# Precision for coverage percentages
+precision = 2
+
+# Show missing lines
+show_missing = True
+
+# Skip covered files in report
+skip_covered = False
+
+# Skip empty files
+skip_empty = True
+
+# Fail if coverage is below this threshold
+fail_under = 90
+
+# Sort by coverage percentage
+sort = Cover
+
+# Exclude lines from coverage (use # pragma: no cover)
+exclude_lines =
+    # Default pragmas
+    pragma: no cover
+    # Don't complain about missing debug-only code
+    def __repr__
+    def __str__
+    # Don't complain if tests don't hit defensive assertion code
+    raise AssertionError
+    raise NotImplementedError
+    # Don't complain if non-runnable code isn't run
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    if typing.TYPE_CHECKING:
+    # Don't complain about abstract methods
+    @abstractmethod
+    @abc.abstractmethod
+    # Don't complain about ellipsis in stubs
+    \.\.\.
+    # Don't complain about pass statements
+    pass
+
+[html]
+# Directory for HTML report
+directory = htmlcov
+
+# Title for HTML report
+title = Tekista Code Coverage Report
+
+[xml]
+# Output file for XML report (for CI/CD)
+output = coverage.xml

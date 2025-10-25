@@ -1,6 +1,8 @@
 from flask import current_app
 from flask_mail import Message
+
 from app import mail
+
 
 def send_email(subject, recipients, body):
 	"""Send an email if mail is configured. Recipients is a list."""

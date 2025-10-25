@@ -3,18 +3,20 @@ Integration Layer
 Connects all systems together: tasks, assignments, performance, notifications, skills
 """
 
-from typing import Dict, Optional, List
-from datetime import datetime
-from models import db, Task, User, Project
-from assignment.models import TaskAssignment, UserSkillProfile
-from performance.models import PerformanceLog
-from assignment import AssignmentService
-from performance import PerformanceService
-from skills import SkillManager
-from notifications_service import NotificationService, NotificationEvents
-from socket_events import emit_task_assigned, emit_task_completed, emit_performance_update
-from recommendations import RecommendationEngine
 import logging
+from datetime import datetime
+from typing import Dict, List, Optional
+
+from assignment import AssignmentService
+from assignment.models import TaskAssignment, UserSkillProfile
+from models import Project, Task, User, db
+from notifications_service import NotificationEvents, NotificationService
+from performance import PerformanceService
+from performance.models import PerformanceLog
+from recommendations import RecommendationEngine
+from skills import SkillManager
+from socket_events import (emit_performance_update, emit_task_assigned,
+                           emit_task_completed)
 
 logger = logging.getLogger(__name__)
 

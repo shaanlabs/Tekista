@@ -1,4 +1,4 @@
-from models import db, User, Project
+from models import Project, User, db
 
 
 def login(client, username, password):
@@ -6,7 +6,7 @@ def login(client, username, password):
 
 
 def setup_user_project(app):
-    from models import User, Project
+    from models import Project, User
     with app.app_context():
         u = User(username='tasker', email='tasker@example.com')
         u.set_password('pw123456')

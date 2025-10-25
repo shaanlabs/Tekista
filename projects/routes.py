@@ -59,6 +59,8 @@
 # 		tasks = [t for t in tasks if any(u.id == assignee for u in t.assignees)]
 # 	return render_template('projects/detail.html', project=p, tasks=tasks)
 
+from datetime import datetime
+
 # @projects_bp.route('/<int:project_id>/export')
 # @login_required
 # def export_project_csv(project_id):
@@ -76,16 +78,17 @@
 # 	filename = f'project_{p.id}_tasks.csv'
 # 	return Response(output, mimetype='text/csv', headers={"Content-Disposition": f"attachment;filename={filename}"})
 # projects/routes.py
-from flask import render_template, redirect, url_for, flash, request, Response, abort
-from flask_login import login_required, current_user
+from flask import (Response, abort, flash, redirect, render_template, request,
+                   url_for)
+from flask_login import current_user, login_required
 from sqlalchemy import exists
 from sqlalchemy.orm import selectinload
 
 # Relative imports to avoid circular dependencies
-from models import Project, User, Task, db
+from models import Project, Task, User, db
+
 from . import projects_bp
 from .forms import ProjectForm
-from datetime import datetime
 
 
 @projects_bp.route('/')
@@ -283,8 +286,8 @@ def export_project_csv(project_id):
         abort(403)
     project = Project.query.get_or_404(project_id)
 
-    from io import StringIO
     import csv
+    from io import StringIO
 
     si = StringIO()
     writer = csv.writer(si)

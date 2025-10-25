@@ -2,10 +2,12 @@
 Enterprise Models for RBAC, Multi-org, SSO, and Audit logging
 """
 
-from datetime import datetime, timedelta
-from models import db
-from sqlalchemy.dialects.postgresql import JSON
 import json
+from datetime import datetime, timedelta
+
+from sqlalchemy.dialects.postgresql import JSON
+
+from models import db
 
 # ============================================================================
 # ORGANIZATION & MULTI-TENANCY

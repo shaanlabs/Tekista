@@ -1,5 +1,6 @@
-from models import db, User, Project, Task
 from datetime import date, timedelta
+
+from models import Project, Task, User, db
 
 
 def get_token_with_data(client, app):

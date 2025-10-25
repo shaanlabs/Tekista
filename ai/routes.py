@@ -1,8 +1,12 @@
-from flask import Blueprint, jsonify, request, current_app
-from flask_login import login_required, current_user
-from . import ai_assistant
-from models import db, Task, Project, User, task_assignees
 from datetime import datetime
+
+from flask import Blueprint, current_app, jsonify, request
+from flask_login import current_user, login_required
+
+from models import Project, Task, User, db, task_assignees
+
+from . import ai_assistant
+
 try:
 	import ollama
 except ImportError:

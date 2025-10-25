@@ -1,9 +1,9 @@
 import argparse
 import json
-import sys
 import os
-from pathlib import Path
+import sys
 from datetime import datetime
+from pathlib import Path
 
 import requests
 
@@ -111,7 +111,11 @@ def main():
     if args.mode == 'db':
         # Import app/models only in DB mode
         from app import create_app as _create_app
-        from models import db as _db, User as _User, Role as _Role, Project as _Project, Task as _Task
+        from models import Project as _Project
+        from models import Role as _Role
+        from models import Task as _Task
+        from models import User as _User
+        from models import db as _db
         app = _create_app()
         ctx = app.app_context()
         ctx.push()

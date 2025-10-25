@@ -3,12 +3,14 @@ Socket.IO Events for Real-Time Notifications
 Handles real-time notification delivery via WebSockets
 """
 
-from flask_socketio import SocketIO, emit, join_room, leave_room
-from flask_login import current_user
-from flask import request
-from models import db, User
-from notifications_service import NotificationService, NotificationEvents
 import logging
+
+from flask import request
+from flask_login import current_user
+from flask_socketio import SocketIO, emit, join_room, leave_room
+
+from models import User, db
+from notifications_service import NotificationEvents, NotificationService
 
 logger = logging.getLogger(__name__)
 

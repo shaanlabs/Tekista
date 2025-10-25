@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField, SelectMultipleField, SubmitField
+from wtforms import (DateField, SelectMultipleField, StringField, SubmitField,
+                     TextAreaField)
 from wtforms.validators import DataRequired, Optional
+
 
 class ProjectForm(FlaskForm):
 	title = StringField('Title', validators=[DataRequired()])

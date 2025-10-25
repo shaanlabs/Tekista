@@ -3,10 +3,10 @@ Skill-Based Task Assignment Engine
 Implements intelligent task assignment based on skills, experience, and workload
 """
 
-from enum import Enum
-from datetime import datetime
-from typing import List, Dict, Tuple, Optional
 import logging
+from datetime import datetime
+from enum import Enum
+from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -196,9 +196,9 @@ class AssignmentService:
         Returns:
             Dictionary with assignment details or None if assignment failed
         """
-        from models import db, Task, User
         from enterprise.models import UserOrganizationRole
-        
+        from models import Task, User, db
+
         # Fetch task
         task = Task.query.get(task_id)
         if not task:
@@ -290,7 +290,7 @@ class AssignmentService:
             Dictionary with score components and overall score
         """
         from assignment.models import UserSkillProfile
-        
+
         # Get user skill profile
         skill_profile = UserSkillProfile.query.filter_by(user_id=user.id).first()
         
@@ -409,9 +409,9 @@ class AssignmentService:
         Returns:
             Dictionary with new assignment details
         """
-        from models import Task
         from assignment.models import TaskAssignment
-        
+        from models import Task
+
         # Get current assignment
         current_assignment = TaskAssignment.query.filter_by(
             task_id=task_id
@@ -438,9 +438,9 @@ class AssignmentService:
         Returns:
             List of user recommendations with scores
         """
-        from models import Task, User
         from enterprise.models import UserOrganizationRole
-        
+        from models import Task, User
+
         # Fetch task
         task = Task.query.get(task_id)
         if not task:

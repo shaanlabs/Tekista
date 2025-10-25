@@ -3,14 +3,16 @@ Performance Tracking API Routes
 Provides endpoints for performance metrics and analytics
 """
 
-from flask import Blueprint, request, jsonify
-from flask_login import login_required, current_user
-from models import db, User
+import logging
+
+from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
+
 from enterprise import require_permission
 from enterprise.models import UserOrganizationRole
+from models import User, db
 from performance import PerformanceService
 from performance.models import PerformanceLog, PerformanceSnapshot
-import logging
 
 logger = logging.getLogger(__name__)
 

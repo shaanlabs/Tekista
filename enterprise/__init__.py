@@ -3,13 +3,15 @@ Enterprise-Grade Features Module
 Includes RBAC, Multi-org support, SSO/OAuth2, Audit logging, and encryption
 """
 
-from enum import Enum
-from datetime import datetime, timedelta
-from functools import wraps
-from flask import current_app, request, jsonify, g
-from flask_login import current_user
-from models import db
 import logging
+from datetime import datetime, timedelta
+from enum import Enum
+from functools import wraps
+
+from flask import current_app, g, jsonify, request
+from flask_login import current_user
+
+from models import db
 
 logger = logging.getLogger(__name__)
 
@@ -172,9 +174,11 @@ def filter_by_organization(query, model):
 # ENCRYPTION UTILITIES
 # ============================================================================
 
-from cryptography.fernet import Fernet
 import base64
 import hashlib
+
+from cryptography.fernet import Fernet
+
 
 class EncryptionManager:
     """Manages encryption/decryption of sensitive data"""
@@ -212,6 +216,7 @@ class EncryptionManager:
 # ============================================================================
 
 import secrets
+
 
 class APITokenManager:
     """Manages secure API tokens for integrations"""

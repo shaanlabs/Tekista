@@ -13,25 +13,26 @@
 #             return wrapper
 #         return decorator
 
-# app.py
-from flask import Flask, render_template, session, jsonify, request, send_from_directory, redirect, url_for, abort
-from flask_login import LoginManager, login_required, current_user
-from flask_mail import Mail
-from flask_wtf.csrf import CSRFProtect, generate_csrf
+import json
+import logging
 import os
 import sys
-import logging
-from functools import wraps
-from werkzeug.utils import secure_filename
-import json
-from datetime import datetime, date, timedelta
 import time
- 
+from datetime import date, datetime, timedelta
+from functools import wraps
+
+# app.py
+from flask import (Flask, abort, jsonify, redirect, render_template, request,
+                   send_from_directory, session, url_for)
+from flask_login import LoginManager, current_user, login_required
+from flask_mail import Mail
+from flask_wtf.csrf import CSRFProtect, generate_csrf
+from werkzeug.utils import secure_filename
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from models import db, User
 from config import Config
+from models import User, db
 from socket_events import init_socketio
 
 # Initialize extensions (using the SAME db from models.py)
@@ -66,13 +67,21 @@ def create_app():
     def inject_csrf_token():
         return {"csrf_token": generate_csrf}
 
+    # Optionally initialize Celery (production)
+    try:
+        if app.config.get('USE_CELERY', False):
+            from celery_app import make_celery
+            app.celery_app = make_celery(app)
+    except Exception:
+        pass
+
     # Register blueprints
+    from ai.routes import aibp as ai_bp
+    from api.routes import api_bp
     from auth import auth_bp
+    from notifications_routes import notifications_bp
     from projects.routes import projects_bp
     from tasks.routes import tasks_bp
-    from api.routes import api_bp
-    from ai.routes import aibp as ai_bp
-    from notifications_routes import notifications_bp
 
     # register blueprint at root so routes like /login are available
     # (previously registered with url_prefix='/auth' which caused 404s for /login)
@@ -153,8 +162,9 @@ def create_app():
     @app.route('/files')
     @login_required
     def files():
-        from models import Project
         import os
+
+        from models import Project
         pid = request.args.get('project_id', type=int)
         projects = Project.query.order_by(Project.title).all()
         current_project = None
@@ -253,7 +263,8 @@ def create_app():
     @login_required
     @csrf.exempt
     def ai_pm_decompose():
-        from models import AIAgentJob, db as _db
+        from models import AIAgentJob
+        from models import db as _db
         payload = request.get_json(silent=True) or {}
         goal = payload.get('goal') or ''
         # stub plan
@@ -277,14 +288,15 @@ def create_app():
     @login_required
     @csrf.exempt
     def ai_pm_apply_plan():
-        from models import AIAgentJob, AIAuditLog, Project, Task, db as _db
+        from models import AIAgentJob, AIAuditLog, Project, Task
+        from models import db as _db
         role_name = getattr(getattr(current_user, 'role', None), 'name', None)
         if role_name not in ('Admin','Manager'):
             return jsonify({'error':'manager approval required'}), 403
         data = request.get_json(silent=True) or {}
         project_id = data.get('project_id')
         plan = data.get('plan') or {}
-        project = Project.query.get_or_404(project_id)
+        project = db.session.get(Project, project_id) or abort(404)
         # create basic tasks sequentially (no dependencies wiring here for brevity)
         created_ids = []
         for item in plan.get('tasks', []):
@@ -394,9 +406,11 @@ def create_app():
         return redirect(url_for('files', project_id=pid))
 
     # Background jobs: lightweight scheduler thread
-    import threading, time
+    import threading
+    import time
     def _calendar_capacity_sync_loop(app_ref):
-        from models import User, UserCapacity, db as _db
+        from models import User, UserCapacity
+        from models import db as _db
         with app_ref.app_context():
             while True:
                 try:
@@ -415,7 +429,8 @@ def create_app():
                 time.sleep(900)  # 15 minutes
 
     def _ml_skill_updater_loop(app_ref):
-        from models import TaskOutcome, UserSkillHistory, db as _db
+        from models import TaskOutcome, UserSkillHistory
+        from models import db as _db
         with app_ref.app_context():
             while True:
                 try:
@@ -426,8 +441,10 @@ def create_app():
                 time.sleep(1800)  # 30 minutes
 
     def _reliability_recompute_loop(app_ref):
-        from models import AnomalyEvent, User, UserReliabilityScore, db as _db
         from sqlalchemy import func
+
+        from models import AnomalyEvent, User, UserReliabilityScore
+        from models import db as _db
         with app_ref.app_context():
             while True:
                 try:
@@ -464,7 +481,8 @@ def create_app():
                 time.sleep(3600)  # hourly
 
     def _integrity_mismatch_detector_loop(app_ref):
-        from models import UserDailyFeature, AnomalyEvent, db as _db
+        from models import AnomalyEvent, UserDailyFeature
+        from models import db as _db
         with app_ref.app_context():
             while True:
                 try:
@@ -504,7 +522,8 @@ def create_app():
                 time.sleep(600)  # 10 minutes
 
     def _after_hours_detector_loop(app_ref):
-        from models import UserDailyFeature, AnomalyEvent, db as _db
+        from models import AnomalyEvent, UserDailyFeature
+        from models import db as _db
         with app_ref.app_context():
             while True:
                 try:
@@ -530,7 +549,8 @@ def create_app():
                 time.sleep(900)  # 15 minutes
 
     def _extreme_deviation_detector_loop(app_ref):
-        from models import UserDailyFeature, UserBehaviorBaseline, AnomalyEvent, db as _db
+        from models import AnomalyEvent, UserBehaviorBaseline, UserDailyFeature
+        from models import db as _db
         with app_ref.app_context():
             while True:
                 try:
@@ -558,8 +578,11 @@ def create_app():
                 time.sleep(900)  # 15 minutes
 
     def _hourly_rollup_loop(app_ref):
-        from models import User, UserDailyFeature, UserCapacity, ProcessEvent, Task, db as _db
         from sqlalchemy import and_
+
+        from models import (ProcessEvent, Task, User, UserCapacity,
+                            UserDailyFeature)
+        from models import db as _db
         with app_ref.app_context():
             while True:
                 try:
@@ -610,8 +633,10 @@ def create_app():
                 time.sleep(3600)  # hourly
 
     def _nightly_baseline_loop(app_ref):
-        from models import UserDailyFeature, UserBehaviorBaseline, db as _db
         from statistics import median
+
+        from models import UserBehaviorBaseline, UserDailyFeature
+        from models import db as _db
         with app_ref.app_context():
             while True:
                 try:
@@ -673,6 +698,9 @@ def create_app():
             return default
     @app.before_request
     def _ensure_background_jobs():
+        # Skip background threads when Celery is enabled
+        if app.config.get('USE_CELERY', False):
+            return
         if not app.config.get('BG_THREADS_STARTED'):
             try:
                 threading.Thread(target=_calendar_capacity_sync_loop, args=(app,), daemon=True).start()
@@ -710,7 +738,7 @@ def create_app():
     @login_required
     def admin_reliability():
         _require_admin()
-        from models import UserReliabilityScore, User
+        from models import User, UserReliabilityScore
         rows = UserReliabilityScore.query.order_by(UserReliabilityScore.score.desc()).limit(500).all()
         users_map = {u.id: u for u in User.query.all()}
         return render_template('pages/reliability.html', rows=rows, users_map=users_map)
@@ -791,7 +819,8 @@ def create_app():
     @csrf.exempt
     def api_anomalies_resolve(aid):
         _require_admin()
-        from models import AnomalyEvent, db as _db
+        from models import AnomalyEvent
+        from models import db as _db
         a = AnomalyEvent.query.get_or_404(aid)
         a.resolved = True
         a.resolved_by = current_user.id
@@ -803,7 +832,8 @@ def create_app():
     @app.route('/me/profile', methods=['GET', 'POST'])
     @login_required
     def my_profile():
-        from models import UserProfile, UserDailyFeature, UserReliabilityScore, db as _db
+        from models import UserDailyFeature, UserProfile, UserReliabilityScore
+        from models import db as _db
         u = current_user
         prof = UserProfile.query.filter_by(user_id=u.id).first()
         if not prof:
@@ -851,7 +881,7 @@ def create_app():
     @login_required
     def api_pm_candidates():
         _require_manager_or_admin()
-        from models import User, Role, Project
+        from models import Project, Role, User
         p_role = Role.query.filter_by(name='Project Manager').first()
         q = User.query
         if p_role:
@@ -874,7 +904,8 @@ def create_app():
     @login_required
     def api_team_candidates():
         _require_manager_or_admin()
-        from models import User, Role, UserProfile, UserDailyFeature
+        from models import Role, User, UserDailyFeature, UserProfile
+
         # parse required skills
         skills_raw = request.args.get('skills','')
         req = [s.strip().lower() for s in (skills_raw.split(',') if skills_raw else []) if s.strip()]
@@ -933,7 +964,7 @@ def create_app():
     @app.route('/api/me', methods=['GET'])
     @login_required
     def api_me():
-        from models import UserProfile, UserDailyFeature, UserReliabilityScore
+        from models import UserDailyFeature, UserProfile, UserReliabilityScore
         u = current_user
         prof = UserProfile.query.filter_by(user_id=u.id).first()
         skills = []
@@ -964,7 +995,8 @@ def create_app():
     @login_required
     @csrf.exempt
     def api_me_skills():
-        from models import UserProfile, db as _db
+        from models import UserProfile
+        from models import db as _db
         data = request.get_json(silent=True) or {}
         add = data.get('add') or []
         remove = data.get('remove') or []
@@ -993,6 +1025,7 @@ def create_app():
     @login_required
     def api_skills_suggest():
         from models import UserSkillHistory
+
         # Build a simple frequency list from UserSkillHistory plus curated defaults
         curated = [
             'Python','React','Node.js','Go','Java','Kotlin','Swift','C#','SQL','NoSQL',
@@ -1030,7 +1063,8 @@ def create_app():
     @csrf.exempt
     def api_ingest_vcs():
         _require_admin_or_abort()
-        from models import UserDailyFeature, ProcessEvent, db as _db
+        from models import ProcessEvent, UserDailyFeature
+        from models import db as _db
         payload = request.get_json(force=True) or {}
         uid = int(payload.get('user_id'))
         d = payload.get('date') or date.today().isoformat()
@@ -1057,7 +1091,8 @@ def create_app():
     @csrf.exempt
     def api_ingest_calendar():
         _require_admin_or_abort()
-        from models import UserCapacity, UserDailyFeature, db as _db
+        from models import UserCapacity, UserDailyFeature
+        from models import db as _db
         payload = request.get_json(force=True) or {}
         uid = int(payload.get('user_id'))
         d = payload.get('date') or date.today().isoformat()
@@ -1083,7 +1118,8 @@ def create_app():
     @csrf.exempt
     def api_ingest_time():
         _require_admin_or_abort()
-        from models import UserDailyFeature, db as _db
+        from models import UserDailyFeature
+        from models import db as _db
         payload = request.get_json(force=True) or {}
         uid = int(payload.get('user_id'))
         d = payload.get('date') or date.today().isoformat()
@@ -1160,7 +1196,7 @@ def create_app():
     @login_required
     @require_roles('Admin')
     def admin_users():
-        from models import User, Role, AuditLog
+        from models import AuditLog, Role, User
         if request.method == 'POST':
             action = request.form.get('action')
             user_id = request.form.get('user_id', type=int)
@@ -1217,9 +1253,11 @@ def create_app():
     @login_required
     @require_roles('Admin')
     def admin_audit():
-        from models import AuditLog, User
-        from sqlalchemy import desc
         from datetime import datetime, timedelta
+
+        from sqlalchemy import desc
+
+        from models import AuditLog, User
         action = request.args.get('action', '').strip()
         actor = request.args.get('actor', '').strip()
         days = request.args.get('days', type=int) or 30

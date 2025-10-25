@@ -2,17 +2,18 @@
 Task Assignment Routes and API Endpoints
 """
 
-from flask import Blueprint, request, jsonify
-from flask_login import login_required, current_user
-from models import db, Task, User
-from enterprise import require_permission, audit_log
-from enterprise.models import AuditLog
-from assignment import AssignmentService, AssignmentStrategy
-from assignment.models import (
-    UserSkillProfile, TaskAssignment, SkillEndorsement,
-    AssignmentFeedback, AssignmentStatistics
-)
 import logging
+
+from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
+
+from assignment import AssignmentService, AssignmentStrategy
+from assignment.models import (AssignmentFeedback, AssignmentStatistics,
+                               SkillEndorsement, TaskAssignment,
+                               UserSkillProfile)
+from enterprise import audit_log, require_permission
+from enterprise.models import AuditLog
+from models import Task, User, db
 
 logger = logging.getLogger(__name__)
 

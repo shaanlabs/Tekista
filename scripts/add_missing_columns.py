@@ -7,9 +7,10 @@ PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
+from sqlalchemy import text
+
 from app import create_app
 from models import db
-from sqlalchemy import text
 
 """
 One-off SQLite migration script to add missing columns introduced in models.py

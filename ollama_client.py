@@ -1,6 +1,7 @@
 import os
+from typing import Dict, List
+
 import requests
-from typing import List, Dict
 
 # These align with Config defaults so you can control via .env or process env
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")

@@ -1,0 +1,114 @@
+[MASTER]
+# Specify directories to ignore during linting
+ignore=venv,env,.venv,node_modules,migrations,__pycache__,.git,static,uploads,tests
+# Ignore optional plugin modules that may not be fully developed
+ignore-patterns=enterprise,assignment,performance,skills,recommendations
+
+# Use multiple processes for faster linting
+jobs=4
+
+# Python version
+py-version=3.11
+
+# Allow loading of C extensions
+extension-pkg-allow-list=
+
+[MESSAGES CONTROL]
+# Disable specific messages initially - we'll enable these as we fix issues
+disable=
+    # Docstring messages - we'll add these systematically
+    C0114,  # missing-module-docstring
+    C0115,  # missing-class-docstring
+    C0116,  # missing-function-docstring
+    # Design messages that are too strict for Flask apps
+    R0903,  # too-few-public-methods (common in Flask models/forms)
+    R0913,  # too-many-arguments (common in service layers)
+    R0914,  # too-many-locals (acceptable in route handlers)
+    # Duplicate code across similar modules
+    R0801,  # duplicate-code
+    # Type hints (we'll add these incrementally)
+    C0103,  # invalid-name (Flask uses app, db, etc.)
+    # Specific to Flask patterns
+    W0212,  # protected-access (common with SQLAlchemy)
+    W0621,  # redefined-outer-name (fixtures in pytest)
+
+[FORMAT]
+# Maximum line length
+max-line-length=100
+
+# Maximum number of lines in a module
+max-module-lines=1500
+
+# String used for indentation
+indent-string='    '
+
+# Expected format of line ending
+expected-line-ending-format=LF
+
+[BASIC]
+# Naming conventions
+# Good variable names
+good-names=i,j,k,ex,Run,_,id,db,app,bp,ai,pm,wd
+
+# Regular expressions for naming
+module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
+class-rgx=[A-Z_][a-zA-Z0-9]+$
+function-rgx=[a-z_][a-z0-9_]{2,40}$
+method-rgx=[a-z_][a-z0-9_]{2,40}$
+attr-rgx=[a-z_][a-z0-9_]{2,40}$
+argument-rgx=[a-z_][a-z0-9_]{2,40}$
+variable-rgx=[a-z_][a-z0-9_]{2,40}$
+const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
+
+[DESIGN]
+# Maximum number of arguments for function / method
+max-args=7
+
+# Maximum number of attributes for a class
+max-attributes=12
+
+# Maximum number of boolean expressions in an if statement
+max-bool-expr=5
+
+# Maximum number of branch for function / method body
+max-branches=15
+
+# Maximum number of locals for function / method body
+max-locals=20
+
+# Maximum number of parents for a class
+max-parents=7
+
+# Maximum number of public methods for a class
+max-public-methods=25
+
+# Maximum number of return / yield for function / method body
+max-returns=6
+
+# Maximum number of statements in function / method body
+max-statements=60
+
+# Minimum number of public methods for a class
+min-public-methods=0
+
+[IMPORTS]
+# Checks for import order and grouping
+import-order-style=pep8
+
+[EXCEPTIONS]
+# Exceptions that will emit a warning when being caught
+overgeneral-exceptions=builtins.BaseException,builtins.Exception
+
+[REPORTS]
+# Set to 'no' for cleaner output in CI
+reports=no
+
+# Activate the evaluation score
+score=yes
+
+# Template for output
+output-format=colorized
+
+[LOGGING]
+# Format string for logging messages
+logging-format-style=old

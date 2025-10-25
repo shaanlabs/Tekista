@@ -1,11 +1,15 @@
-from flask import jsonify, request, url_for, g, Response, abort
-from flask_login import login_required
 from datetime import datetime, timedelta
+
+from flask import Response, abort, g, jsonify, request, url_for
+from flask_login import login_required
 from sqlalchemy import func
-from . import api_bp
-from models import Project, Task, User
+
 from app import db
+from models import Project, Task, User
+
+from . import api_bp
 from .auth import api_auth_required
+
 
 def task_to_dict(t):
 	return {
@@ -166,7 +170,7 @@ def api_revoke_token():
 def api_analytics_metrics():
 	"""Get dashboard analytics metrics."""
 	from models import Project, Task, User
-	
+
 	# Calculate metrics (guard against null due_date)
 	total_projects = Project.query.count()
 	total_tasks = Task.query.count()
@@ -191,8 +195,9 @@ def api_analytics_metrics():
 @api_auth_required
 def api_analytics_performance():
 	"""Get performance analytics data."""
-	from models import Task
 	from sqlalchemy import func
+
+	from models import Task
 
 	# Attempt to group by due_date if present; otherwise return aggregate only
 	days = request.args.get('days', 30, type=int)
@@ -283,8 +288,9 @@ def api_search():
 @api_auth_required
 def api_activity():
 	"""Get recent activity feed."""
-	from models import Project, Task, Comment
 	from sqlalchemy import desc
+
+	from models import Comment, Project, Task
 	
 	activities = []
 	
@@ -366,9 +372,10 @@ def api_project_analytics(project_id):
 @api_auth_required
 def api_generate_report():
 	"""Generate comprehensive project reports."""
-	from models import Project, Task, User
-	import io
 	import csv
+	import io
+
+	from models import Project, Task, User
 	
 	report_type = request.json.get('type', 'project')
 	project_id = request.json.get('project_id')

@@ -3,15 +3,16 @@ AI Assistant System
 Processes natural language queries and returns relevant data
 """
 
-from typing import Dict, List, Optional, Tuple
+import logging
+import re
 from datetime import datetime, timedelta
-from models import db, User, Task
+from typing import Dict, List, Optional, Tuple
+
 from assignment.models import TaskAssignment, UserSkillProfile
+from models import Task, User, db
 from performance.models import PerformanceLog
 from recommendations import RecommendationEngine
 from skills import SkillManager
-import logging
-import re
 
 logger = logging.getLogger(__name__)
 

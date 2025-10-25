@@ -1,7 +1,10 @@
 from functools import wraps
-from flask import request, g, jsonify
+
+from flask import g, jsonify, request
 from flask_login import current_user
+
 from models import User
+
 
 def api_auth_required(f):
 	"""Decorator that allows Authorization via token or existing session login."""

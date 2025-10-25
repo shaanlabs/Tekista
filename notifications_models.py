@@ -4,8 +4,10 @@ Stores and manages user notifications
 """
 
 from datetime import datetime
-from models import db
+
 from sqlalchemy import Index
+
+from models import db
 
 # ============================================================================
 # NOTIFICATION

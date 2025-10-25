@@ -1,5 +1,6 @@
 import json
-from models import db, User, Project, Task
+
+from models import Project, Task, User, db
 
 
 def get_token(client, app):

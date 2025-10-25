@@ -1,5 +1,6 @@
 from flask import url_for
-from models import db, Project
+
+from models import Project, db
 
 
 def login(client, username, password):

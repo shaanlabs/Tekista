@@ -1,19 +1,24 @@
 from flask import current_app, has_app_context
+
 try:
     import openai
 except ImportError:
     openai = None
 from datetime import datetime, timedelta
-from sqlalchemy import func, and_
-from models import db, Task, Project, User, Comment
+
+from sqlalchemy import and_, func
+
+from models import Comment, Project, Task, User, db
+
 try:
     import numpy as np
     from sklearn.linear_model import LinearRegression
 except ImportError:
     np = None
     LinearRegression = None
-from collections import defaultdict
 import json
+from collections import defaultdict
+
 
 class AIAssistant:
     def __init__(self, openai_api_key=None):

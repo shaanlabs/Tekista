@@ -1,7 +1,9 @@
 import io
 import re
+
 from flask import url_for
-from models import db, User, Role, Project, Task, AuditLog
+
+from models import AuditLog, Project, Role, Task, User, db
 
 
 def ensure_roles(app):

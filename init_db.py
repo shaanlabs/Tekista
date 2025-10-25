@@ -4,9 +4,11 @@ Database initialization script for TaskManager
 Run this script to create the database tables and optionally create a sample user.
 """
 
-from app import create_app
-from models import db, User, Project, Task, Comment
 from datetime import datetime, timedelta
+
+from app import create_app
+from models import Comment, Project, Task, User, db
+
 
 def init_database():
     """Initialize the database with tables"""

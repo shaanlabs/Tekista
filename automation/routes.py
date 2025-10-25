@@ -3,13 +3,14 @@ Automation Routes and Endpoints
 Provides API endpoints for task automation and performance tracking
 """
 
-from flask import Blueprint, request, jsonify
-from flask_login import login_required, current_user
-from models import db, Task
-from enterprise import require_permission, audit_log
-from enterprise.models import AuditLog
-from automation import TaskAutomationEngine, PerformanceCalculator, WorkloadBalancer
 import logging
+
+from flask import Blueprint, abort, jsonify, request
+from flask_login import current_user, login_required
+
+from automation import (PerformanceCalculator, TaskAutomationEngine,
+                        WorkloadBalancer)
+from models import AuditLog, Task, db
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,7 @@ def complete_task(task_id):
     Args:
         task_id: ID of the task to complete
     """
-    task = Task.query.get_or_404(task_id)
+    task = db.session.get(Task, task_id) or abort(404)
     
     # Check authorization
     if task.assignees and current_user not in task.assignees:
@@ -41,7 +42,7 @@ def complete_task(task_id):
     try:
         # Update task status
         old_status = task.status
-        task.status = 'Done'
+        task.status = 'Completed'
         
         if notes:
             task.notes = notes
@@ -55,16 +56,11 @@ def complete_task(task_id):
         )
         
         # Audit log
-        AuditLog.log_action(
-            current_user.id,
-            current_user.organization_id,
-            'complete',
-            'task',
-            task_id,
-            old_values={'status': old_status},
-            new_values={'status': 'Done'},
-            details={'actual_hours': actual_hours}
-        )
+        try:
+            db.session.add(AuditLog(actor_id=current_user.id, action='complete', target_type='task', target_id=task_id, meta=f"old={old_status}, new=Completed, actual_hours={actual_hours}"))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
         
         return jsonify({
             'success': True,
@@ -78,12 +74,11 @@ def complete_task(task_id):
 
 @automation_bp.route('/tasks/<int:task_id>/status', methods=['PUT'])
 @login_required
-@require_permission('edit_tasks')
 def update_task_status(task_id):
     """
     Update task status and trigger automation if completed
     """
-    task = Task.query.get_or_404(task_id)
+    task = db.session.get(Task, task_id) or abort(404)
     
     data = request.get_json()
     new_status = data.get('status')
@@ -91,14 +86,24 @@ def update_task_status(task_id):
     if not new_status:
         return jsonify({'error': 'Status is required'}), 400
     
+    # Admin/Manager role check for status updates
+    role_name = getattr(getattr(current_user, 'role', None), 'name', None)
+    if role_name not in ('Admin','Manager') and current_user not in task.assignees:
+        return jsonify({'error':'forbidden'}), 403
+
     try:
         old_status = task.status
+        # Normalize statuses
+        if new_status.lower() in ('done','completed'):
+            new_status = 'Completed'
+        elif new_status.lower() in ('in progress','in_progress'):
+            new_status = 'In Progress'
         task.status = new_status
         db.session.commit()
         
         # Trigger automation if task is completed
         automation_result = None
-        if new_status.lower() in ['done', 'completed']:
+        if new_status == 'Completed':
             automation_result = TaskAutomationEngine.on_task_status_changed(
                 task_id=task_id,
                 old_status=old_status,
@@ -106,15 +111,11 @@ def update_task_status(task_id):
             )
         
         # Audit log
-        AuditLog.log_action(
-            current_user.id,
-            current_user.organization_id,
-            'update',
-            'task',
-            task_id,
-            old_values={'status': old_status},
-            new_values={'status': new_status}
-        )
+        try:
+            db.session.add(AuditLog(actor_id=current_user.id, action='update', target_type='task', target_id=task_id, meta=f"{old_status}->{new_status}"))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
         
         return jsonify({
             'success': True,
@@ -147,11 +148,15 @@ def get_user_performance(user_id):
 
 @automation_bp.route('/performance/team', methods=['GET'])
 @login_required
-@require_permission('view_team')
 def get_team_performance():
     """Get performance metrics for entire team"""
+    # Only Admin/Manager can access team performance
+    role_name = getattr(getattr(current_user, 'role', None), 'name', None)
+    if role_name not in ('Admin','Manager'):
+        return jsonify({'error':'forbidden'}), 403
+
     team_performance = PerformanceCalculator.calculate_team_performance(
-        current_user.organization_id
+        getattr(current_user, 'organization_id', None)
     )
     
     return jsonify({
@@ -162,13 +167,17 @@ def get_team_performance():
 
 @automation_bp.route('/performance/high-performers', methods=['GET'])
 @login_required
-@require_permission('view_team')
 def get_high_performers():
     """Get list of high-performing team members"""
     threshold = request.args.get('threshold', 80, type=int)
     
+    # Only Admin/Manager
+    role_name = getattr(getattr(current_user, 'role', None), 'name', None)
+    if role_name not in ('Admin','Manager'):
+        return jsonify({'error':'forbidden'}), 403
+
     high_performers = PerformanceCalculator.identify_high_performers(
-        current_user.organization_id,
+        getattr(current_user, 'organization_id', None),
         threshold
     )
     
@@ -180,13 +189,15 @@ def get_high_performers():
 
 @automation_bp.route('/performance/at-risk', methods=['GET'])
 @login_required
-@require_permission('view_team')
 def get_at_risk_performers():
     """Get list of performers who need support"""
     threshold = request.args.get('threshold', 50, type=int)
     
+    role_name = getattr(getattr(current_user, 'role', None), 'name', None)
+    if role_name not in ('Admin','Manager'):
+        return jsonify({'error':'forbidden'}), 403
     at_risk = PerformanceCalculator.identify_at_risk_performers(
-        current_user.organization_id,
+        getattr(current_user, 'organization_id', None),
         threshold
     )
     
@@ -218,23 +229,27 @@ def get_user_capacity(user_id):
 
 @automation_bp.route('/workload/team/rebalance-suggestions', methods=['GET'])
 @login_required
-@require_permission('manage_team')
 def get_rebalance_suggestions():
     """Get workload rebalancing suggestions for team"""
+    role_name = getattr(getattr(current_user, 'role', None), 'name', None)
+    if role_name not in ('Admin','Manager'):
+        return jsonify({'error':'forbidden'}), 403
     suggestions = WorkloadBalancer.suggest_workload_rebalancing(
-        current_user.organization_id
+        getattr(current_user, 'organization_id', None)
     )
     
     return jsonify(suggestions), 200
 
 @automation_bp.route('/workload/team/status', methods=['GET'])
 @login_required
-@require_permission('view_team')
 def get_team_workload_status():
     """Get overall team workload status"""
     from models import User
-    from enterprise.models import UserOrganizationRole
-    from assignment.models import UserSkillProfile
+    try:
+        from assignment.models import UserSkillProfile
+        from enterprise.models import UserOrganizationRole
+    except Exception:
+        return jsonify({'error':'enterprise modules unavailable'}), 501
     
     users = User.query.join(
         UserOrganizationRole,
@@ -292,14 +307,18 @@ def get_job_status(job_id):
 
 @automation_bp.route('/automation-log', methods=['GET'])
 @login_required
-@require_permission('view_audit_log')
 def get_automation_log():
     """Get automation activity log"""
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 50, type=int)
     
+    # Only Admin/Manager can view audit logs
+    role_name = getattr(getattr(current_user, 'role', None), 'name', None)
+    if role_name not in ('Admin','Manager'):
+        return jsonify({'error':'forbidden'}), 403
+
     logs = AuditLog.query.filter(
-        AuditLog.organization_id == current_user.organization_id,
+        AuditLog.organization_id == getattr(current_user, 'organization_id', None),
         AuditLog.action.in_(['complete', 'assign', 'update'])
     ).order_by(
         AuditLog.created_at.desc()

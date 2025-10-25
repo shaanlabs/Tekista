@@ -6,10 +6,11 @@ Provides structured access to task management data and operations
 
 import json
 import logging
-from typing import Any, Optional
 from datetime import datetime, timedelta
-from models import db, Task, Project, User, Comment
+from typing import Any, Optional
+
 from app import create_app
+from models import Comment, Project, Task, User, db
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

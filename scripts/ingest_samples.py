@@ -1,6 +1,7 @@
 from datetime import date, datetime
+
 from app import create_app
-from models import db, Setting, UserDailyFeature, UserCapacity, ProcessEvent
+from models import ProcessEvent, Setting, UserCapacity, UserDailyFeature, db
 
 # Configure here
 USER_ID = 21  # adjust to an existing Member ID

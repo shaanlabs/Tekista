@@ -3,12 +3,14 @@ Skills Management API Routes
 Provides endpoints for skill management and recommendations
 """
 
-from flask import Blueprint, request, jsonify
-from flask_login import login_required, current_user
-from models import db
-from assignment.models import UserSkillProfile
-from skills import SkillManager, SkillRecommendationEngine
 import logging
+
+from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
+
+from assignment.models import UserSkillProfile
+from models import db
+from skills import SkillManager, SkillRecommendationEngine
 
 logger = logging.getLogger(__name__)
 

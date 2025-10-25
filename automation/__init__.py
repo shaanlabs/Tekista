@@ -3,10 +3,12 @@ Task Automation Engine
 Handles automatic task assignment and performance tracking when tasks are completed
 """
 
-from datetime import datetime
-from models import db, Task
-from assignment.models import TaskAssignment, UserSkillProfile, AssignmentStatistics
 import logging
+from datetime import datetime
+
+from assignment.models import (AssignmentStatistics, TaskAssignment,
+                               UserSkillProfile)
+from models import Task, db
 
 logger = logging.getLogger(__name__)
 
@@ -26,11 +28,9 @@ class TaskAutomationEngine:
             Dictionary with automation results
         """
         try:
-            from celery_app import (
-                assign_next_task_for_user,
-                update_user_performance_metrics,
-                send_performance_update_notification
-            )
+            from celery_app import (assign_next_task_for_user,
+                                    send_performance_update_notification,
+                                    update_user_performance_metrics)
             
             task = Task.query.get(task_id)
             if not task:
@@ -212,8 +212,8 @@ class PerformanceCalculator:
             List of team member performance data
         """
         try:
-            from models import User
             from enterprise.models import UserOrganizationRole
+            from models import User
             
             users = User.query.join(
                 UserOrganizationRole,
@@ -320,8 +320,8 @@ class WorkloadBalancer:
             List of rebalancing suggestions
         """
         try:
-            from models import User
             from enterprise.models import UserOrganizationRole
+            from models import User
             
             users = User.query.join(
                 UserOrganizationRole,
