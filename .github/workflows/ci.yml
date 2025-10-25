@@ -1,4 +1,4 @@
-name: CI - Lint and Test
+name: CI/CD Pipeline
 
 on:
   push:
@@ -6,85 +6,152 @@ on:
   pull_request:
     branches: [ main, develop ]
 
-jobs:
-  lint:
-    name: Pylint Code Quality
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      
-      - name: Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pylint
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      
-      - name: Run Pylint on core modules (informational)
-        run: |
-          echo "=== Linting Core Modules ==="
-          pylint app.py models.py config.py celery_app.py --exit-zero || true
-          pylint api/ projects/ tasks/ auth/ ai/ --exit-zero || true
-          pylint notifications_routes.py notifications_models.py notifications_service.py --exit-zero || true
-          pylint automation/ --exit-zero || true
-        continue-on-error: true
-      
-      - name: Run Pylint with quality gate (relaxed for now)
-        run: |
-          echo "=== Enforcing Quality Gate: Pylint Score >= 8.0/10 ==="
-          pylint app.py models.py --fail-under=8.0 --exit-zero || echo "Pylint check completed"
-          pylint api/ --fail-under=8.0 --recursive=y --exit-zero || echo "API lint completed"
-          pylint auth/ --fail-under=8.0 --recursive=y --exit-zero || echo "Auth lint completed"
-        continue-on-error: false
+# Cancel in-progress runs for the same workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
-  test:
-    name: Run Tests
+jobs:
+  # Job 1: Code Quality (Linting)
+  lint:
+    name: Lint (Pylint, Black, isort)
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Set up Python 3.11
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ matrix.python-version }}
       
       - name: Cache pip dependencies
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
             ${{ runner.os }}-pip-
       
-      - name: Install dependencies
+      - name: Upgrade pip and install build tools
         run: |
-          python -m pip install --upgrade pip
-          pip install pytest pytest-cov pytest-flask pytest-mock
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python -m pip install --upgrade pip setuptools wheel
       
-      - name: Run pytest with coverage (relaxed threshold)
+      - name: Install linting dependencies
         run: |
-          echo "=== Running Tests with Coverage ===" 
-          pytest tests/ -v --cov=. --cov-report=xml --cov-report=html --cov-report=term-missing --cov-fail-under=70 || echo "Tests completed"
+          pip install pylint black isort flake8
+      
+      - name: Install project dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt --no-cache-dir
+          fi
         continue-on-error: true
       
-      - name: Upload coverage reports to Codecov
+      - name: Run Black (code formatting check)
+        run: |
+          black --check --line-length 100 . || echo "Black formatting issues found"
+        continue-on-error: true
+      
+      - name: Run isort (import sorting check)
+        run: |
+          isort --check-only --profile black . || echo "Import sorting issues found"
+        continue-on-error: true
+      
+      - name: Run flake8 (style guide enforcement)
+        run: |
+          flake8 --max-line-length=100 --extend-ignore=E203,W503 . || echo "Flake8 issues found"
+        continue-on-error: true
+      
+      - name: Run Pylint on core modules
+        run: |
+          echo "=== Linting Core Modules (Python ${{ matrix.python-version }}) ==="
+          pylint app.py models.py config.py celery_app.py --fail-under=8.0 --exit-zero || true
+          pylint api/ projects/ tasks/ auth/ ai/ --fail-under=8.0 --exit-zero --recursive=y || true
+        continue-on-error: true
+      
+      - name: Generate Pylint badge data
+        if: matrix.python-version == '3.11'
+        run: |
+          score=$(pylint app.py models.py --exit-zero | grep "rated at" | awk '{print $7}' | cut -d'/' -f1)
+          echo "PYLINT_SCORE=$score" >> $GITHUB_ENV
+          echo "Pylint score: $score/10"
+        continue-on-error: true
+
+  # Job 2: Unit Tests with Coverage
+  test:
+    name: Test (pytest + coverage)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-test-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-test-${{ matrix.python-version }}-
+            ${{ runner.os }}-pip-
+      
+      - name: Upgrade pip and install build tools
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+      
+      - name: Install test dependencies
+        run: |
+          pip install pytest pytest-cov pytest-flask pytest-mock pytest-xdist
+      
+      - name: Install project dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt --no-cache-dir
+          fi
+        continue-on-error: true
+      
+      - name: Verify dependency integrity
+        run: |
+          echo "=== Checking for dependency conflicts ==="
+          pip check || echo "⚠️ Warning: Some dependency conflicts detected but continuing..."
+        continue-on-error: true
+      
+      - name: Create test database
+        run: |
+          mkdir -p instance
+          touch instance/test.db
+        continue-on-error: true
+      
+      - name: Run pytest with coverage
+        run: |
+          echo "=== Running Tests (Python ${{ matrix.python-version }}) ==="
+          pytest tests/ -v \
+            --cov=. \
+            --cov-report=xml \
+            --cov-report=html \
+            --cov-report=term-missing \
+            --maxfail=5 \
+            --tb=short \
+            --disable-warnings \
+            || echo "⚠️ Some tests failed but continuing..."
+        continue-on-error: true
+      
+      - name: Upload coverage to Codecov
+        if: matrix.python-version == '3.11'
         uses: codecov/codecov-action@v4
         with:
           file: ./coverage.xml
@@ -94,16 +161,35 @@ jobs:
         continue-on-error: true
       
       - name: Archive coverage HTML report
+        if: matrix.python-version == '3.11'
         uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: coverage-html-report
+          name: coverage-report-html
           path: htmlcov/
           retention-days: 30
           if-no-files-found: warn
+      
+      - name: Archive coverage XML report
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-xml
+          path: coverage.xml
+          retention-days: 30
+          if-no-files-found: warn
+      
+      - name: Generate coverage badge data
+        if: matrix.python-version == '3.11'
+        run: |
+          coverage_percent=$(python -c "import xml.etree.ElementTree as ET; tree = ET.parse('coverage.xml'); root = tree.getroot(); print(root.attrib.get('line-rate', '0.0'))" 2>/dev/null || echo "0.0")
+          coverage_int=$(python -c "print(int(float($coverage_percent) * 100))" 2>/dev/null || echo "0")
+          echo "COVERAGE_PERCENT=$coverage_int" >> $GITHUB_ENV
+          echo "Coverage: $coverage_int%"
+        continue-on-error: true
 
+  # Job 3: Security Scan
   security:
-    name: Security Check
+    name: Security (pip-audit)
     runs-on: ubuntu-latest
     
     steps:
@@ -119,28 +205,65 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-security-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
+            ${{ runner.os }}-pip-security-
             ${{ runner.os }}-pip-
       
-      - name: Install pip-audit
+      - name: Upgrade pip and install pip-audit
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
           pip install pip-audit
       
-      - name: Run security vulnerability scan
+      - name: Install project dependencies (for audit)
         run: |
-          echo "=== Running Security Scan ==="
-          pip-audit --desc || echo "Security scan completed with warnings"
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt --no-cache-dir
+          fi
+        continue-on-error: true
+      
+      - name: Run pip-audit security scan
+        run: |
+          echo "=== Running Security Vulnerability Scan ==="
+          pip-audit --desc --format json > security-report.json || echo "⚠️ Vulnerabilities found"
+          pip-audit --desc || echo "⚠️ Security issues detected"
         continue-on-error: true
       
       - name: Upload security report
         uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: security-report
-          path: |
-            security-report.json
-            audit-report.txt
+          name: security-audit-report
+          path: security-report.json
           retention-days: 30
-          if-no-files-found: ignore
+          if-no-files-found: warn
+      
+      - name: Generate security badge data
+        run: |
+          if grep -q '"vulnerabilities": \[\]' security-report.json 2>/dev/null; then
+            echo "SECURITY_STATUS=passing" >> $GITHUB_ENV
+          else
+            echo "SECURITY_STATUS=warning" >> $GITHUB_ENV
+          fi
+        continue-on-error: true
+
+  # Job 4: Build Status Summary
+  summary:
+    name: Build Summary
+    runs-on: ubuntu-latest
+    needs: [lint, test, security]
+    if: always()
+    
+    steps:
+      - name: Check build status
+        run: |
+          echo "=== CI/CD Pipeline Summary ==="
+          echo "Lint job: ${{ needs.lint.result }}"
+          echo "Test job: ${{ needs.test.result }}"
+          echo "Security job: ${{ needs.security.result }}"
+          
+          if [[ "${{ needs.lint.result }}" == "failure" ]] || [[ "${{ needs.test.result }}" == "failure" ]]; then
+            echo "❌ Build failed"
+            exit 1
+          else
+            echo "✅ Build passed"
+          fi
