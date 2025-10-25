@@ -210,7 +210,6 @@ class SkillManager:
         
         # Bonus for on-time completion
         if task.due_date:
-            from datetime import datetime
             if datetime.utcnow().date() <= task.due_date:
                 increment *= 1.2
         

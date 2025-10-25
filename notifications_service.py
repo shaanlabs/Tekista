@@ -4,12 +4,13 @@ Handles notification creation, delivery, and management
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 
 from models import db
 from notifications_models import (Notification, NotificationPreference,
                                   NotificationTemplate)
+from sqlalchemy.exc import SQLAlchemyError
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ class NotificationService:
                 # Check if this notification type is enabled
                 pref_key = f'{notification_type}'
                 if hasattr(prefs, pref_key) and not getattr(prefs, pref_key):
-                    logger.info(f"Notification type {notification_type} disabled for user {user_id}")
+                    logger.info("Notification type %s disabled for user %s", notification_type, user_id)
                     return None
             
             # Create notification
@@ -72,11 +73,11 @@ class NotificationService:
             db.session.add(notification)
             db.session.commit()
             
-            logger.info(f"Created notification {notification.id} for user {user_id}")
+            logger.info("Created notification %s for user %s", notification.id, user_id)
             return notification
         
-        except Exception as exc:
-            logger.error(f"Error creating notification: {str(exc)}")
+        except SQLAlchemyError as exc:
+            logger.error("Error creating notification: %s", exc)
             return None
     
     @staticmethod
@@ -110,7 +111,7 @@ class NotificationService:
             template = NotificationTemplate.get_template(template_key)
             
             if not template:
-                logger.warning(f"Template {template_key} not found")
+                logger.warning("Template %s not found", template_key)
                 return None
             
             title, message = template.render(**template_vars)
@@ -128,7 +129,7 @@ class NotificationService:
             )
         
         except Exception as exc:
-            logger.error(f"Error creating notification from template: {str(exc)}")
+            logger.error("Error creating notification from template: %s", exc)
             return None
     
     @staticmethod
@@ -160,8 +161,8 @@ class NotificationService:
             
             return notifications
         
-        except Exception as exc:
-            logger.error(f"Error getting notifications for user {user_id}: {str(exc)}")
+        except SQLAlchemyError as exc:
+            logger.error("Error getting notifications for user %s: %s", user_id, exc)
             return []
     
     @staticmethod
@@ -173,8 +174,8 @@ class NotificationService:
                 is_read=False
             ).count()
             return count
-        except Exception as exc:
-            logger.error(f"Error getting unread count for user {user_id}: {str(exc)}")
+        except SQLAlchemyError as exc:
+            logger.error("Error getting unread count for user %s: %s", user_id, exc)
             return 0
     
     @staticmethod
@@ -186,8 +187,8 @@ class NotificationService:
                 notification.mark_as_read()
                 return True
             return False
-        except Exception as exc:
-            logger.error(f"Error marking notification as read: {str(exc)}")
+        except SQLAlchemyError as exc:
+            logger.error("Error marking notification as read: %s", exc)
             return False
     
     @staticmethod
@@ -201,8 +202,8 @@ class NotificationService:
             
             db.session.commit()
             return count
-        except Exception as exc:
-            logger.error(f"Error marking all notifications as read: {str(exc)}")
+        except SQLAlchemyError as exc:
+            logger.error("Error marking all notifications as read: %s", exc)
             return 0
     
     @staticmethod
@@ -215,16 +216,14 @@ class NotificationService:
                 db.session.commit()
                 return True
             return False
-        except Exception as exc:
-            logger.error(f"Error deleting notification: {str(exc)}")
+        except SQLAlchemyError as exc:
+            logger.error("Error deleting notification: %s", exc)
             return False
     
     @staticmethod
     def cleanup_old_notifications(days: int = 30) -> int:
         """Delete notifications older than N days"""
         try:
-            from datetime import timedelta
-            
             cutoff_date = datetime.utcnow() - timedelta(days=days)
             
             count = Notification.query.filter(
@@ -232,10 +231,10 @@ class NotificationService:
             ).delete()
             
             db.session.commit()
-            logger.info(f"Cleaned up {count} old notifications")
+            logger.info("Cleaned up %s old notifications", count)
             return count
-        except Exception as exc:
-            logger.error(f"Error cleaning up old notifications: {str(exc)}")
+        except SQLAlchemyError as exc:
+            logger.error("Error cleaning up old notifications: %s", exc)
             return 0
     
     @staticmethod
@@ -250,8 +249,8 @@ class NotificationService:
                 db.session.commit()
             
             return prefs
-        except Exception as exc:
-            logger.error(f"Error getting/creating preferences: {str(exc)}")
+        except SQLAlchemyError as exc:
+            logger.error("Error getting/creating preferences: %s", exc)
             return None
     
     @staticmethod
@@ -269,8 +268,8 @@ class NotificationService:
             
             db.session.commit()
             return True
-        except Exception as exc:
-            logger.error(f"Error updating preferences: {str(exc)}")
+        except SQLAlchemyError as exc:
+            logger.error("Error updating preferences: %s", exc)
             return False
 
 # ============================================================================
