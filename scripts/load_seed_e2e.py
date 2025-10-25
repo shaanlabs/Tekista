@@ -65,31 +65,31 @@ def upsert_project(session, p):
 
 
 def api_token(base, username, password):
-    resp = requests.post(f"{base}/api/token", json={'username': username, 'password': password})
+    resp = requests.post(f"{base}/api/token", json={'username': username, 'password': password}, timeout=15)
     resp.raise_for_status()
     return resp.json()['token']
 
 
 def api_upsert_project(base, token, p):
     # Try to find by title first
-    resp = requests.get(f"{base}/api/projects", headers={'Authorization': f'Bearer {token}'})
+    resp = requests.get(f"{base}/api/projects", headers={'Authorization': f'Bearer {token}'}, timeout=15)
     resp.raise_for_status()
     exists = next((x for x in resp.json() if x['title'] == p['projectName']), None)
     if exists:
         return exists['id']
-    resp = requests.post(f"{base}/api/projects", headers={'Authorization': f'Bearer {token}'}, json={'title': p['projectName'], 'description': ''})
+    resp = requests.post(f"{base}/api/projects", headers={'Authorization': f'Bearer {token}'}, json={'title': p['projectName'], 'description': ''}, timeout=15)
     resp.raise_for_status()
     return resp.json()['id']
 
 
 def api_create_task(base, token, t):
-    resp = requests.post(f"{base}/api/tasks", headers={'Authorization': f'Bearer {token}'}, json=t)
+    resp = requests.post(f"{base}/api/tasks", headers={'Authorization': f'Bearer {token}'}, json=t, timeout=15)
     resp.raise_for_status()
     created = resp.json()
     # Patch status if provided and not default
     if t.get('status') and t['status'] != created.get('status'):
         rid = created['id']
-        r2 = requests.patch(f"{base}/api/tasks/{rid}", headers={'Authorization': f'Bearer {token}'}, json={'status': t['status']})
+        r2 = requests.patch(f"{base}/api/tasks/{rid}", headers={'Authorization': f'Bearer {token}'}, json={'status': t['status']}, timeout=15)
         r2.raise_for_status()
         created = r2.json()
     return created['id']

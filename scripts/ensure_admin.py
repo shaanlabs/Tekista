@@ -17,12 +17,13 @@ def main():
         # prompt if not provided
         try:
             password = getpass('Enter password for admin user: ')
-        except Exception:
-            print('Set ADMIN_PASSWORD env var or run interactively to input password.')
+        except (EOFError, KeyboardInterrupt):
+            print('Set ADMIN_PASSWORD env var or run interactively to input password.', file=sys.stderr)
             sys.exit(2)
 
     app = create_app()
-    ctx = app.app_context(); ctx.push()
+    ctx = app.app_context()
+    ctx.push()
 
     role = Role.query.filter_by(name='Admin').first()
     if not role:
